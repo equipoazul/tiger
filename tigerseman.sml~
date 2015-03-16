@@ -216,7 +216,7 @@ fun transExp(venv, tenv) =
     | trexp(ArrayExp({typ, size, init}, nl)) =
       let
         val tyinit = trexp init
-        val t = case tabBusca(typ, venv) of (* REVISAR *)
+        val t = case tabBusca(typ, venv) of
                    SOME (TArray t2) => if tiposIguales (#1(t2)) (#ty tyinit) then {exp = () , ty = t2} 
                                      else error("Tipo de init distinto del tipo de array", nl)
                   | _ => error("Tipo de arreglo inexistente", nl)
