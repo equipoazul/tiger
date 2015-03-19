@@ -134,17 +134,20 @@ fun transExp(venv, tenv) =
         val exprs = map (fn{exp, ty} => exp) lexti
         val {exp, ty=tipo} = hd(rev lexti)
       in  { exp=(), ty=tipo } end
+      
+      
     (* <NOSOTROS> *)
-    | trexp(AssignExp({var=SimpleVar s, exp}, nl)) =
-    let
+    | trexp(AssignExp({var=SimpleVar s, exp}, nl)) = (print "BONDIOLA"; {exp=(), ty=TUnit})
+    
+    (*let
       val {exp=_, ty=tyvar} = case tabBusca(s, venv) of
-                                SOME VIntro => error("Variable de solo lectura.", nl)
-                                |_ => trvar(SimpleVar s, nl)
+                                SOME VIntro => (print "JAMON"; error("Variable de solo lectura.", nl))
+                                |_ => (print "QUESO"; trvar(SimpleVar s, nl))
       val {exp=_, ty=tyexp} = trexp exp
     in 
       if tiposIguales tyexp tyvar then {exp=(), ty=tyvar}
       else error("Error de tipos en asignacion", nl)
-    end
+    end*)
     
     | trexp(AssignExp({var, exp}, nl)) =
     let
@@ -184,17 +187,23 @@ fun transExp(venv, tenv) =
       (*NOSOTROS*)
       (*Revisar, Hay q verificar q el var es un SimpleVar???*)
       (*Es necesario meter el var en el env?? o eso es parte de la generacion de codigo intermedio??*)
-    | trexp(ForExp({var, escape, lo, hi, body}, nl)) =
+    | trexp(ForExp({var, escape, lo, hi, body}, nl)) = 
       let 
+        val _ = print "PALETA"
+      in
+        {exp=(), ty=TUnit}
+      end
+     (* let 
              
         val tylo = trexp lo
         val tyhi = trexp hi
-        val tybody = trexp body
+	      val venv' = tabInserta(var, VIntro, venv)
+        val tybody = transExp (venv', tenv) body
       in 
-        if tipoReal (#ty tylo) = TInt andalso (#ty tyhi) = TInt andalso (#ty tybody) = TUnit then {exp=(), ty=TUnit}
+        if tipoReal (#ty tylo) = TInt andalso (#ty tyhi) = TInt andalso (#ty tybody) = TUnit then (print "MORTADELA"; {exp=(), ty=TUnit})
         else if tipoReal (#ty tylo) <> TInt orelse #ty tyhi <> TInt then error("Error de tipo en la condición", nl)
         else error("El cuerpo de un for no puede devolver un valor", nl)
-      end
+      end *)
     
       (*/NOSOTROS*)
     
@@ -216,24 +225,48 @@ fun transExp(venv, tenv) =
     | trexp(ArrayExp({typ, size, init}, nl)) =
       let
         val tyinit = trexp init
-        val t = case tabBusca(typ, venv) of (* REVISAR *)
+        val t = case tabBusca(typ, tenv) of (* REVISAR *)
                    SOME (TArray t2) => if tiposIguales (#1(t2)) (#ty tyinit) then {exp = () , ty = t2} 
                                      else error("Tipo de init distinto del tipo de array", nl)
                   | _ => error("Tipo de arreglo inexistente", nl)
         val tysize = trexp size
       in 
-        if (#ty tysize) <> TInt then error("Tamaño de array inválido") 
-        else {exp = (), ty = TArray t2}
+        if (#ty tysize) <> TInt then error("Tamaño de array inválido",nl) 
+        else {exp = (), ty = TArray (#ty t)}
       end
       
       
+    (* <NOSOTROS> *)
     and trvar(SimpleVar s, nl) =
-      {exp=(), ty=TUnit} (*COMPLETAR*)
+        	(case tabBusca(s, venv) of 
+		                   SOME (Var{ty = t}) => {exp = (), ty = t}
+		                  | _ => error("Tipo de arreglo inexistente", nl))
+		      
+
     | trvar(FieldVar(v, s), nl) =
-      {exp=(), ty=TUnit} (*COMPLETAR*)
+      let
+        val {exp = _, ty = typ} = trvar(v, nl)
+        val (l, u) = (case typ of
+                          TRecord l' => l'                  
+                        | _ => error("No es un record", nl))
+        in
+          case List.find (fn x =>(#1)x = s) l of
+              SOME (str, typfv, index) => {exp = (), ty = typfv}
+            | _ => error("Campo de record \""^s^"\" inexistente", nl)
+        end
+
     | trvar(SubscriptVar(v, e), nl) =
-      {exp=(), ty=TUnit} (*COMPLETAR*)
-      
+      let
+        val {exp = _, ty = typ} = trvar(v, nl)
+      in
+        (case typ of
+              TArray (t, u) =>  (case (trexp e) of
+                                      {exp = _, ty = TInt} => {exp = (), ty = t}
+                                      | _ => error("La expresión utilizada como índice no es entero.", nl))
+              | _ => error("No es un arreglo", nl))
+      end
+    (* </NOSOTROS> *)
+
     and trdec (venv, tenv) (VarDec ({name,escape,typ=NONE,init},pos)) = 
       (venv, tenv, []) (*COMPLETAR*)
     | trdec (venv,tenv) (VarDec ({name,escape,typ=SOME s,init},pos)) =
@@ -246,7 +279,7 @@ fun transExp(venv, tenv) =
 fun transProg ex =
   let  val main =
         LetExp({decs=[FunctionDec[({name="_tigermain", params=[],
-                result=NONE, body=ex}, 0)]],
+                result=SOME "int", body=ex}, 0)]],
             body=UnitExp 0}, 0)
     val _ = transExp(tab_vars, tab_tipos) main
   in  print "bien!\n" end

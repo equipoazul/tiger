@@ -2,7 +2,7 @@
 
 HOME=~
 #MOSMLHOME=${HOME}/mosml
-MOSMLHOME=/usr/local
+MOSMLHOME=/usr
 MOSMLTOOLS=camlrunm $(MOSMLHOME)/tools
 MOSMLLEX=mosmllex
 MOSMLYACC=mosmlyac -v
