@@ -62,8 +62,15 @@ fun tiposIguales (TRecord _) TNil = true
     end
   | tiposIguales a b = (a=b)
 
-fun transExp(venv, tenv) =
-  let fun error(s, p) = raise Fail ("Error -- línea "^Int.toString(p)^": "^s^"\n")
+fun transExp(venv, tenv) ex =
+  let 
+    val _ = print "en transexp!!!!!\n"
+    val _ = case ex of
+		SeqExp _ => print "un seqqqqq!\n"
+		| LetExp _ => print "un lettt\n"
+		| ForExp _ => print "un ForExp\n"
+		| _ => print "otra cosa\n"
+    fun error(s, p) = raise Fail ("Error -- línea "^Int.toString(p)^": "^s^"\n")
     fun trexp(VarExp v) = trvar(v)
     | trexp(UnitExp _) = {exp=(), ty=TUnit}
     | trexp(NilExp _)= {exp=(), ty=TNil}
@@ -130,15 +137,19 @@ fun transExp(venv, tenv) =
         {exp=(), ty=tyr}
       end
     | trexp(SeqExp(s, nl)) =
-      let  val lexti = map trexp s
+      let  
+val _ = print "esoooooo yyyyyyyyyy\n"
+        val lexti = map trexp s
+val _ = print "esoooooo zzzzzz\n"
         val exprs = map (fn{exp, ty} => exp) lexti
         val {exp, ty=tipo} = hd(rev lexti)
       in  { exp=(), ty=tipo } end
       
       
     (* <NOSOTROS> *)
-    | trexp(AssignExp({var=SimpleVar s, exp}, nl)) =
-    let
+    | trexp(AssignExp({var=SimpleVar s, exp}, nl)) = (print "BONDIOLA"; {exp=(), ty=TUnit})
+    
+    (*let
       val {exp=_, ty=tyvar} = case tabBusca(s, venv) of
                                 SOME VIntro => (print "JAMON"; error("Variable de solo lectura.", nl))
                                 |_ => (print "QUESO"; trvar(SimpleVar s, nl))
@@ -146,7 +157,7 @@ fun transExp(venv, tenv) =
     in 
       if tiposIguales tyexp tyvar then {exp=(), ty=tyvar}
       else error("Error de tipos en asignacion", nl)
-    end
+    end*)
     
     | trexp(AssignExp({var, exp}, nl)) =
     let
@@ -216,8 +227,7 @@ fun transExp(venv, tenv) =
         val {exp=expbody,ty=tybody}=transExp (venv', tenv') body
       in 
         {exp=(), ty=tybody}
-      end
-      
+      end 
     | trexp(BreakExp nl) =
       {exp=(), ty=TUnit} 
       
@@ -267,14 +277,59 @@ fun transExp(venv, tenv) =
     (* </NOSOTROS> *)
 
     and trdec (venv, tenv) (VarDec ({name,escape,typ=NONE,init},pos)) = 
-      (venv, tenv, []) (*COMPLETAR*)
+          let 
+            val {exp=_, ty=tyinit} = trexp init
+            val venv' = tabInserta(name, Var{ty=tyinit}, venv)
+          in 
+            (venv', tenv, [])
+          end   
+    
     | trdec (venv,tenv) (VarDec ({name,escape,typ=SOME s,init},pos)) =
-      (venv, tenv, []) (*COMPLETAR*)
+        let
+          val {exp=_, ty=tyinit} = trexp init
+          val venv' = (case tabBusca(s, tenv) of
+                          SOME t => if tiposIguales t tyinit then tabInserta(name, Var{ty=t}, venv)
+                                    else error("el tipo de var es distinto a la expresion", pos)
+                          |_ => error("tipo desconocido", pos))
+        in 
+           (venv', tenv, [])  
+        end
+
+
+
+
+(*
+    FunctionDec of ({name: symbol, params: field list,
+		result: symbol option, body: exp} * pos) list
+		
+		field = {name: symbol, escape: bool ref, typ: ty}
+*)
+
+
+
+		
     | trdec (venv,tenv) (FunctionDec fs) =
-      (venv, tenv, []) (*COMPLETAR*)
+      let
+        val flist = map (fn (x,y) => x) fs
+        (*Chequeamos que no haya dos funciones con el mismo nombre *)
+        val nlist = map (fn (x, pos) => (#name x, pos)) fs
+        
+        fun checkNames [] = true
+            | checkNames ((x, pos)::xs) = if List.exists (fn y => x=(#1 y)) xs then error("Nombre de funcion "^x^" duplicado", pos)
+                                          else checkNames xs  
+                            
+      in (venv, tenv, [])
+    end
+    
+      
+     
+     
+     
+     
+     
     | trdec (venv,tenv) (TypeDec ts) =
       (venv, tenv, []) (*COMPLETAR*)
-  in trexp end
+  in trexp ex end
 fun transProg ex =
   let  val main =
         LetExp({decs=[FunctionDec[({name="_tigermain", params=[],
