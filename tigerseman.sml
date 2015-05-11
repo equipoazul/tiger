@@ -3,6 +3,7 @@ struct
 
 open tigerabs
 open tigersres
+open topsort
 
 type expty = {exp: unit, ty: Tipo}
 
@@ -64,12 +65,6 @@ fun tiposIguales (TRecord _) TNil = true
 
 fun transExp(venv, tenv) ex =
   let 
-    val _ = print "en transexp!!!!!\n"
-    val _ = case ex of
-		SeqExp _ => print "un seqqqqq!\n"
-		| LetExp _ => print "un lettt\n"
-		| ForExp _ => print "un ForExp\n"
-		| _ => print "otra cosa\n"
     fun error(s, p) = raise Fail ("Error -- línea "^Int.toString(p)^": "^s^"\n")
     fun trexp(VarExp v) = trvar(v)
     | trexp(UnitExp _) = {exp=(), ty=TUnit}
@@ -138,26 +133,24 @@ fun transExp(venv, tenv) ex =
       end
     | trexp(SeqExp(s, nl)) =
       let  
-val _ = print "esoooooo yyyyyyyyyy\n"
         val lexti = map trexp s
-val _ = print "esoooooo zzzzzz\n"
         val exprs = map (fn{exp, ty} => exp) lexti
         val {exp, ty=tipo} = hd(rev lexti)
       in  { exp=(), ty=tipo } end
       
       
     (* <NOSOTROS> *)
-    | trexp(AssignExp({var=SimpleVar s, exp}, nl)) = (print "BONDIOLA"; {exp=(), ty=TUnit})
+    | trexp(AssignExp({var=SimpleVar s, exp}, nl)) = 
     
-    (*let
+    let
       val {exp=_, ty=tyvar} = case tabBusca(s, venv) of
-                                SOME VIntro => (print "JAMON"; error("Variable de solo lectura.", nl))
-                                |_ => (print "QUESO"; trvar(SimpleVar s, nl))
+                                SOME VIntro => (error("Variable de solo lectura.", nl))
+                                |_ => (trvar(SimpleVar s, nl))
       val {exp=_, ty=tyexp} = trexp exp
     in 
       if tiposIguales tyexp tyvar then {exp=(), ty=tyvar}
       else error("Error de tipos en asignacion", nl)
-    end*)
+    end
     
     | trexp(AssignExp({var, exp}, nl)) =
     let
@@ -199,11 +192,6 @@ val _ = print "esoooooo zzzzzz\n"
       (*Es necesario meter el var en el env?? o eso es parte de la generacion de codigo intermedio??*)
     | trexp(ForExp({var, escape, lo, hi, body}, nl)) = 
       let 
-        val _ = print "PALETA"
-      in
-        {exp=(), ty=TUnit}
-      end
-     (* let 
              
         val tylo = trexp lo
         val tyhi = trexp hi
@@ -213,7 +201,7 @@ val _ = print "esoooooo zzzzzz\n"
         if tipoReal (#ty tylo) = TInt andalso (#ty tyhi) = TInt andalso (#ty tybody) = TUnit then (print "MORTADELA"; {exp=(), ty=TUnit})
         else if tipoReal (#ty tylo) <> TInt orelse #ty tyhi <> TInt then error("Error de tipo en la condición", nl)
         else error("El cuerpo de un for no puede devolver un valor", nl)
-      end *)
+      end 
     
       (*/NOSOTROS*)
     
@@ -303,6 +291,9 @@ val _ = print "esoooooo zzzzzz\n"
 		result: symbol option, body: exp} * pos) list
 		
 		field = {name: symbol, escape: bool ref, typ: ty}
+		
+		
+		Func of {level: unit, label: tigertemp.label, formals: Tipo list, result: Tipo, extern: bool}
 *)
 
 
@@ -310,25 +301,232 @@ val _ = print "esoooooo zzzzzz\n"
 		
     | trdec (venv,tenv) (FunctionDec fs) =
       let
-        val flist = map (fn (x,y) => x) fs
         (*Chequeamos que no haya dos funciones con el mismo nombre *)
         val nlist = map (fn (x, pos) => (#name x, pos)) fs
         
         fun checkNames [] = true
             | checkNames ((x, pos)::xs) = if List.exists (fn y => x=(#1 y)) xs then error("Nombre de funcion "^x^" duplicado", pos)
-                                          else checkNames xs  
-                            
-      in (venv, tenv, [])
+                                          else checkNames xs 
+        
+        val _ = checkNames nlist          
+                
+        fun transparams pos x = (case (#typ x) of
+                                         NameTy s => (case tabBusca(s, tenv) of
+                                                           SOME t => {name = (#name x), typ = t}
+                                                          | _ => error("No se permiten argumentos de ese tipo.", pos))
+                                         | _ => error("Error de tipo en el campo.", pos))
+                                          
+        
+        val name' = tigertemp.newlabel()
+        
+        fun getFormals pos params = map (transparams pos) params 
+        
+        fun getResult pos x = (case x of
+                              SOME t => (case tabBusca(t, tenv) of
+                                            SOME t' => t'
+                                            |_ => error("Error en el tipo de retorno"^t^".", pos))
+                              |_ => TUnit)
+        
+        val venv' = foldr (fn (x, venvv) => tabInserta(#name (#1 x), Func{level=(), label=name', formals=map #typ (getFormals (#2 x) (#params (#1 x))), result=getResult (#2 x) (#result (#1 x)), extern=false}, venvv))  venv fs      
+		
+        fun procBody (r, pos) = 
+            let
+                val formals = getFormals pos (#params r) 
+                val b_venv = foldr (fn (x, xs) => tabInserta(#name x, Var {ty=(#typ x)}, xs)) venv formals 
+            in
+                transExp (b_venv, tenv) (#body r)
+            end  
+                     
+        val _ = map procBody fs
+        
+      in (venv', tenv, [])
     end
-    
-      
-     
-     
-     
-     
-     
+     (*TypeDec of ({name: symbol, ty: ty} * pos) list
+     list = {first:int, rest:list}
+     field = {name: symbol, escape: bool ref, typ: ty}
+     TRecord of (string * Tipo * int) list * unique *)   
     | trdec (venv,tenv) (TypeDec ts) =
-      (venv, tenv, []) (*COMPLETAR*)
+        let
+            
+            fun buscaArrRecords lt = 
+                let 
+                    fun buscaRecs [] recs = recs
+                        |buscaRecs ((r as {name, ty=RecordTy _}) :: t) recs = buscaRecs t (r :: recs)
+                        |buscaRecs ((r as {name, ty=ArrayTy _}) :: t) recs = buscaRecs t (r :: recs)
+                        |buscaRecs (_ :: t) recs = buscaRecs t recs
+                in
+                    buscaRecs lt [] end
+                    
+            fun genPares lt = 
+                let  
+                    val lrecs = buscaArrRecords lt
+                    fun genP [] res = res
+                       |genP ({name, ty=NameTy s} :: t) res = genP t ((s, name) :: res)
+                       |genP ({name, ty=ArrayTy s} :: t) res = genP t ((s, name) :: res)
+                       |genP ({name, ty=RecordTy lf} :: t) res = genP t res
+                            (*let
+                                fun recorre ({typ=NameTy x, ...} :: t) = (case List.find((op = rs x) o #name) lrecs of
+                                                                                    SOME _ => recorre t
+                                                                                    |_ => x :: recorre t)
+								   |recorre (_ :: L) = recorre L
+								   |recorre [] = []
+							   val res' = recorre lf
+							   val res'' = List.map (fn x => (x, name)) res'
+                           in genP t (res''@res) end*)
+                in 
+                    genP lt []                    
+                       
+                end
+                
+            
+            
+            (*vaval pares = genPares batch
+                    val recs = buscaArrRecords batch
+                    val ordered = topsort pares
+                    val env' = procesa ordered batch recs env
+                    val env'' = procRecords rec env'
+                    val env''' = fijaNONE ( tabAList env'') env''
+                    *)
+                    
+            fun procesa [] pares recs env = env
+               |procesa (sorted as (h :: t)) pares recs env = 
+                    let fun filt h {name, ty=NameTy t} = h = t
+                            |filt h {name, ty=ArrayTy t} = h = t
+                            |filt _ _ = false
+                            (*|filt h {name, ty=RecordTy lt} = List.exists((h is op=) o #name) lt*)
+                            val (ps, ps') = List.partition (filt h) pares
+                            val ttopt = (case List.find (fn {name,ty} => name = h) recs of 
+												SOME {ty=RecordTy _, name} => NONE
+												|SOME {ty=ArrayTy _, name} => NONE
+												|SOME _ => NONE
+												|NONE => (case tabBusca (h, env) of
+													SOME t => SOME t
+													|_ => error(h^"no existe", 666)))
+                            val env' = (case ttopt of 
+                                            SOME tt => List.foldr (fn ({name, ty=NameTy ty}, env') => tabInserta(name, tt, env)
+                                                                        |_ => error("error interno.", 666)) env recs
+                                            |_ => env)
+                    in 
+                        procesa t ps' recs env'
+                    end
+                
+            fun procRecords batch recs env =
+                let
+                    fun buscaEnv env' t = (case tabBusca(t, env) of
+                                            SOME (x as (TRecord _)) => TTipo (t, ref (SOME x))
+                                            |SOME t' => t'
+                                            |_ => (case tabBusca(t, env) of 
+                                                        SOME (x as (TRecord _)) => TTipo (t, ref (SOME x))
+                                                        |SOME t' => t'
+                                                        |_ => (case List.find (fn {name, ...} => name = t) recs of
+                                                                    SOME {name, ...} => TTipo (name, ref NONE)
+                                                                    |_ => error(t^"*no existe", 666))))
+                    fun precs [] env' = env'
+                        |precs ({name, ty=RecordTy lf} :: t) env' = 
+                                let 
+                                    val lf' = List.foldl (fn ({name, typ=NameTy t, ...}, l) => 
+                                                                (name, buscaEnv env' t) :: l
+                                                          |({name, typ=ArrayTy t, ...}, l) =>
+                                                                (name, TArray (buscaEnv env' t, ref ())) :: l
+                                                          |(_, l) => l) [] lf
+                                    val (_, lf'') = List.foldl (fn ((x,y), (n,l)) => (n+1, (x, y, n) :: l)) (0, []) lf'
+                                    val env'' = tabInserta(name, TRecord (lf'', ref ()), env')
+                                in
+                                    precs t env''
+                                end
+                        |precs ({name, ty=ArrayTy t} :: tu) env' = precs tu (tabInserta (name, TArray (buscaEnv env' t, ref ()), env'))
+                        |precs _ _ = error("error interno", 666)
+                in 
+                    precs batch (fromTab env) 
+                end
+                
+            fun fijaNONE recs env = env
+                |fijaNONE ((name, TArray (TTipo (s, ref NONE), u)) :: t) env =
+                    (case tabBusca(s, env) of 
+                        SOME (r as (TRecord _)) => fijaNONE t (tabRInserta(name, TArray (TTipo(s, ref (SOME r)), u), env))
+                        |_ => error("666+1", 666))
+                        
+                        (*TRecord of (string * Tipo * int) list * unique*)
+                        
+                        
+                        
+                |fijaNONE ((name, TRecord (lf, u)) :: t) env =
+                        let
+                            fun busNONE ((s, TTipo (t, ref NONE), n), l) =
+                                (case tabBusca(t, env) of
+                                    SOME (tt as (TRecord _)) => (s, TTipo (t, ref (SOME tt)), n) :: l
+                                    | SOME _ => error (s ^ " no record?", 666)
+                                    | _ => error (s^": Tipo inexistente", 666))
+                               |busNONE (d, l) = d :: l
+                            val lf' = List.foldr busNONE [] lf
+                        in
+                            fijaNONE t (tabRInserta (name, TRecord (lf, u), env)) 
+                        end
+                        
+                |fijaNONE (_ :: t) env = fijaNONE t env
+            (*
+            fun fijaRecords recs env = 
+                let
+                    fun buscaEnv t = (case tabBusca(t, env) of
+                                        SOME t' => t'
+                                        |_ => error(t^"no existe"))
+                    
+                    fun fija1 (name, TTipo (s, ref NONE), n) = (name, TTipo (s, ref (SOME (buscaEnv s))), n)
+                        |fija1 ((name, TRecord (lf, u), n)) = 
+                            let
+                                val (nr, r) = val of (List.find (fn (_, TRecord (_, u')) => u = u'
+                                                                    |_ => false) decs)
+                            in
+                                (name, TTipo (nr, ref (SOME r)), n)
+                            end
+                        |fija1 x = x
+                    
+                    fun fija (name, TRecord (lf, u)) = (name, TRecord (List.map fija1 lf, u))
+                in
+                    List.map fija decs 
+                end 
+              *)  
+            fun fijaTipos batch env = 
+                let val pares = genPares batch
+                    val recs = buscaArrRecords batch
+                    val ordered = topsort pares
+                    val env' = procesa ordered batch recs env
+                    val env'' = procRecords batch recs env'
+                    val env''' = fijaNONE ( tabAList env'') env''
+                in
+                    env'''
+                end                    
+                                  
+             fun printTenv [] = print "\n"
+            | printTenv ((name, _) :: tss) = (print (name^"\n"); printTenv tss)
+            
+            fun checkNames [] = true
+            | checkNames ((x, pos)::xs) = if List.exists (fn y => x=(#1 y)) xs then error("Nombre de funcion "^x^" duplicado", pos)
+                                          else checkNames xs  
+            val decs = List.map #1 ts
+            val _ = if checkNames (List.map (fn x => (#name x, 666)) decs) then error ("Declaraciones multiples", 666)
+                    else ()
+            val tenv' = fijaTipos decs tenv
+            (*val _ = (print("\n"); printTenv (tabAList tenv'))*)      
+
+        (*
+            val tenv' = foldr (fn (x, tenvv) => tabInserta(#name (#1 x), TTipo (#name (#1 x), ref NONE), tenvv)) tenv ts
+        
+            fun transTy pos tenv (NameTy s) = (case tabBusca(s, tenv) of
+                                              SOME t => t
+                                              | _ => error("Tipo inexistente"^s^".", pos))
+               |transTy pos tenv (RecordTy fs) = let
+                                                val t = map (fn x => (#name x, transTy pos tenv (#typ x), 0)) fs 
+                                             in
+                                                TRecord (t, ref ()) 
+                                             end
+	           |transTy pos tenv (ArrayTy s) = (case tabBusca(s, tenv) of
+	                                          SOME t => t
+	                                          | _ => error("Tipo inexistente"^s^".", pos))
+            val tenv' = foldr (fn (x, tenvv) => tabInserta(#name (#1 x), transTy (#2 x) tenvv (#ty (#1 x)), tenvv)) tenv ts*)
+        in
+            (venv, tenv', []) (*COMPLETAR*)
+        end
   in trexp ex end
 fun transProg ex =
   let  val main =
