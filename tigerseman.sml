@@ -9,6 +9,13 @@ fun printEnv [] = print (""^"\n")
     |printEnv (x::xs) = (print (x^"\n"); printEnv xs)
 
 
+fun printEnv' ((name, TArray (t, u)) :: xs) = (print name; printEnv' [("asd",t)]; print "\n"; printEnv' xs)
+    |printEnv' ((name, TRecord (lf, u)) :: xs) = (print name; printEnv (map #1 lf); printEnv' xs)
+    |printEnv' ((name, TTipo _) :: xs) = (print name; print " TTipo"; printEnv' xs)
+    |printEnv' _ = print "no me importa\n"
+
+
+
 type expty = {exp: unit, ty: Tipo}
 
 type venv = (string, EnvEntry) tigertab.Tabla
@@ -67,7 +74,7 @@ fun tiposIguales (TRecord _) TNil = true
     end
   | tiposIguales a b = (a=b)
 
-fun transExp(venv, tenv) ex =
+fun transExp(venv, tenv) =
   let 
     fun error(s, p) = raise Fail ("Error -- línea "^Int.toString(p)^": "^s^"\n")
     fun trexp(VarExp v) = trvar(v)
@@ -278,11 +285,13 @@ fun transExp(venv, tenv) ex =
     
     | trdec (venv,tenv) (VarDec ({name,escape,typ=SOME s,init},pos)) =
         let
+
           val {exp=_, ty=tyinit} = trexp init
           val venv' = (case tabBusca(s, tenv) of
                           SOME t => if tiposIguales t tyinit then tabInserta(name, Var{ty=t}, venv)
                                     else error("el tipo de var es distinto a la expresion", pos)
                           |_ => error("tipo desconocido", pos))
+
         in 
            (venv', tenv, [])  
         end
@@ -423,7 +432,7 @@ fun transExp(venv, tenv) ex =
                     precs batch (fromTab env)
                 end
                 
-            fun fijaNONE recs env = env
+            fun fijaNONE [] env = env
                 |fijaNONE ((name, TArray (TTipo (s, ref NONE), u)) :: t) env =
                     (case tabBusca(s, env) of 
                         SOME (r as (TRecord _)) => fijaNONE t (tabRInserta(name, TArray (TTipo(s, ref (SOME r)), u), env))
@@ -435,15 +444,14 @@ fun transExp(venv, tenv) ex =
                         
                 |fijaNONE ((name, TRecord (lf, u)) :: t) env =
                         let
-                          val _ = print "HOASLDJKASLÑDK"
                             fun busNONE ((s, TTipo (t, ref NONE), n), l) =
                                 (case tabBusca(t, env) of
                                     SOME (tt as (TRecord _)) => (s, TTipo (t, ref (SOME tt)), n) :: l
                                     | SOME _ => error (s ^ " no record?", 666)
                                     | _ => error (s^": Tipo inexistente", 666))
                                |busNONE (d, l) = d :: l
-                            val lf' = List.foldr busNONE [] lf
-                        in
+                            val lf' = List.foldr busNONE [] lf  
+                        in                                
                             fijaNONE t (tabRInserta (name, TRecord (lf', u), env)) 
                         end
                         
@@ -469,8 +477,8 @@ fun transExp(venv, tenv) ex =
             val decs = List.map #1 ts
             val _ = checkNames (List.map (fn (x, pos) => (#name x, pos)) ts)
             val tenv' = fijaTipos decs tenv
-            val _ = printEnv (tabClaves tenv')
-            val _ = printEnv (tabClaves venv)
+(*            val _ = printEnv (tabClaves tenv')*)
+
             (*val _ = (print("\n"); printTenv (tabAList tenv'))*)      
         
         (* 
@@ -500,12 +508,12 @@ fun transExp(venv, tenv) ex =
         in
             (venv, tenv', []) (*COMPLETAR*)
         end
-  in trexp ex end
+  in trexp end
 fun transProg ex =
-  let  val main =
-        LetExp({decs=[FunctionDec[({name="_tigermain", params=[],
-                result=SOME "int", body=ex}, 0)]],
-            body=UnitExp 0}, 0)
-    val _ = transExp(tab_vars, tab_tipos) main
-  in  print "bien!\n" end
+	let	val main =
+				LetExp({decs=[FunctionDec[({name="_tigermain", params=[],
+								result=SOME "int", body=ex}, 0)]],
+						body=UnitExp 0}, 0)
+		val _ = transExp(tab_vars, tab_tipos) main
+	in	print "bien!\n" end
 end
