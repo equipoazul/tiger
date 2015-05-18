@@ -1,7 +1,8 @@
 # Unix makefile for tigermain example
 
 HOME=~
-MOSMLHOME=${HOME}/mosml
+#MOSMLHOME=${HOME}/mosml
+MOSMLHOME=/usr
 MOSMLTOOLS=camlrunm $(MOSMLHOME)/tools
 MOSMLLEX=mosmllex
 MOSMLYACC=mosmlyac -v
@@ -56,7 +57,7 @@ clean:
 .sml.uo:
 	$(MOSMLC) $<
 
-depend: tigerabs.sml tigergrm.sml tigerlex.sml tigermain.sml \
+depend: topsort.sml tigerabs.sml tigergrm.sml tigerlex.sml tigermain.sml \
 	tigernlin.sml tigerpp.sml
 	$(REMOVE) Makefile.bak
 	$(MOVE) Makefile Makefile.bak
@@ -69,7 +70,7 @@ tigerescap.ui: tigerabs.uo
 tigergrm.ui: tigerabs.uo 
 tigerseman.ui: tigerabs.uo 
 tigerescap.uo: tigerescap.ui tigertab.ui tigerabs.uo 
-tigerseman.uo: tigerseman.ui tigersres.uo tigertab.ui tigerabs.uo 
+tigerseman.uo: tigerseman.ui tigersres.uo tigertab.ui topsort.uo tigerabs.uo 
 tigergrm.uo: tigergrm.ui tigernlin.uo tigerabs.uo 
 tigersres.uo: tigertab.ui tigertips.uo tigertemp.ui tigerabs.uo 
 tigertab.uo: tigertab.ui 
