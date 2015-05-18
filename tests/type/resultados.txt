@@ -1,0 +1,34 @@
+assign-loop-var.tig             B
+fun-vs-var.tig                  B
+nil-equal-nil.tig               B
+test09.tig                      B
+test10.tig                      B
+test11.tig                      B
+test13.tig                      B
+test14.tig                      M - VER CHECKNAMES
+test15.tig                      DUDOSO
+test16.tig                      M - VER CHECKNAMES
+test17.tig                      M
+test18.tig                      M
+test19.tig                      DUDOSO (es de la 2da entrega?)
+test20.tig                      DUDOSO (es de la 2da entrega?)
+test21.tig                      M
+test22.tig                      M
+test23.tig
+test24.tig
+test25.tig
+test26.tig
+test28.tig
+test29.tig
+test31.tig
+test32.tig
+test33.tig
+test34.tig
+test35.tig
+test36.tig
+test38.tig
+test39.tig
+test40.tig
+test43.tig
+test45.tig
+test51.tig
