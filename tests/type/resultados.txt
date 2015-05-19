@@ -5,30 +5,30 @@ test09.tig                      B
 test10.tig                      B
 test11.tig                      B
 test13.tig                      B
-test14.tig                      M - VER CHECKNAMES
-test15.tig                      DUDOSO
-test16.tig                      M - VER CHECKNAMES
-test17.tig                      M
-test18.tig                      M
-test19.tig                      DUDOSO (es de la 2da entrega?)
-test20.tig                      DUDOSO (es de la 2da entrega?)
-test21.tig                      M
-test22.tig                      M
-test23.tig
-test24.tig
-test25.tig
-test26.tig
-test28.tig
-test29.tig
-test31.tig
-test32.tig
-test33.tig
-test34.tig
-test35.tig
-test36.tig
-test38.tig
-test39.tig
-test40.tig
-test43.tig
-test45.tig
-test51.tig
+test14.tig                      B
+test15.tig                      B
+test16.tig                      B
+test17.tig                      B
+test18.tig                      B
+test19.tig                      M - NI TIRA EL ARBOL
+test20.tig                      M - NI TIRA EL ARBOL
+test21.tig                      M - Chequear el tipo de retorno del body (FuncDec)
+test22.tig                      B
+test23.tig                      B
+test24.tig                      B
+test25.tig                      B
+test26.tig                      B
+test28.tig                      B
+test29.tig                      B
+test31.tig                      B
+test32.tig                      B - ARREGLAR MSJ DE ERROR
+test33.tig                      B  
+test34.tig                      B
+test35.tig                      B - Habria que arreglar msg de error
+test36.tig                      B - Habria que arreglar msg de error
+test38.tig                      B
+test39.tig                      B
+test40.tig                      M - Chequear el tipo de retorno del body (FuncDec)
+test43.tig                      B
+test45.tig                      M - WHAT??????
+test51.tig                      B

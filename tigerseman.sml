@@ -14,6 +14,10 @@ fun printEnv' ((name, TArray (t, u)) :: xs) = (print name; printEnv' [("asd",t)]
     |printEnv' ((name, TTipo _) :: xs) = (print name; print " TTipo"; printEnv' xs)
     |printEnv' _ = print "no me importa\n"
 
+fun  zipEq [] (y::ys) = raise Fail "Error, distintos tamaños."
+    | zipEq (x::xs) [] = raise Fail "Error, distintos tamaños."
+    | zipEq [] [] = []
+    | zipEq (x::xs) (y::ys) = (x, y) :: zipEq xs ys
 
 
 type expty = {exp: unit, ty: Tipo}
@@ -83,7 +87,15 @@ fun transExp(venv, tenv) =
     | trexp(IntExp(i, _)) = {exp=(), ty=TInt}
     | trexp(StringExp(s, _)) = {exp=(), ty=TString}
     | trexp(CallExp({func, args}, nl)) =
-      {exp=(), ty=TUnit} (*COMPLETAR*)
+      let
+        val formalsArgs = map (fn e => #ty (trexp e)) args
+        val envEntry = case tabBusca(func, venv) of
+                          SOME (Func vals) => vals
+                        | _ => error (func^" no es una función", nl)
+        val b = List.foldr (fn (x, rest) => (tiposIguales (#1 x) (#2 x)) andalso rest) true (zipEq (#formals envEntry) formalsArgs)
+      in  
+        if not b then error("Error en los argumentos de la funcion (tipos)", nl) else {exp=(), ty=(#result envEntry)} 
+      end
     | trexp(OpExp({left, oper=EqOp, right}, nl)) =
       let
         val {exp=_, ty=tyl} = trexp left
@@ -116,7 +128,7 @@ fun transExp(venv, tenv) =
             | GtOp => if tipoReal tyl=TInt orelse tipoReal tyl=TString then {exp=(),ty=TInt} else error("Error de tipos", nl)
             | GeOp => if tipoReal tyl=TInt orelse tipoReal tyl=TString then {exp=(),ty=TInt} else error("Error de tipos", nl)
             | _ => raise Fail "No debería pasar! (3)"
-        else error("Error de tipos", nl)
+        else error("Error de tipos, operando tipos distintos.", nl)
       end
     | trexp(RecordExp({fields, typ}, nl)) =
       let
@@ -179,14 +191,14 @@ fun transExp(venv, tenv) =
           val {exp=elseexp, ty=tyelse} = trexp else'
       in
         if tipoReal tytest=TInt andalso tiposIguales tythen tyelse then {exp=(), ty=tythen}
-        else error("Error de tipos en if" ,nl)
+        else error("El tipo del if es incorrecto.", nl)
       end
     | trexp(IfExp({test, then', else'=NONE}, nl)) =
       let val {exp=exptest,ty=tytest} = trexp test
           val {exp=expthen,ty=tythen} = trexp then'
       in
         if tipoReal tytest=TInt andalso tythen=TUnit then {exp=(), ty=TUnit}
-        else error("Error de tipos en if", nl)
+        else error("El tipo del if es incorrecto.", nl)
       end
     | trexp(WhileExp({test, body}, nl)) =
       let
@@ -277,7 +289,7 @@ fun transExp(venv, tenv) =
 
     and trdec (venv, tenv) (VarDec ({name,escape,typ=NONE,init},pos)) = 
           let 
-            val {exp=_, ty=tyinit} = trexp init
+            val {exp=_, ty=tyinit} = transExp (venv, tenv) init
             val venv' = tabInserta(name, Var{ty=tyinit}, venv)
           in 
             (venv', tenv, [])
@@ -286,7 +298,7 @@ fun transExp(venv, tenv) =
     | trdec (venv,tenv) (VarDec ({name,escape,typ=SOME s,init},pos)) =
         let
 
-          val {exp=_, ty=tyinit} = trexp init
+          val {exp=_, ty=tyinit} = transExp (venv, tenv) init
           val venv' = (case tabBusca(s, tenv) of
                           SOME t => if tiposIguales t tyinit then tabInserta(name, Var{ty=t}, venv)
                                     else error("el tipo de var es distinto a la expresion", pos)
@@ -318,7 +330,7 @@ fun transExp(venv, tenv) =
         val nlist = map (fn (x, pos) => (#name x, pos)) fs
         
         fun checkNames [] = true
-            | checkNames ((x, pos)::xs) = if List.exists (fn y => x=(#1 y)) xs then error("Nombre de funcion "^x^" duplicado", pos)
+            | checkNames ((x, pos)::xs) = if List.exists (fn y => x=(#1 y)) xs then error("Nombre '"^x^"' duplicado", pos)
                                           else checkNames xs 
         
         val _ = checkNames nlist          
@@ -472,7 +484,7 @@ fun transExp(venv, tenv) =
             | printTenv ((name, _) :: tss) = (print (name^"\n"); printTenv tss)
             
             fun checkNames [] = true
-            | checkNames ((x, pos)::xs) = if List.exists (fn y => x=(#1 y)) xs then error("Nombre de funcion "^x^" duplicado", pos)
+            | checkNames ((x, pos)::xs) = if List.exists (fn y => x=(#1 y)) xs then error("Nombre '"^x^"' duplicado", pos)
                                           else checkNames xs  
             val decs = List.map #1 ts
             val _ = checkNames (List.map (fn (x, pos) => (#name x, pos)) ts)
