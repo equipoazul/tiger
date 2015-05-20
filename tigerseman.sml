@@ -344,22 +344,33 @@ fun transExp(venv, tenv) =
         
         val name' = tigertemp.newlabel()
         
+        (* Obtiene la lista de argumentos de la funcion *)
         fun getFormals pos params = map (transparams pos) params 
         
+        (* Obtiene el tipo de retorno de la funcion *)
         fun getResult pos x = (case x of
-                              SOME t => (case tabBusca(t, tenv) of
-                                            SOME t' => t'
-                                            |_ => error("Error en el tipo de retorno"^t^".", pos))
-                              |_ => TUnit)
-        
+                                  SOME t => (case tabBusca(t, tenv) of
+                                                SOME t' => t'
+                                                |_ => error("Error en el tipo de retorno"^t^".", pos))
+                                  |_ => TUnit)
+            
         val venv' = foldr (fn (x, venvv) => tabInserta(#name (#1 x), Func{level=(), label=name', formals=map #typ (getFormals (#2 x) (#params (#1 x))), result=getResult (#2 x) (#result (#1 x)), extern=false}, venvv))  venv fs      
 		
         fun procBody (r, pos) = 
             let
                 val formals = getFormals pos (#params r) 
                 val b_venv = foldr (fn (x, xs) => tabInserta(#name x, Var {ty=(#typ x)}, xs)) venv formals 
+                val {exp=bodyv, ty=bodyty} = transExp (b_venv, tenv) (#body r)
+                val tipodeclarado = getResult 1 (#result r)
+                val _ = if tiposIguales tipodeclarado TUnit then
+                              if not (tiposIguales bodyty tipodeclarado) then error("No se puede retornar un valor en un procedure", 666)
+                              else ()
+                        else
+                            if not (tiposIguales bodyty tipodeclarado) then error("El tipo declarado y el de retorno no coinciden", 666)
+                            else ()
             in
-                transExp (b_venv, tenv) (#body r)
+                (* transExp (b_venv, tenv) (#body r) *)
+                {exp=bodyv, ty=bodyty}
             end  
                      
         val _ = map procBody fs

@@ -28,7 +28,7 @@ test35.tig                      B - Habria que arreglar msg de error
 test36.tig                      B - Habria que arreglar msg de error
 test38.tig                      B
 test39.tig                      B
-test40.tig                      M - Chequear el tipo de retorno del body (FuncDec)
+test40.tig                      B - Chequear el tipo de retorno del body (FuncDec)
 test43.tig                      B
 test45.tig                      M - WHAT??????
 test51.tig                      B
