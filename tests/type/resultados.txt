@@ -30,5 +30,5 @@ test38.tig                      B
 test39.tig                      B
 test40.tig                      B - Chequear el tipo de retorno del body (FuncDec)
 test43.tig                      B
-test45.tig                      M - WHAT??????
+test45.tig                      B
 test51.tig                      B

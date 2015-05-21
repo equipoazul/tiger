@@ -20,6 +20,8 @@ fun  zipEq [] (y::ys) = raise Fail "Error, distintos tamaños."
     | zipEq (x::xs) (y::ys) = (x, y) :: zipEq xs ys
 
 
+fun pTupla (a, b) = (print "("; print a; print " "; print b; print ")"; (a, b))
+
 type expty = {exp: unit, ty: Tipo}
 
 type venv = (string, EnvEntry) tigertab.Tabla
@@ -141,7 +143,6 @@ fun transExp(venv, tenv) =
                                             TRecord (cs, u) => (TRecord (cs, u), cs)
                                             | _ => error(typ^" no es de tipo record", nl))
                             | NONE => error("Tipo inexistente ("^typ^")", nl)
-        
         (* Verificar que cada campo esté en orden y tenga una expresión del tipo que corresponde *)
         fun verificar [] [] = ()
           | verificar (c::cs) [] = error("Faltan campos", nl)
@@ -171,7 +172,7 @@ fun transExp(venv, tenv) =
                                 |_ => (trvar(SimpleVar s, nl))
       val {exp=_, ty=tyexp} = trexp exp
     in 
-      if tiposIguales tyexp tyvar then {exp=(), ty=tyvar}
+      if tiposIguales tyexp tyvar then {exp=(), ty=TUnit}
       else error("Error de tipos en asignacion", nl)
     end
     
@@ -180,7 +181,7 @@ fun transExp(venv, tenv) =
       val {exp=_, ty=tyexp} = trexp exp
       val {exp=_, ty=tyvar} = trvar(var, nl)
     in 
-      if tiposIguales tyexp tyvar then {exp=(), ty=tyvar}
+      if tiposIguales tyexp tyvar then {exp=(), ty=TUnit}
       else error("Error de tipos en asignacion", nl)
     end
     (* </NOSOTROS> *)
@@ -221,7 +222,7 @@ fun transExp(venv, tenv) =
 	      val venv' = tabInserta(var, VIntro, venv)
         val tybody = transExp (venv', tenv) body
       in 
-        if tipoReal (#ty tylo) = TInt andalso (#ty tyhi) = TInt andalso (#ty tybody) = TUnit then (print "MORTADELA"; {exp=(), ty=TUnit})
+        if tipoReal (#ty tylo) = TInt andalso (#ty tyhi) = TInt andalso (#ty tybody) = TUnit then {exp=(), ty=TUnit}
         else if tipoReal (#ty tylo) <> TInt orelse #ty tyhi <> TInt then error("Error de tipo en la condición", nl)
         else error("El cuerpo de un for no puede devolver un valor", nl)
       end 
@@ -260,7 +261,8 @@ fun transExp(venv, tenv) =
     and trvar(SimpleVar s, nl) =
         	(case tabBusca(s, venv) of 
 		                   SOME (Var{ty = t}) => {exp = (), ty = t}
-		                  | _ => error("Tipo de arreglo inexistente", nl))
+		                   |SOME VIntro => {exp = (), ty = TInt} 
+		                  | _ => error("Variable inexistente", nl))
 		      
 
     | trvar(FieldVar(v, s), nl) =
@@ -289,6 +291,9 @@ fun transExp(venv, tenv) =
 
     and trdec (venv, tenv) (VarDec ({name,escape,typ=NONE,init},pos)) = 
           let 
+            val _ = case init of
+                      NilExp _ => error("No se puede asignar 'nil' en una declaración.", pos) 
+                      | _ => ()
             val {exp=_, ty=tyinit} = transExp (venv, tenv) init
             val venv' = tabInserta(name, Var{ty=tyinit}, venv)
           in 
@@ -410,22 +415,23 @@ fun transExp(venv, tenv) =
             (*procesa ordered batch recs env*)
             fun procesa [] pares recs env = env
                |procesa (sorted as (h :: t)) pares recs env = 
-                    let fun filt h {name, ty=NameTy t} = h = t
-                            (*|filt h {name, ty=ArrayTy t} = h = t*)
+                    let
+                      fun filt h {name, ty=NameTy t} = h = t
                             |filt _ _ = false
-                            
-                            val (ps, ps') = List.partition (filt h) pares
-                            (* si List.find encuentra un elemento, quiere decir que h es un record o un array con lo cual lo metemos en el entorno luego con procesaRec*)
-                            val ttopt = (case List.find (fn {name,ty} => name = h) recs of 
-												        SOME _ => NONE
-												        |NONE => (case tabBusca (h, env) of
-													        SOME t => SOME t
-													        |_ => error(h^"no existe", 666)))
-													  
-                            val env' = (case ttopt of 
-                                     SOME tt => List.foldr (fn ({name, ty=NameTy ty}, env') => tabInserta(name, tt, env)
-                                                                  |_ => error("error interno1.", 666)) env ps
-                                            |_ => env)
+                      val (ps, ps') = List.partition (filt h) pares
+                      (* si List.find encuentra un elemento, quiere decir que h es un record o un 
+                         array con lo cual lo metemos en el entorno luego con procesaRec*)
+                      
+                      val ttopt = (case List.find (fn {name,ty} => name = h) recs of 
+									                     SOME _ => NONE
+									                    |NONE => (case tabBusca (h, env) of
+										                                 SOME t => SOME t
+										                                |_ => error(h^" no existe", 666)))
+										  
+                      val env' = (case ttopt of 
+                                      SOME tt => List.foldr (fn ({name, ty=NameTy ty}, env') => tabInserta(name, tt, env)
+                                                              |_ => error("error interno1.", 666)) env ps
+                                      |_ => env)
                     in 
                         procesa t ps' recs env'
                     end
@@ -452,7 +458,7 @@ fun transExp(venv, tenv) =
                                     precs t env''
                                 end
                         |precs ({name, ty=ArrayTy t} :: tu) env' = precs tu (tabInserta (name, TArray (buscaEnv env' t, ref ()), env'))
-                        |precs _ _ = error("error internoo", 666)
+                        |precs (_ :: tu) env' = precs tu env'
                 in 
                     precs batch (fromTab env)
                 end
@@ -486,6 +492,7 @@ fun transExp(venv, tenv) =
                 let val pares = genPares batch
                     val ordered = topsort pares
                     val recs = buscaArrRecords batch
+                    val _ = printEnv ordered
                     val env' = procesa ordered batch recs env
                     val env'' = procRecords batch recs env'
                     val env''' = fijaNONE ( tabAList env'') env''
