@@ -22,6 +22,8 @@ fun  zipEq [] (y::ys) = raise Fail "Error, distintos tamaños."
 
 fun pTupla (a, b) = (print "("; print a; print " "; print b; print ")"; (a, b))
 
+
+
 type expty = {exp: unit, ty: Tipo}
 
 type venv = (string, EnvEntry) tigertab.Tabla
@@ -412,30 +414,7 @@ fun transExp(venv, tenv) =
                        
                 end
                 
-            (*procesa ordered batch recs env*)
-            fun procesa [] pares recs env = env
-               |procesa (sorted as (h :: t)) pares recs env = 
-                    let
-                      fun filt h {name, ty=NameTy t} = h = t
-                            |filt _ _ = false
-                      val (ps, ps') = List.partition (filt h) pares
-                      (* si List.find encuentra un elemento, quiere decir que h es un record o un 
-                         array con lo cual lo metemos en el entorno luego con procesaRec*)
-                      
-                      val ttopt = (case List.find (fn {name,ty} => name = h) recs of 
-									                     SOME _ => NONE
-									                    |NONE => (case tabBusca (h, env) of
-										                                 SOME t => SOME t
-										                                |_ => error(h^" no existe", 666)))
-										  
-                      val env' = (case ttopt of 
-                                      SOME tt => List.foldr (fn ({name, ty=NameTy ty}, env') => tabInserta(name, tt, env)
-                                                              |_ => error("error interno1.", 666)) env ps
-                                      |_ => env)
-                    in 
-                        procesa t ps' recs env'
-                    end
-                
+
             fun procRecords batch recs env =
                 let
                     fun buscaEnv env' t = (case tabBusca(t, env) of
@@ -462,6 +441,46 @@ fun transExp(venv, tenv) =
                 in 
                     precs batch (fromTab env)
                 end
+
+            (*procesa ordered batch recs env*)
+            fun procesa [] pares recs env = env
+               |procesa (sorted as (h :: t)) pares recs env = 
+                    let
+                      fun filt h {name, ty=NameTy t} = h = t
+                          |filt _ _ = false
+                      val (ps, ps') = List.partition (filt h) (List.filter (fn x => (#name x) <> h) pares)
+                      (* si List.find encuentra un elemento, quiere decir que h es un record o un 
+                         array con lo cual lo metemos en el entorno luego con procesaRec*)
+
+                      val hinrecs = List.find (fn {name,ty} => name = h) recs
+                      val ttopt = (case hinrecs of 
+									                     SOME _ => NONE
+									                    |NONE => (case tabBusca (h, env) of
+										                                 SOME t => SOME t
+										                                |_ => error(h^" no existe.", 666)))
+
+                      (* (1) Si encuentra un record o un array en este punto es probable que un NameTy dependa de uno de 
+                         ellos, por lo tanto lo metemos en el enviroment ahora para que no haya errores de dependencia
+                         que no son ciertos, esto lo tratamos en el "|_ => " de val env' *) 
+										  
+                      val env' = (case hinrecs of 
+                                        SOME t => procRecords [t] [] env
+                                       | _ => env)
+
+                      fun meterEntorno env ts tt = List.foldr (fn ({name, ty=NameTy ty}, envr) => tabInserta(name, tt, envr)
+                                                                |_ => error("error interno.", 666)) env ps
+                      val env'' = (case ttopt of 
+                                      SOME tt => meterEntorno env' ps tt
+
+                                      |_ =>  case tabBusca (h, env') of
+										                                 SOME tt => meterEntorno env' ps tt
+										                                |_ => env' ) 
+                    
+                    in 
+                        procesa t ps' recs env''
+                    end
+                
+
                 
             fun fijaNONE [] env = env
                 |fijaNONE ((name, TArray (TTipo (s, ref NONE), u)) :: t) env =
@@ -492,7 +511,6 @@ fun transExp(venv, tenv) =
                 let val pares = genPares batch
                     val ordered = topsort pares
                     val recs = buscaArrRecords batch
-                    val _ = map pTupla ordered
                     val env' = procesa ordered batch recs env
                     val env'' = procRecords batch recs env'
                     val env''' = fijaNONE ( tabAList env'') env''

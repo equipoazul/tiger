@@ -1,22 +1,21 @@
-compare-record-and-nil.tig
-fact.tig
-local-vs-global-type.tig
-merge.tig
-queens.tig
-recursive-comments.tig
-recursive-types.tig
-resultados.txt
-test01.tig
-test02.tig
-test03.tig
-test06.tig
-test07.tig
-test08.tig
-test12.tig
-test27.tig
-test30.tig
-test37.tig
-test42.tig
+compare-record-and-nil.tig          B
+fact.tig                            B
+local-vs-global-type.tig            B
+merge.tig                           B
+queens.tig                          B
+recursive-comments.tig              B
+recursive-types.tig                 B
+test01.tig                          B
+test02.tig                          B
+test03.tig                          B
+test06.tig                          B
+test07.tig                          B
+test08.tig                          B
+test12.tig                          B
+test27.tig                          B                          
+test30.tig                          B - HABRIA QUE SACAR DEL BATCH LOS RECORDS/ARRAYS QUE PROCESAMOS ANTES...
+test37.tig                          B
+test42.tig                          M
 test44.tig
 test47.tig
 test48.tig
