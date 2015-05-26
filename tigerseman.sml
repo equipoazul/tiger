@@ -172,6 +172,7 @@ fun transExp(venv, tenv) =
       val {exp=_, ty=tyvar} = case tabBusca(s, venv) of
                                 SOME VIntro => (error("Variable de solo lectura.", nl))
                                 |_ => (trvar(SimpleVar s, nl))
+                          
       val {exp=_, ty=tyexp} = trexp exp
     in 
       if tiposIguales tyexp tyvar then {exp=(), ty=TUnit}
@@ -270,9 +271,9 @@ fun transExp(venv, tenv) =
     | trvar(FieldVar(v, s), nl) =
       let
         val {exp = _, ty = typ} = trvar(v, nl)
-        val (l, u) = (case typ of
-                          TRecord l' => l'                  
-                        | _ => error("No es un record", nl))
+        val (l, u) = (case (tipoReal typ) of
+                        TRecord l' => l'                  
+                        | _ => error(s^" No es un record", nl))
         in
           case List.find (fn x =>(#1)x = s) l of
               SOME (str, typfv, index) => {exp = (), ty = typfv}
@@ -295,6 +296,7 @@ fun transExp(venv, tenv) =
           let 
             val _ = case init of
                       NilExp _ => error("No se puede asignar 'nil' en una declaración.", pos) 
+                      |BreakExp _ => error("No se puede asignar 'nil' en una declaración.", pos) 
                       | _ => ()
             val {exp=_, ty=tyinit} = transExp (venv, tenv) init
             val venv' = tabInserta(name, Var{ty=tyinit}, venv)
@@ -335,7 +337,7 @@ fun transExp(venv, tenv) =
       let
         (*Chequeamos que no haya dos funciones con el mismo nombre *)
         val nlist = map (fn (x, pos) => (#name x, pos)) fs
-        
+          
         fun checkNames [] = true
             | checkNames ((x, pos)::xs) = if List.exists (fn y => x=(#1 y)) xs then error("Nombre '"^x^"' duplicado", pos)
                                           else checkNames xs 
@@ -357,15 +359,16 @@ fun transExp(venv, tenv) =
                                                 SOME t' => t'
                                                 |_ => error("Error en el tipo de retorno"^t^".", pos))
                                   |_ => TUnit)
-
         val venv' = foldr (fn (x, venvv) => tabInserta(#name (#1 x), Func{level=(), label=name', formals=map #typ (getFormals (#2 x) (#params (#1 x))), result=getResult (#2 x) (#result (#1 x)), extern=false}, venvv))  venv fs      
+
 
         fun procBody (r, pos) = 
             let
                 val formals = getFormals pos (#params r) 
+                  
                 (* Aca hay que pasarle el venv' y no el venv por si el body hace una llamada recursiva, si sucede esto
                    el body deberia encontrar la funcion que llama (que es ella misma) *)
-                val b_venv = foldr (fn (x, xs) => tabInserta(#name x, Var {ty=(#typ x)}, xs)) venv' formals 
+                val b_venv = foldr (fn (x, xs) => tabRInserta(#name x, Var {ty=(#typ x)}, xs)) venv' formals 
                 val {exp=bodyv, ty=bodyty} = transExp (b_venv, tenv) (#body r)
                 val tipodeclarado = getResult 1 (#result r)
                 val _ = if tiposIguales tipodeclarado TUnit then
@@ -518,9 +521,7 @@ fun transExp(venv, tenv) =
                     env'''
                 end                    
                                   
-             fun printTenv [] = print "\n"
-            | printTenv ((name, _) :: tss) = (print (name^"\n"); printTenv tss)
-            
+           
             fun checkNames [] = true
             | checkNames ((x, pos)::xs) = if List.exists (fn y => x=(#1 y)) xs then error("Nombre '"^x^"' duplicado", pos)
                                           else checkNames xs  
