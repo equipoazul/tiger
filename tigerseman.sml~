@@ -5,6 +5,22 @@ open tigerabs
 open tigersres
 open topsort
 
+fun printEnv [] = print (""^"\n")
+    |printEnv (x::xs) = (print (x^"\n"); printEnv xs)
+
+
+fun printEnv' ((name, TArray (t, u)) :: xs) = (print name; printEnv' [("asd",t)]; print "\n"; printEnv' xs)
+    |printEnv' ((name, TRecord (lf, u)) :: xs) = (print name; printEnv (map #1 lf); printEnv' xs)
+    |printEnv' ((name, TTipo _) :: xs) = (print name; print " TTipo"; printEnv' xs)
+    |printEnv' _ = print "no me importa\n"
+
+
+
+
+fun pTupla (a, b) = (print "("; print a; print " "; print b; print ")"; (a, b))
+
+
+
 type expty = {exp: unit, ty: Tipo}
 
 type venv = (string, EnvEntry) tigertab.Tabla
@@ -149,6 +165,8 @@ fun transExp(venv, tenv) =
         val {exp, ty=tipo} = hd(rev lexti)
       in  { exp=(), ty=tipo } end
       
+      
+    (* <NOSOTROS> *)
     | trexp(AssignExp({var=SimpleVar s, exp}, nl)) = 
     
     let
@@ -170,7 +188,8 @@ fun transExp(venv, tenv) =
       if tiposIguales tyexp tyvar then {exp=(), ty=TUnit}
       else error("Error de tipos en asignacion", nl)
     end
-      
+    (* </NOSOTROS> *)
+        
     | trexp(IfExp({test, then', else'=SOME else'}, nl)) =
       let val {exp=testexp, ty=tytest} = trexp test
           val {exp=thenexp, ty=tythen} = trexp then'
@@ -239,6 +258,8 @@ fun transExp(venv, tenv) =
         else {exp = (), ty = TArray (#ty t)}
       end
       
+      
+    (* <NOSOTROS> *)
     and trvar(SimpleVar s, nl) =
         	(case tabBusca(s, venv) of 
 		                   SOME (Var{ty = t}) => {exp = (), ty = t}
@@ -268,6 +289,7 @@ fun transExp(venv, tenv) =
                                       | _ => error("La expresión utilizada como índice no es entero.", nl))
               | _ => error("No es un arreglo", nl))
       end
+    (* </NOSOTROS> *)
 
     and trdec (venv, tenv) (VarDec ({name,escape,typ=NONE,init},pos)) = 
           let 
@@ -293,6 +315,22 @@ fun transExp(venv, tenv) =
         in 
            (venv', tenv, [])  
         end
+
+
+
+
+(*
+    FunctionDec of ({name: symbol, params: field list,
+		result: symbol option, body: exp} * pos) list
+		
+		field = {name: symbol, escape: bool ref, typ: ty}
+		
+		
+		Func of {level: unit, label: tigertemp.label, formals: Tipo list, result: Tipo, extern: bool}
+*)
+
+
+
 		
     | trdec (venv,tenv) (FunctionDec fs) =
       let
@@ -476,9 +514,37 @@ fun transExp(venv, tenv) =
                                           else checkNames xs  
             val decs = List.map #1 ts
             val _ = checkNames (List.map (fn (x, pos) => (#name x, pos)) ts)
-            val tenv' = fijaTipos decs tenv               
+            val tenv' = fijaTipos decs tenv
+(*            val _ = printEnv (tabClaves tenv')*)
+
+            (*val _ = (print("\n"); printTenv (tabAList tenv'))*)      
+        
+        (* 
+                   El problema de los ciclos es solo para tipos q no sean records, 
+                    type B = A
+                    type A = C
+                    type C = array of int
+                    
+                    se generan pares de esta forma
+                    (A,B)(C,A)
+                    
+                    y el topsort te devuelve algo de esta forma, o tira un error si encuentra un ciclo
+                    [C, A, B]
+                    
+                    Para los tipos recursivos es q tenemos q meterlos con referencia NONE por ejemplo
+                    
+                    type list = {hd:int, tl:list}
+                    
+                    metemos list como un TTipo con ref NONE, 
+                    luego para procesar el TRecord se tendra TRecord de [(string:hd, tipo:int, n),[(string:tl, tipo list, n)] 
+                    de esta forma nos queda un "vacio" con NONE, luego al cambiarle la ref por un SOME algo, como le estamos cambiando el puntero
+                    cada vez q encontremos un NONE, en vez de eso encontrara un SOME algo
+                    
+                    El pos no hay q hacerlo tan detallado... el 666 va como piña :P
+                    *)
+        
         in
-            (venv, tenv', []) 
+            (venv, tenv', []) (*COMPLETAR*)
         end
   in trexp end
 fun transProg ex =
