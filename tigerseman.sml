@@ -14,10 +14,7 @@ fun printEnv' ((name, TArray (t, u)) :: xs) = (print name; printEnv' [("asd",t)]
     |printEnv' ((name, TTipo _) :: xs) = (print name; print " TTipo"; printEnv' xs)
     |printEnv' _ = print "no me importa\n"
 
-fun  zipEq [] (y::ys) = raise Fail "Error, distintos tamaños."
-    | zipEq (x::xs) [] = raise Fail "Error, distintos tamaños."
-    | zipEq [] [] = []
-    | zipEq (x::xs) (y::ys) = (x, y) :: zipEq xs ys
+
 
 
 fun pTupla (a, b) = (print "("; print a; print " "; print b; print ")"; (a, b))
@@ -93,10 +90,14 @@ fun transExp(venv, tenv) =
     | trexp(CallExp({func, args}, nl)) =
       let
         val formalsArgs = map (fn e => #ty (trexp e)) args
+        fun  zipEq [] (y::ys) pos = error("Sobran argumentos.", pos)
+            | zipEq (x::xs) [] pos =  error("Faltan argumentos.", pos)
+            | zipEq [] [] pos = []
+            | zipEq (x::xs) (y::ys) pos = (x, y) :: zipEq xs ys pos
         val envEntry = case tabBusca(func, venv) of
                           SOME (Func vals) => vals
                         | _ => error (func^" no es una función", nl)
-        val b = List.foldr (fn (x, rest) => (tiposIguales (#1 x) (#2 x)) andalso rest) true (zipEq (#formals envEntry) formalsArgs)
+        val b = List.foldr (fn (x, rest) => (tiposIguales (#1 x) (#2 x)) andalso rest) true (zipEq (#formals envEntry) formalsArgs nl)
       in  
         if not b then error("Error en los argumentos de la funcion (tipos)", nl) else {exp=(), ty=(#result envEntry)} 
       end
@@ -194,15 +195,19 @@ fun transExp(venv, tenv) =
           val {exp=thenexp, ty=tythen} = trexp then'
           val {exp=elseexp, ty=tyelse} = trexp else'
       in
-        if tipoReal tytest=TInt andalso tiposIguales tythen tyelse then {exp=(), ty=tythen}
-        else error("El tipo del if es incorrecto.", nl)
+        case tipoReal tytest of
+          TInt => if tiposIguales tythen tyelse then {exp=(), ty=tythen}
+                  else error("Tipos distintos then-else.", nl)
+          | _ => error("La condición del if debe ser entera.", nl)
       end
     | trexp(IfExp({test, then', else'=NONE}, nl)) =
       let val {exp=exptest,ty=tytest} = trexp test
           val {exp=expthen,ty=tythen} = trexp then'
       in
-        if tipoReal tytest=TInt andalso tythen=TUnit then {exp=(), ty=TUnit}
-        else error("El tipo del if es incorrecto.", nl)
+        case tipoReal tytest of 
+          TInt => if tythen=TUnit then {exp=(), ty=TUnit}
+                   else error("El then debe retornar unit.", nl)
+         | _ => error("La condición del if debe ser entera.", nl)
       end
     | trexp(WhileExp({test, body}, nl)) =
       let
@@ -213,29 +218,23 @@ fun transExp(venv, tenv) =
         else if tipoReal (#ty ttest) <> TInt then error("Error de tipo en la condición", nl)
         else error("El cuerpo de un while no puede devolver un valor", nl)
       end
-      
-      (*NOSOTROS*)
-      (*Revisar, Hay q verificar q el var es un SimpleVar???*)
-      (*Es necesario meter el var en el env?? o eso es parte de la generacion de codigo intermedio??*)
     | trexp(ForExp({var, escape, lo, hi, body}, nl)) = 
-      let 
-             
+      let  
         val tylo = trexp lo
         val tyhi = trexp hi
 	      val venv' = tabInserta(var, VIntro, venv)
         val tybody = transExp (venv', tenv) body
       in 
-        if tipoReal (#ty tylo) = TInt andalso (#ty tyhi) = TInt andalso (#ty tybody) = TUnit then {exp=(), ty=TUnit}
+        case tipoReal (#ty tylo) of
+            TInt => (case tipoReal (#ty tyhi) of
+                       TInt => if (#ty tybody) = TUnit then {exp=(), ty=TUnit}
+                               else error("El cuerpo de un for no puede devolver un valor", nl)
+                       |_ => error("La expresión 'hi' no es entera.", nl))
+            |_ => error("La expresión 'lo' no es entera.", nl)
+        (*if tipoReal (#ty tylo) = TInt andalso (#ty tyhi) = TInt andalso (#ty tybody) = TUnit then {exp=(), ty=TUnit}
         else if tipoReal (#ty tylo) <> TInt orelse #ty tyhi <> TInt then error("Error de tipo en la condición", nl)
-        else error("El cuerpo de un for no puede devolver un valor", nl)
+        else error("El cuerpo de un for no puede devolver un valor", nl)*)
       end 
-    
-      (*/NOSOTROS*)
-    
-    
-    
-    
-    
     | trexp(LetExp({decs, body}, _)) =
       let
         val (venv', tenv', _) = List.foldl (fn (d, (v, t, _)) => trdec(v, t) d) (venv, tenv, []) decs
@@ -388,14 +387,9 @@ fun transExp(venv, tenv) =
         
       in 
         (venv', tenv, [])
-      end
-     (*TypeDec of ({name: symbol, ty: ty} * pos) list
-     list = {first:int, rest:list}
-     field = {name: symbol, escape: bool ref, typ: ty}
-     TRecord of (string * Tipo * int) list * unique *)   
+      end 
     | trdec (venv,tenv) (TypeDec ts) =
         let
-            
             fun buscaArrRecords lt = 
                 let 
                     fun buscaRecs [] recs = recs
@@ -417,7 +411,6 @@ fun transExp(venv, tenv) =
                        
                 end
                 
-
             fun procRecords batch recs env =
                 let
                     fun buscaEnv env' t = (case tabBusca(t, env) of
@@ -512,7 +505,7 @@ fun transExp(venv, tenv) =
            
             fun fijaTipos batch env = 
                 let val pares = genPares batch
-                    val ordered = topsort pares
+                    val ordered = topsort pares 
                     val recs = buscaArrRecords batch
                     val env' = procesa ordered batch recs env
                     val env'' = procRecords batch recs env'
