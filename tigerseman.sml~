@@ -379,7 +379,6 @@ fun transExp(venv, tenv) =
                                 error("El tipo declarado y el de retorno no coinciden", 666)
                             else ()
             in
-                (* transExp (b_venv, tenv) (#body r) *)
                 {exp=bodyv, ty=bodyty}
             end  
                      
@@ -402,7 +401,6 @@ fun transExp(venv, tenv) =
                     
             fun genPares lt = 
                 let  
-                    (*val lrecs = buscaArrRecords lt*)
                     fun genP [] res = res
                        |genP ({name, ty=NameTy s} :: t) res = genP t ((s, name) :: res)
                        |genP ({name, ty=ArrayTy s} :: t) res = genP t ((s, name) :: res)
@@ -420,7 +418,7 @@ fun transExp(venv, tenv) =
                                             |SOME t' => t'
                                             |_ => (case List.find (fn {name, ...} => name = t) recs of
                                                         SOME {name, ...} => TTipo (name, ref NONE)
-                                                        |_ => error(t^"*no existe", 666)))
+                                                        |_ => error(t^" no existe", 666)))
                     fun precs [] env' = env'
                         |precs ({name, ty=RecordTy lf} :: t) env' = 
                                 let 
@@ -455,7 +453,7 @@ fun transExp(venv, tenv) =
 									                     SOME _ => NONE
 									                    |NONE => (case tabBusca (h, env) of
 										                                 SOME t => SOME t
-										                                |_ => error(h^" no existe.", 666)))
+										                                |_ => error(h^" no existe.", 0)))
 
                       (* (1) Si encuentra un record o un array en este punto es probable que un NameTy dependa de uno de 
                          ellos, por lo tanto lo metemos en el enviroment ahora para que no haya errores de dependencia
@@ -466,7 +464,7 @@ fun transExp(venv, tenv) =
                                        | _ => env)
 
                       fun meterEntorno env ts tt = List.foldr (fn ({name, ty=NameTy ty}, envr) => tabInserta(name, tt, envr)
-                                                                |_ => error("error interno.", 666)) env ps
+                                                                |_ => error("error interno.", 0)) env ps
                       val env'' = (case ttopt of 
                                       SOME tt => meterEntorno env' ps tt
 
@@ -484,27 +482,21 @@ fun transExp(venv, tenv) =
                 |fijaNONE ((name, TArray (TTipo (s, ref NONE), u)) :: t) env =
                     (case tabBusca(s, env) of 
                         SOME (r as (TRecord _)) => fijaNONE t (tabRInserta(name, TArray (TTipo(s, ref (SOME r)), u), env))
-                        |_ => error("666+1", 666))
-                        
-                        (*TRecord of (string * Tipo * int) list * unique*)
-                        
-                        
-                        
+                        |_ => error("error interno.", 0))
                 |fijaNONE ((name, TRecord (lf, u)) :: t) env =
                         let
                             fun busNONE ((s, TTipo (t, ref NONE), n), l) =
                                 (case tabBusca(t, env) of
                                     SOME (tt as (TRecord _)) => (s, TTipo (t, ref (SOME tt)), n) :: l
-                                    | SOME _ => error (s ^ " no record?", 666)
-                                    | _ => error (s^": Tipo inexistente", 666))
+                                    | SOME _ => error (s ^ " Error interno", 0)
+                                    | _ => error (s^": Tipo inexistente", 0))
                                |busNONE (d, l) = d :: l
                             val lf' = List.foldr busNONE [] lf  
                         in                                
                             fijaNONE t (tabRInserta (name, TRecord (lf', u), env)) 
                         end
-                        
                 |fijaNONE (_ :: t) env = fijaNONE t env
-           
+    
             fun fijaTipos batch env = 
                 let val pares = genPares batch
                     val ordered = topsort pares 

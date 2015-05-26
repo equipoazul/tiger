@@ -5,22 +5,6 @@ open tigerabs
 open tigersres
 open topsort
 
-fun printEnv [] = print (""^"\n")
-    |printEnv (x::xs) = (print (x^"\n"); printEnv xs)
-
-
-fun printEnv' ((name, TArray (t, u)) :: xs) = (print name; printEnv' [("asd",t)]; print "\n"; printEnv' xs)
-    |printEnv' ((name, TRecord (lf, u)) :: xs) = (print name; printEnv (map #1 lf); printEnv' xs)
-    |printEnv' ((name, TTipo _) :: xs) = (print name; print " TTipo"; printEnv' xs)
-    |printEnv' _ = print "no me importa\n"
-
-
-
-
-fun pTupla (a, b) = (print "("; print a; print " "; print b; print ")"; (a, b))
-
-
-
 type expty = {exp: unit, ty: Tipo}
 
 type venv = (string, EnvEntry) tigertab.Tabla
@@ -165,8 +149,6 @@ fun transExp(venv, tenv) =
         val {exp, ty=tipo} = hd(rev lexti)
       in  { exp=(), ty=tipo } end
       
-      
-    (* <NOSOTROS> *)
     | trexp(AssignExp({var=SimpleVar s, exp}, nl)) = 
     
     let
@@ -188,8 +170,7 @@ fun transExp(venv, tenv) =
       if tiposIguales tyexp tyvar then {exp=(), ty=TUnit}
       else error("Error de tipos en asignacion", nl)
     end
-    (* </NOSOTROS> *)
-        
+      
     | trexp(IfExp({test, then', else'=SOME else'}, nl)) =
       let val {exp=testexp, ty=tytest} = trexp test
           val {exp=thenexp, ty=tythen} = trexp then'
@@ -258,8 +239,6 @@ fun transExp(venv, tenv) =
         else {exp = (), ty = TArray (#ty t)}
       end
       
-      
-    (* <NOSOTROS> *)
     and trvar(SimpleVar s, nl) =
         	(case tabBusca(s, venv) of 
 		                   SOME (Var{ty = t}) => {exp = (), ty = t}
@@ -289,7 +268,6 @@ fun transExp(venv, tenv) =
                                       | _ => error("La expresión utilizada como índice no es entero.", nl))
               | _ => error("No es un arreglo", nl))
       end
-    (* </NOSOTROS> *)
 
     and trdec (venv, tenv) (VarDec ({name,escape,typ=NONE,init},pos)) = 
           let 
@@ -315,22 +293,6 @@ fun transExp(venv, tenv) =
         in 
            (venv', tenv, [])  
         end
-
-
-
-
-(*
-    FunctionDec of ({name: symbol, params: field list,
-		result: symbol option, body: exp} * pos) list
-		
-		field = {name: symbol, escape: bool ref, typ: ty}
-		
-		
-		Func of {level: unit, label: tigertemp.label, formals: Tipo list, result: Tipo, extern: bool}
-*)
-
-
-
 		
     | trdec (venv,tenv) (FunctionDec fs) =
       let
@@ -379,7 +341,6 @@ fun transExp(venv, tenv) =
                                 error("El tipo declarado y el de retorno no coinciden", 666)
                             else ()
             in
-                (* transExp (b_venv, tenv) (#body r) *)
                 {exp=bodyv, ty=bodyty}
             end  
                      
@@ -390,6 +351,7 @@ fun transExp(venv, tenv) =
       end 
     | trdec (venv,tenv) (TypeDec ts) =
         let
+            
             fun buscaArrRecords lt = 
                 let 
                     fun buscaRecs [] recs = recs
@@ -401,7 +363,6 @@ fun transExp(venv, tenv) =
                     
             fun genPares lt = 
                 let  
-                    (*val lrecs = buscaArrRecords lt*)
                     fun genP [] res = res
                        |genP ({name, ty=NameTy s} :: t) res = genP t ((s, name) :: res)
                        |genP ({name, ty=ArrayTy s} :: t) res = genP t ((s, name) :: res)
@@ -411,6 +372,7 @@ fun transExp(venv, tenv) =
                        
                 end
                 
+
             fun procRecords batch recs env =
                 let
                     fun buscaEnv env' t = (case tabBusca(t, env) of
@@ -418,7 +380,7 @@ fun transExp(venv, tenv) =
                                             |SOME t' => t'
                                             |_ => (case List.find (fn {name, ...} => name = t) recs of
                                                         SOME {name, ...} => TTipo (name, ref NONE)
-                                                        |_ => error(t^"*no existe", 666)))
+                                                        |_ => error(t^" no existe", 666)))
                     fun precs [] env' = env'
                         |precs ({name, ty=RecordTy lf} :: t) env' = 
                                 let 
@@ -453,7 +415,7 @@ fun transExp(venv, tenv) =
 									                     SOME _ => NONE
 									                    |NONE => (case tabBusca (h, env) of
 										                                 SOME t => SOME t
-										                                |_ => error(h^" no existe.", 666)))
+										                                |_ => error(h^" no existe.", 0)))
 
                       (* (1) Si encuentra un record o un array en este punto es probable que un NameTy dependa de uno de 
                          ellos, por lo tanto lo metemos en el enviroment ahora para que no haya errores de dependencia
@@ -464,7 +426,7 @@ fun transExp(venv, tenv) =
                                        | _ => env)
 
                       fun meterEntorno env ts tt = List.foldr (fn ({name, ty=NameTy ty}, envr) => tabInserta(name, tt, envr)
-                                                                |_ => error("error interno.", 666)) env ps
+                                                                |_ => error("error interno.", 0)) env ps
                       val env'' = (case ttopt of 
                                       SOME tt => meterEntorno env' ps tt
 
@@ -482,27 +444,21 @@ fun transExp(venv, tenv) =
                 |fijaNONE ((name, TArray (TTipo (s, ref NONE), u)) :: t) env =
                     (case tabBusca(s, env) of 
                         SOME (r as (TRecord _)) => fijaNONE t (tabRInserta(name, TArray (TTipo(s, ref (SOME r)), u), env))
-                        |_ => error("666+1", 666))
-                        
-                        (*TRecord of (string * Tipo * int) list * unique*)
-                        
-                        
-                        
+                        |_ => error("error interno.", 0))
                 |fijaNONE ((name, TRecord (lf, u)) :: t) env =
                         let
                             fun busNONE ((s, TTipo (t, ref NONE), n), l) =
                                 (case tabBusca(t, env) of
                                     SOME (tt as (TRecord _)) => (s, TTipo (t, ref (SOME tt)), n) :: l
-                                    | SOME _ => error (s ^ " no record?", 666)
-                                    | _ => error (s^": Tipo inexistente", 666))
+                                    | SOME _ => error (s ^ " Error interno", 0)
+                                    | _ => error (s^": Tipo inexistente", 0))
                                |busNONE (d, l) = d :: l
                             val lf' = List.foldr busNONE [] lf  
                         in                                
                             fijaNONE t (tabRInserta (name, TRecord (lf', u), env)) 
                         end
-                        
                 |fijaNONE (_ :: t) env = fijaNONE t env
-           
+    
             fun fijaTipos batch env = 
                 let val pares = genPares batch
                     val ordered = topsort pares 
@@ -520,37 +476,9 @@ fun transExp(venv, tenv) =
                                           else checkNames xs  
             val decs = List.map #1 ts
             val _ = checkNames (List.map (fn (x, pos) => (#name x, pos)) ts)
-            val tenv' = fijaTipos decs tenv
-(*            val _ = printEnv (tabClaves tenv')*)
-
-            (*val _ = (print("\n"); printTenv (tabAList tenv'))*)      
-        
-        (* 
-                   El problema de los ciclos es solo para tipos q no sean records, 
-                    type B = A
-                    type A = C
-                    type C = array of int
-                    
-                    se generan pares de esta forma
-                    (A,B)(C,A)
-                    
-                    y el topsort te devuelve algo de esta forma, o tira un error si encuentra un ciclo
-                    [C, A, B]
-                    
-                    Para los tipos recursivos es q tenemos q meterlos con referencia NONE por ejemplo
-                    
-                    type list = {hd:int, tl:list}
-                    
-                    metemos list como un TTipo con ref NONE, 
-                    luego para procesar el TRecord se tendra TRecord de [(string:hd, tipo:int, n),[(string:tl, tipo list, n)] 
-                    de esta forma nos queda un "vacio" con NONE, luego al cambiarle la ref por un SOME algo, como le estamos cambiando el puntero
-                    cada vez q encontremos un NONE, en vez de eso encontrara un SOME algo
-                    
-                    El pos no hay q hacerlo tan detallado... el 666 va como piña :P
-                    *)
-        
+            val tenv' = fijaTipos decs tenv               
         in
-            (venv, tenv', []) (*COMPLETAR*)
+            (venv, tenv', []) 
         end
   in trexp end
 fun transProg ex =
