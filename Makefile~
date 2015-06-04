@@ -1,8 +1,8 @@
 # Unix makefile for tigermain example
 
-HOME=/usr
-MOSMLHOME=${HOME}
-#MOSMLHOME=/usr/local
+HOME=~
+#MOSMLHOME=${HOME}/mosml
+MOSMLHOME=/usr
 MOSMLTOOLS=camlrunm $(MOSMLHOME)/tools
 MOSMLLEX=mosmllex
 MOSMLYACC=mosmlyac -v
@@ -26,8 +26,7 @@ EXEFILE=
 .SUFFIXES : .sig .sml .ui .uo
 
 GRALOBJS= tigerabs.uo tigergrm.uo tigerlex.uo tigermain.uo \
-	tigernlin.uo tigerpp.uo tigerescap.uo tigertab.uo tigerseman.uo tigertemp.uo topsort.uo tigertree.uo \
-	tigerframe.uo tigertrans.uo tigerit.uo tigerpila.uo
+	tigernlin.uo tigerpp.uo tigerescap.uo tigertab.uo tigerseman.uo tigertemp.uo topsort.uo
 
 all: tiger
 
@@ -58,7 +57,7 @@ clean:
 .sml.uo:
 	$(MOSMLC) $<
 
-depend: topsort.sml tigerabs.sml tigergrm.sml tigerlex.sml tigermain.sml \
+depend: tigerabs.sml tigergrm.sml tigerlex.sml tigermain.sml \
 	tigernlin.sml tigerpp.sml
 	$(REMOVE) Makefile.bak
 	$(MOVE) Makefile Makefile.bak
@@ -67,23 +66,13 @@ depend: topsort.sml tigerabs.sml tigergrm.sml tigerlex.sml tigermain.sml \
 
 ### DO NOT DELETE THIS LINE
 tigerpp.uo: tigerabs.uo 
-tigertrans.uo: tigertrans.ui tigertree.uo tigerpila.ui tigerframe.ui \
-    tigerit.uo tigertemp.ui tigerabs.uo 
-tigertrans.ui: tigertree.uo tigerframe.ui tigertemp.ui tigerabs.uo 
 tigerescap.ui: tigerabs.uo 
-tigerframe.ui: tigertree.uo tigertemp.ui 
-tigerframe.uo: tigerframe.ui tigertree.uo tigertemp.ui 
 tigergrm.ui: tigerabs.uo 
 tigerseman.ui: tigerabs.uo 
 tigerescap.uo: tigerescap.ui tigertab.ui tigerabs.uo 
-tigerit.uo: tigertree.uo tigertab.ui 
-tigertree.uo: tigertemp.ui 
-tigerseman.uo: tigerseman.ui tigersres.uo tigertab.ui tigerpila.ui \
-    tigerabs.uo tigertrans.ui topsort.uo
+tigerseman.uo: tigerseman.ui tigersres.uo tigertab.ui tigerabs.uo 
 tigergrm.uo: tigergrm.ui tigernlin.uo tigerabs.uo 
-tigerpila.uo: tigerpila.ui 
-tigersres.uo: tigertab.ui tigertips.uo tigertemp.ui tigerabs.uo \
-    tigertrans.ui 
+tigersres.uo: tigertab.ui tigertips.uo tigertemp.ui tigerabs.uo 
 tigertab.uo: tigertab.ui 
 tigermain.uo: tigerseman.ui tigerescap.ui tigergrm.ui tigerlex.uo \
     tigerpp.uo 
