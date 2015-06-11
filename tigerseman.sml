@@ -196,7 +196,7 @@ fun transExp(venv, tenv) =
       in
         case tipoReal tytest of 
           TInt => if tythen=TUnit then {exp=ifThenExp{test=exptest, then'=expthen}, ty=TUnit}
-                   else error("El then debe retornar unit.", nl)
+                  else error("El then debe retornar unit.", nl)
          | _ => error("La condición del if debe ser entera.", nl)
       end
     | trexp(WhileExp({test, body}, nl)) =
@@ -208,7 +208,6 @@ fun transExp(venv, tenv) =
         else if tipoReal (#ty ttest) <> TInt then error("Error de tipo en la condición", nl)
         else error("El cuerpo de un while no puede devolver un valor", nl)
       end
-
     | trexp(ForExp({var, escape, lo, hi, body}, nl)) = 
       let  
         val {exp=explo, ty=tylo} = trexp lo
@@ -298,7 +297,6 @@ fun transExp(venv, tenv) =
     
     | trdec (venv,tenv) (VarDec ({name,escape,typ=SOME s,init},pos)) =
         let
-
           val {exp=expe, ty=tyinit} = transExp (venv, tenv) init
           val acc = allocLocal (topLevel()) (!escape)
           val level = getActualLev()
@@ -338,8 +336,6 @@ fun transExp(venv, tenv) =
                                                 |_ => error("Error en el tipo de retorno"^t^".", pos))
                                   |_ => TUnit)
         val venv' = foldr (fn (x, venvv) => tabInserta(#name (#1 x), Func{level=topLevel(), label=name', formals=map #typ (getFormals (#2 x) (#params (#1 x))), result=getResult (#2 x) (#result (#1 x)), extern=false}, venvv))  venv fs      
-
-
         fun procBody (r, pos) = 
             let
                 val formals = getFormals pos (#params r) 
