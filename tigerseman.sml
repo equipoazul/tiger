@@ -337,7 +337,7 @@ fun transExp(venv, tenv) =
                                                 SOME t' => t'
                                                 |_ => error("Error en el tipo de retorno"^t^".", pos))
                                   |_ => TUnit)
-        val venv' = foldr (fn (x, venvv) => tabInserta(#name (#1 x), Func{level=(), label=name', formals=map #typ (getFormals (#2 x) (#params (#1 x))), result=getResult (#2 x) (#result (#1 x)), extern=false}, venvv))  venv fs      
+        val venv' = foldr (fn (x, venvv) => tabInserta(#name (#1 x), Func{level=topLevel(), label=name', formals=map #typ (getFormals (#2 x) (#params (#1 x))), result=getResult (#2 x) (#result (#1 x)), extern=false}, venvv))  venv fs      
 
 
         fun procBody (r, pos) = 
@@ -346,7 +346,9 @@ fun transExp(venv, tenv) =
                   
                 (* Aca hay que pasarle el venv' y no el venv por si el body hace una llamada recursiva, si sucede esto
                    el body deberia encontrar la funcion que llama (que es ella misma) *)
-                val b_venv = foldr (fn (x, xs) => tabRInserta(#name x, Var {ty=(#typ x)}, xs)) venv' formals 
+                val acc = allocLocal (topLevel()) false
+                val level = getActualLev()
+                val b_venv = foldr (fn (x, xs) => tabRInserta(#name x, Var {access=acc, level=level, ty=(#typ x)}, xs)) venv' formals 
                 val {exp=bodyv, ty=bodyty} = transExp (b_venv, tenv) (#body r)
                 val tipodeclarado = getResult 1 (#result r)
                 val _ = if tiposIguales tipodeclarado TUnit then

@@ -144,9 +144,9 @@ fun simpleVar(acc, nivel) =
         |InFrame k => 
             let 
                 fun aux 0 = TEMP fp
-                    |aux n = MEM (BINOP (PLUS, fPredLevel, aux(n-1)))
+                    |aux n = MEM (BINOP (PLUS, aux(!actualLevel - 1), aux(n-1)))
              in
-                Ex (MEM (BINOP (PLUS, aux(!actualLevel - level), CONST k)))
+                Ex (MEM (BINOP (PLUS, aux(!actualLevel - nivel), CONST k)))
             end
 
 fun varDec(acc) = simpleVar(acc, getActualLev())

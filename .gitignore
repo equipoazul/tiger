@@ -7,3 +7,10 @@
 *.cmx
 *.cmxs
 *.cmxa
+Makefile.bak
+tigergrm.output
+*.ui
+*.uo
+errlist
+*.o
+*.*~
