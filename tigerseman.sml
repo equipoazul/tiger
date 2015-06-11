@@ -169,14 +169,18 @@ fun transExp(venv, tenv) =
     in 
       if tiposIguales tyexp tyvar then {exp=nilExp(), ty=TUnit}
       else error("Error de tipos en asignacion", nl)
-    end
-    
+    end   
     | trexp(AssignExp({var, exp}, nl)) =
     let
       val {exp=_, ty=tyexp} = trexp exp
       val {exp=_, ty=tyvar} = trvar(var, nl)
     in 
-      if tiposIguales tyexp tyvar then {exp=nilExp(), ty=TUnit}
+      if tiposIguales tyexp tyvar then 
+          case var of
+            FieldVar v,s => {exp=fieldVar (v, )}
+            SubscriptVar v,e =>
+
+            {exp=nilExp(), ty=TUnit}
       else error("Error de tipos en asignacion", nl)
     end
       
@@ -257,7 +261,7 @@ fun transExp(venv, tenv) =
          SOME (Var {access=acc, ty=t, level=lv}) => {exp=simpleVar(acc, lv), ty=t}
         |SOME (VIntro {access=acc, level=lv}) => {exp=simpleVar(acc, lv), ty=TInt} 
         | _ => error("Variable inexistente", nl))
-
+    (*fieldvar-> v.s*) 
     | trvar(FieldVar(v, s), nl) =
       let
         val {exp=expvar, ty=typ} = trvar(v, nl)
@@ -266,7 +270,7 @@ fun transExp(venv, tenv) =
                         | _ => error(s^" No es un record", nl))
         in
           case List.find (fn x =>(#1)x = s) l of
-              SOME (str, typfv, index) => {exp=unitExp(), ty=typfv} (*TODO, hay que usar fieldvar pero no se que va en los parametros*)
+              SOME (str, typfv, index) => {exp=unitExp()), ty=typfv} (*TODO, hay que usar fieldvar pero no se que va en los parametros*)
             | _ => error("Campo de record \""^s^"\" inexistente", nl)
         end
 
