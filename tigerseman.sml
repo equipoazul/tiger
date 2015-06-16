@@ -156,7 +156,9 @@ fun transExp(venv, tenv) =
         val lexti = map trexp s
         val exprs = map (fn{exp, ty} => exp) lexti
         val {exp, ty=tipo} = hd(rev lexti)
-      in  { exp=seqExp (exprs), ty=tipo } end
+      in  
+        { exp=seqExp (exprs), ty=tipo } 
+      end
       
     | trexp(AssignExp({var=SimpleVar s, exp}, nl)) = 
     
@@ -172,18 +174,12 @@ fun transExp(venv, tenv) =
     end   
     | trexp(AssignExp({var, exp}, nl)) =
     let
-      val {exp=_, ty=tyexp} = trexp exp
-      val {exp=_, ty=tyvar} = trvar(var, nl)
+      val {exp=expExp, ty=tyexp} = trexp exp
+      val {exp=expVar, ty=tyvar} = trvar(var, nl)
     in 
-      if tiposIguales tyexp tyvar then 
-          case var of
-            FieldVar v,s => {exp=fieldVar (v, )}
-            SubscriptVar v,e =>
-
-            {exp=nilExp(), ty=TUnit}
+      if tiposIguales tyexp tyvar then {exp=assignExp{var=expVar, exp=expExp}, ty=TUnit}
       else error("Error de tipos en asignacion", nl)
     end
-      
     | trexp(IfExp({test, then', else'=SOME else'}, nl)) =
       let val {exp=testexp, ty=tytest} = trexp test
           val {exp=thenexp, ty=tythen} = trexp then'
@@ -264,23 +260,23 @@ fun transExp(venv, tenv) =
     (*fieldvar-> v.s*) 
     | trvar(FieldVar(v, s), nl) =
       let
-        val {exp=expvar, ty=typ} = trvar(v, nl)
-        val (l, u) = (case (tipoReal typ) of
+        val {exp=expVar, ty=tyVar} = trvar(v, nl)
+        val (l, u) = (case (tipoReal tyVar) of
                         TRecord l' => l'                  
                         | _ => error(s^" No es un record", nl))
         in
           case List.find (fn x =>(#1)x = s) l of
-              SOME (str, typfv, index) => {exp=unitExp()), ty=typfv} (*TODO, hay que usar fieldvar pero no se que va en los parametros*)
+              SOME (str, typfv, index) => {exp=fieldVar(expVar, index), ty=typfv} (*TODO, hay que usar fieldvar pero no se que va en los parametros*)
             | _ => error("Campo de record \""^s^"\" inexistente", nl)
         end
-
+    (*fieldvar-> a[i]*) 
     | trvar(SubscriptVar(v, e), nl) =
       let
-        val {exp=expvar, ty=typ} = trvar(v, nl)
+        val {exp=expVar, ty=tyVar} = trvar(v, nl)
       in
-        (case typ of
+        (case tyVar of
               TArray (t, u) =>  (case (trexp e) of
-                                      {exp=expe, ty = TInt} => {exp=subscriptVar(expe, expvar), ty=t}
+                                      {exp=expExp, ty=TInt} => {exp=subscriptVar(expVar, expExp), ty=tyVar}
                                       | _ => error("La expresión utilizada como índice no es entero.", nl))
               | _ => error("No es un arreglo", nl))
       end
@@ -301,14 +297,13 @@ fun transExp(venv, tenv) =
     
     | trdec (venv,tenv) (VarDec ({name,escape,typ=SOME s,init},pos)) =
         let
-          val {exp=expe, ty=tyinit} = transExp (venv, tenv) init
+          val {exp=expExp, ty=tyinit} = transExp (venv, tenv) init
           val acc = allocLocal (topLevel()) (!escape)
           val level = getActualLev()
           val venv' = (case tabBusca(s, tenv) of
                           SOME t => if tiposIguales t tyinit then tabInserta(name, Var{access=acc, level=level, ty=t}, venv)
                                     else error("el tipo de var es distinto a la expresion", pos)
                           |_ => error("tipo desconocido", pos))
-
         in 
            (venv', tenv, [])  
         end
@@ -349,18 +344,18 @@ fun transExp(venv, tenv) =
                 val acc = allocLocal (topLevel()) false
                 val level = getActualLev()
                 val b_venv = foldr (fn (x, xs) => tabRInserta(#name x, Var {access=acc, level=level, ty=(#typ x)}, xs)) venv' formals 
-                val {exp=bodyv, ty=bodyty} = transExp (b_venv, tenv) (#body r)
+                val {exp=expBody, ty=tyBody} = transExp (b_venv, tenv) (#body r)
                 val tipodeclarado = getResult 1 (#result r)
                 val _ = if tiposIguales tipodeclarado TUnit then
-                            if not (tiposIguales bodyty tipodeclarado) then 
+                            if not (tiposIguales tyBody tipodeclarado) then 
                                 error("No se puede retornar un valor en un procedure", 666)
                             else ()
                         else
-                            if not (tiposIguales bodyty tipodeclarado) then 
+                            if not (tiposIguales tyBody tipodeclarado) then 
                                 error("El tipo declarado y el de retorno no coinciden", 666)
                             else ()
             in
-                {exp=bodyv, ty=bodyty}
+                {exp=expBody, ty=tyBody}
             end  
                      
         val _ = map procBody fs

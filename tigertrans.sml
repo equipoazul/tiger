@@ -146,13 +146,23 @@ fun simpleVar(acc, nivel) =
                 fun aux 0 = TEMP fp
                     |aux n = MEM (BINOP (PLUS, aux(!actualLevel - 1), aux(n-1)))
              in
-                Ex (MEM (BINOP (PLUS, aux(!actualLevel - nivel), CONST k)))
+                Ex (MEM (BINOP (PLUS, aux(!actualLevel - 1), CONST k)))
             end
 
 fun varDec(acc) = simpleVar(acc, getActualLev())
 
 fun fieldVar(var, field) = 
-	Ex (CONST 0) (*COMPLETAR*)
+let
+	val a = unEx var
+	val ra = newtemp()
+	val ri = newtemp()
+in
+	Ex( ESEQ(seq[MOVE(TEMP ra, a),
+		MOVE(TEMP ri, CONST field),
+		EXP(externalCall("_checkindex", [TEMP ra, TEMP ri]))],
+		MEM(BINOP(PLUS, TEMP ra,
+			BINOP(MUL, TEMP ri, CONST tigerframe.wSz)))))
+end
 
 fun subscriptVar(arr, ind) =
 let
@@ -169,7 +179,11 @@ in
 end
 
 fun recordExp l =
-	Ex (CONST 0) (*COMPLETAR*)
+let
+	val li = List.map (fn (e, i) => CONST i) l
+in
+	Ex (externalCall("allocRecord", li))
+end
 
 fun arrayExp{size, init} =
 let
