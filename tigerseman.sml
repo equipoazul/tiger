@@ -163,13 +163,12 @@ fun transExp(venv, tenv) =
     | trexp(AssignExp({var=SimpleVar s, exp}, nl)) = 
     
     let
-      val {exp=_, ty=tyvar} = case tabBusca(s, venv) of
-                                SOME (VIntro _) => (error("Variable de solo lectura.", nl))
-                                |_ => (trvar(SimpleVar s, nl))
-                          
-      val {exp=_, ty=tyexp} = trexp exp
+      val {exp=expVar, ty=tyvar} = case tabBusca(s, venv) of
+                                      SOME (VIntro _) => (error("Variable de solo lectura.", nl))
+                                      |_ => (trvar(SimpleVar s, nl))
+      val {exp=expExp, ty=tyexp} = trexp exp
     in 
-      if tiposIguales tyexp tyvar then {exp=nilExp(), ty=TUnit}
+      if tiposIguales tyexp tyvar then {exp=assignExp{var=expVar, exp=expExp}, ty=TUnit}
       else error("Error de tipos en asignacion", nl)
     end   
     | trexp(AssignExp({var, exp}, nl)) =

@@ -239,13 +239,44 @@ fun forExp {lo, hi, var, body} =
 	Ex (CONST 0) (*COMPLETAR*)
 
 fun ifThenExp{test, then'} =
-	Ex (CONST 0) (*COMPLETAR*)
+	let
+		val cf = unCx test
+		val (l1, l2) = (newlabel(), newlabel())
+		val expThen = unNx then'
+	in
+		Nx (seq[cf(l1,l2),
+				LABEL l1,
+				expThen,
+				LABEL l2])
+	end
 
 fun ifThenElseExp {test,then',else'} =
-	Ex (CONST 0) (*COMPLETAR*)
+	let
+		val cf = unCx test
+		val (l1, l2) = (newlabel(), newlabel())
+		val expThen = unEx then'
+		val expElse = unEx else'
+	in
+		Ex (ESEQ (cf(l1,l2),
+			        seqExp[	NAME l1,
+							expThen,
+							NAME l2,
+							expElse])
+	end
 
 fun ifThenElseExpUnit {test,then',else'} =
-	Ex (CONST 0) (*COMPLETAR*)
+	let
+		val cf = unCx test
+		val (l1, l2) = (newlabel(), newlabel())
+		val expThen = unNx then'
+		val expElse = unNx else'
+	in
+		Nx (seq[cf(l1,l2),
+				LABEL l1,
+				expThen,
+				LABEL l2,
+				expElse])
+	end
 
 fun assignExp{var, exp} =
 let
