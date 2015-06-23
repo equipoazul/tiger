@@ -253,15 +253,15 @@ fun ifThenExp{test, then'} =
 fun ifThenElseExp {test,then',else'} =
 	let
 		val cf = unCx test
-		val (l1, l2) = (newlabel(), newlabel())
+		val (l1, l2, r) = (newlabel(), newlabel(), newtemp())
 		val expThen = unEx then'
 		val expElse = unEx else'
 	in
-		Ex (ESEQ (cf(l1,l2),
-			        seqExp[	NAME l1,
-							expThen,
-							NAME l2,
-							expElse])
+		Ex ( ESEQ(seq([cf(l1,l2),
+					   LABEL l1,
+					   MOVE (TEMP r, expThen),
+					   LABEL l2,
+					   MOVE (TEMP r, expElse)]), TEMP r))
 	end
 
 fun ifThenElseExpUnit {test,then',else'} =
@@ -287,10 +287,41 @@ in
 end
 
 fun binOpIntExp {left, oper, right} = 
-	Ex (CONST 0) (*COMPLETAR*)
+	let
+		val r = newtemp()
+		val oper = case oper of
+					 PlusOp => PLUS
+					|MinusOp => MINUS 
+					|TimesOp => MUL
+					|DivideOp => DIV
+					| _ => raise Fail "Error interno al interpretar operaciones binarias internas"  
+		val lexp = unEx left
+		val rexp = unEx right
+	in
+		Ex (MEM (BINOP (oper, lexp, rexp)))
+	end
 
 fun binOpIntRelExp {left,oper,right} =
-	Ex (CONST 0) (*COMPLETAR*)
+	let
+		val r = newtemp()
+		val oper = case oper of
+					  EqOp => EQ
+					 |NeqOp => NE
+					 |LtOp => LT
+					 |LeOp => LE
+					 |GtOp => GT
+					 |GeOp => GE
+					 | _ => raise Fail "Error interno al interpretar operaciones binarias internas"  
+		val lexp = unEx left
+		val rexp = unEx right
+		val (t, f) = (newtemp(), newtemp())
+	in
+		Nx (seq([LABEL t,
+				 MOVE (TEMP r, CONST 1),
+				 LABEL f,
+				 MOVE (TEMP r, CONST 0),
+				 CJUMP (oper, lexp, rexp, t, f)]))
+	end
 
 fun binOpStrExp {left,oper,right} =
 	Ex (CONST 0) (*COMPLETAR*)
