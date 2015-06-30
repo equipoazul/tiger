@@ -236,7 +236,42 @@ in
 end
 
 fun forExp {lo, hi, var, body} =
-	Ex (CONST 0) (*COMPLETAR*)
+	let val var' = unEx var
+		val {l1, l2, lsal} = (newlabel(), newlabel(), topSalida())
+	in
+		Nx (seq[case hi of
+				Ex (CONST n) =>
+					if n = valofInt.maxInt then (*haremos un while*)
+					   [MOVE (var', unEx lo),
+					    JUMP (NAME l2, [l2]),
+					    LABEL l1, 
+						    unNx body
+						    MOVE (var', BINOP (PLUS, var', CONST 1)) 
+					    LABEL l2,
+					    	CJUMP (GT, var', CONST 0, lsal, l1),
+					    LABEL lsal]
+                    else 
+                        [MOVE (var', unEx lo),
+                         LABEL l2,
+                         	CJUMP (EQ (var', CONST n, lsal, l1)
+                         LABEL l1,
+                         	unNx body,
+                         	MOVE (var', BINOP (PLUS, var', CONST 1)),
+                         	JUMP (NAME l2, [l2]),
+                         LABEL lsal]
+                |_  => (*high no es CONST*)
+                		let val t = newtemp()
+                		in
+                			[MOVE (var', unEx lo),
+                			 MOVE (TEMP t, unEx hi),
+                			 CJUMP (LE, var', TEMP t, val, l1),
+                			 LABEL l1,
+                			 MOVE (var', BINOP (PLUS, var', CONST 1)),
+                			 JUMP (NAME l2, [l2]),
+                			 LABEL lsal)])
+						end
+		end
+                         
 
 fun ifThenExp{test, then'} =
 	let
@@ -324,7 +359,23 @@ fun binOpIntRelExp {left,oper,right} =
 	end
 
 fun binOpStrExp {left,oper,right} =
-	Ex (CONST 0) (*COMPLETAR*)
+	let
+		val oper = case oper of
+						  EqOp => EQ
+						 |NeqOp => NE
+						 |LtOp => LT
+						 |LeOp => LE
+						 |GtOp => GT
+						 |GeOp => GE
+						 | _ => raise Fail "Error interno al interpretar operaciones binarias internas"  
+	 	val lexp = unEx left
+	 	val rexp = unEx right
+	 	val (l, r, res) = (newtemp(), newtemp(), newtemp())
 
-
+	in
+		Ex (ESEQ(seq[MOVE(TEMP l, lexp),
+				     MOVE(TEMP r, rexp),
+					 MOVE(TEMP res, externalCall("_stringcmp", [TEMP l, TEMP r]))],
+					 TEMP res))
+	end
 end
