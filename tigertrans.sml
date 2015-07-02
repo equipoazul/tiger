@@ -193,14 +193,41 @@ in
 	Ex (externalCall("allocArray", [s, i]))
 end
 
-fun callExp (name,external,isproc,lev:level,ls) = 
-	Ex (CONST 0) (*COMPLETAR*)
+fun callExp (name, external, isproc, lev:level, ls) = 
+	let fun memArray 0 = TEMP fp
+		   |memArray n = MEM (BINOP (PLUS, memArray (n-1), CONST fpPrevLev))
+		   val fplex = if (#level lev) = !actualLevel then 
+		   					MEM (BINOP (PLUS, TEMP fp, CONST fpPrevLev))
+	   				   else if (#level lev) < !actualLevel then 
+	   				   		memArray (!actualLevel - ((#level lev) + 1))
+	   				   	else TEMP fp
+		fun preparaArgs [] (rt, re) = (rt, re)
+		   |preparaArgs (h::t) (rt, re) = 
+		   				case h of
+		   					Ex (CONST s) => preparaArgs t (CONST s::rt, re)
+		   				   |Ex (NAME s) => preparaArgs t (NAME s::rt, re)
+		   				   |Ex (TEMP s) => preparaArgs t (TEMP s::rt, re)
+		   				   |_ => let val t' = newtemp()
+		   				   		 in
+		   				   		 	preparaArgs t (rt, (MOVE (TEMP t', unEx h))::re)
+		   				   		 end
+		val (la, la') = preparaArgs (rev ls) ([], [])
+		val ta' = if external then la else fplex::la
+	in 
+		if isproc then Nx (seq(la'@[EXP (CALL (NAME name, ta'))]))
+		else
+			let val tmp = newtemp()
+			in
+				Ex (ESEQ (seq(la'@[EXP (CALL (NAME name, ta')),
+								   MOVE (TEMP tmp, TEMP rv)]), TEMP tmp))
+			end
+	end
 
 fun letExp ([], body) = Ex (unEx body)
  |  letExp (inits, body) = Ex (ESEQ(seq inits,unEx body))
 
 fun breakExp() = 
-	Ex (CONST 0) (*COMPLETAR*)
+	Nx (LABEL (topSalida())) 
 
 fun seqExp ([]:exp list) = Nx (EXP(CONST 0))
 	| seqExp (exps:exp list) =
@@ -237,23 +264,23 @@ end
 
 fun forExp {lo, hi, var, body} =
 	let val var' = unEx var
-		val {l1, l2, lsal} = (newlabel(), newlabel(), topSalida())
+		val (l1, l2, lsal) = (newlabel(), newlabel(), topSalida())
 	in
-		Nx (seq[case hi of
+		Nx (seq(case hi of
 				Ex (CONST n) =>
-					if n = valofInt.maxInt then (*haremos un while*)
+					if n = 999999 then (*haremos un while*)
 					   [MOVE (var', unEx lo),
 					    JUMP (NAME l2, [l2]),
 					    LABEL l1, 
-						    unNx body
-						    MOVE (var', BINOP (PLUS, var', CONST 1)) 
+						    unNx body,
+						    MOVE (var', BINOP (PLUS, var', CONST 1)),
 					    LABEL l2,
-					    	CJUMP (GT, var', CONST 0, lsal, l1),
+					    	CJUMP (GT, var', CONST n, lsal, l1),
 					    LABEL lsal]
                     else 
                         [MOVE (var', unEx lo),
                          LABEL l2,
-                         	CJUMP (EQ (var', CONST n, lsal, l1)
+                         	CJUMP (EQ, var', CONST n, lsal, l1),
                          LABEL l1,
                          	unNx body,
                          	MOVE (var', BINOP (PLUS, var', CONST 1)),
@@ -264,12 +291,15 @@ fun forExp {lo, hi, var, body} =
                 		in
                 			[MOVE (var', unEx lo),
                 			 MOVE (TEMP t, unEx hi),
-                			 CJUMP (LE, var', TEMP t, val, l1),
+                			 CJUMP (LE, var', TEMP t, l2, lsal),
+                			 LABEL l2,
+                			 	unNx body,
+                			 	CJUMP (EQ, var', TEMP t, lsal, l1),
                 			 LABEL l1,
-                			 MOVE (var', BINOP (PLUS, var', CONST 1)),
-                			 JUMP (NAME l2, [l2]),
-                			 LABEL lsal)])
-						end
+                			 	MOVE (var', BINOP (PLUS, var', CONST 1)),
+                			 	JUMP (NAME l2, [l2]),
+                			 LABEL lsal]
+						end))
 		end
                          
 
