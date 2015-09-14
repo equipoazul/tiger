@@ -18,7 +18,8 @@ val actualLevel = ref ~1 (* _tigermain debe tener level = 0. *)
 fun getActualLev() = !actualLevel
 
 val outermost: level = {parent=NONE,
-	frame=newFrame{name="_tigermain", formals=[]}, level=getActualLev()}
+	frame=newFrame{name="_tigermain", formals=[]}, level=0}
+	(*frame=newFrame{name="_tigermain", formals=[]}, level=getActualLev()}*)
 fun newLevel{parent={parent, frame, level}, name, formals} =
 	{
 	parent=SOME frame,
@@ -223,8 +224,10 @@ fun callExp (name, external, isproc, lev:level, ls) =
 			end
 	end
 
-fun letExp ([], body) = Ex (unEx body)
- |  letExp (inits, body) = Ex (ESEQ(seq inits,unEx body))
+
+(*fun letExp ([], body) = Ex (unEx body)
+ |  letExp (inits, body) = Ex (ESEQ(seq inits,unEx body))*)
+
 
 fun breakExp() = 
 	Nx (LABEL (topSalida())) 
@@ -243,6 +246,10 @@ fun seqExp ([]:exp list) = Nx (EXP(CONST 0))
 				| Ex e => Ex (ESEQ(seq(unx exps), e))
 				| cond => Ex (ESEQ(seq(unx exps), unEx cond))
 		end
+
+
+fun letExp ([], body) = Ex (unEx body)
+ |  letExp (inits, body) = seqExp(inits @ [body])
 
 fun preWhileForExp() = pushSalida(SOME(newlabel()))
 

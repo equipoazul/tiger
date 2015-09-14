@@ -80,6 +80,7 @@ fun transExp(venv, tenv) =
     | trexp(CallExp({func, args}, nl)) =
       let
         val formalsArgs = map (fn e => #ty (trexp e)) args
+        val formalsArgsExp = map (fn e => #exp (trexp e)) args
         fun  zipEq [] (y::ys) pos = error("Sobran argumentos.", pos)
             | zipEq (x::xs) [] pos =  error("Faltan argumentos.", pos)
             | zipEq [] [] pos = []
@@ -89,7 +90,7 @@ fun transExp(venv, tenv) =
                         | _ => error (func^" no es una función", nl)
         val b = List.foldr (fn (x, rest) => (tiposIguales (#1 x) (#2 x)) andalso rest) true (zipEq (#formals envEntry) formalsArgs nl)
       in  
-        if not b then error("Error en los argumentos de la funcion (tipos)", nl) else {exp=nilExp(), ty=(#result envEntry)} 
+        if not b then error("Error en los argumentos de la funcion (tipos)", nl) else {exp=callExp(func, false, false, topLevel(), formalsArgsExp), ty=(#result envEntry)} 
       end
     | trexp(OpExp({left, oper=EqOp, right}, nl)) =
       let
@@ -230,10 +231,17 @@ fun transExp(venv, tenv) =
       end 
     | trexp(LetExp({decs, body}, _)) =
       let
-        val (venv', tenv', _) = List.foldl (fn (d, (v, t, _)) => trdec(v, t) d) (venv, tenv, []) decs
-        val {exp=expbody,ty=tybody}=transExp (venv', tenv') body
+        (* exp1: [{var=expVar, exp=expExp}] *)
+        fun tmp (d, (v, t, exp1)) =
+          let
+            val (v', t', exp2) = trdec (v, t) d 
+          in
+            (v', t', exp1@(map #exp exp2))
+        end
+        val (venv', tenv', decs') = List.foldl tmp (venv, tenv, []) decs
+        val {exp=expbody,ty=tybody} = transExp (venv', tenv') body
       in 
-        {exp=expbody, ty=tybody}
+        {exp=letExp(decs', expbody), ty=tybody}
       end 
     | trexp(BreakExp nl) =
       {exp=nilExp(), ty=TUnit} 
@@ -286,12 +294,12 @@ fun transExp(venv, tenv) =
                       NilExp _ => error("No se puede asignar 'nil' en una declaración.", pos) 
                       |BreakExp _ => error("No se puede asignar 'nil' en una declaración.", pos) 
                       | _ => ()
-            val {exp=_, ty=tyinit} = transExp (venv, tenv) init
+            val {exp=expExp, ty=tyinit} = transExp (venv, tenv) init
             val acc = allocLocal (topLevel()) (!escape)
             val level = getActualLev()
             val venv' = tabInserta(name, Var{access=acc, level=level, ty=tyinit}, venv)
           in 
-            (venv', tenv, [])
+            (venv', tenv, [{var=varDec acc, exp=expExp}])
           end   
     
     | trdec (venv,tenv) (VarDec ({name,escape,typ=SOME s,init},pos)) =
@@ -304,7 +312,7 @@ fun transExp(venv, tenv) =
                                     else error("el tipo de var es distinto a la expresion", pos)
                           |_ => error("tipo desconocido", pos))
         in 
-           (venv', tenv, [])  
+           (venv', tenv, [{var=varDec acc, exp=expExp}])  
         end
 		
     | trdec (venv,tenv) (FunctionDec fs) =
@@ -356,11 +364,11 @@ fun transExp(venv, tenv) =
             in
                 {exp=expBody, ty=tyBody}
             end  
-                     
-        val _ = map procBody fs
-        
+        (* Obtenemos el body y el tipo de todas las funciones el batch *)             
+        val funcBatchList = map procBody fs
+        val bodies = map (fn {exp=e, ty=t} => functionDec(e, topLevel(), false)) funcBatchList
       in 
-        (venv', tenv, [])
+        (venv', tenv, [{var=(CONST 0), exp=seqExp(bodies)}])
       end 
     | trdec (venv,tenv) (TypeDec ts) =
         let
