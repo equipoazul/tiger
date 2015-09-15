@@ -266,6 +266,7 @@ fun transExp(venv, tenv) =
     | trvar(FieldVar(v, s), nl) =
       let
         val {exp=expVar, ty=tyVar} = trvar(v, nl)
+        val _ = (print("-------------------------\n"); print(tigerit.tree(tigertrans.stmToExp expVar)); print ("-------------------------\n\n"))
         val (l, u) = (case (tipoReal tyVar) of
                         TRecord l' => l'                  
                         | _ => error(s^" No es un record", nl))
@@ -364,9 +365,9 @@ fun transExp(venv, tenv) =
             end  
         (* Obtenemos el body y el tipo de todas las funciones el batch *)             
         val funcBatchList = map procBody fs
-        val bodies = map (fn {exp=e, ty=t} => functionDec(e, topLevel(), false)) funcBatchList
+        val functions = map (fn {exp=e, ty=t} => {var=functionDec(e, topLevel(), tiposIguales t TUnit), exp=e}) funcBatchList
       in 
-        (venv', tenv, [{var=unitExp(), exp=seqExp(bodies)}])
+        (venv', tenv, functions)
       end 
     | trdec (venv,tenv) (TypeDec ts) =
         let

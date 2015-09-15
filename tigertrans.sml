@@ -160,7 +160,7 @@ let
 in
 	Ex( ESEQ(seq[MOVE(TEMP ra, a),
 		MOVE(TEMP ri, CONST field),
-		EXP(externalCall("_checkindex", [TEMP ra, TEMP ri]))],
+		EXP(externalCall("_checkIndexArray", [TEMP ra, TEMP ri]))],
 		MEM(BINOP(PLUS, TEMP ra,
 			BINOP(MUL, TEMP ri, CONST tigerframe.wSz)))))
 end
@@ -174,7 +174,7 @@ let
 in
 	Ex( ESEQ(seq[MOVE(TEMP ra, a),
 		MOVE(TEMP ri, i),
-		EXP(externalCall("_checkindex", [TEMP ra, TEMP ri]))],
+		EXP(externalCall("_checkIndexArray", [TEMP ra, TEMP ri]))],
 		MEM(BINOP(PLUS, TEMP ra,
 			BINOP(MUL, TEMP ri, CONST tigerframe.wSz)))))
 end
@@ -183,7 +183,7 @@ fun recordExp l =
 let
 	val li = List.map (fn (e, i) => CONST i) l
 in
-	Ex (externalCall("allocRecord", li))
+	Ex (externalCall("_allocRecord", li))
 end
 
 fun arrayExp{size, init} =
@@ -191,7 +191,7 @@ let
 	val s = unEx size
 	val i = unEx init
 in
-	Ex (externalCall("allocArray", [s, i]))
+	Ex (externalCall("_allocArray", [s, i]))
 end
 
 fun callExp (name, external, isproc, lev:level, ls) = 
@@ -415,4 +415,11 @@ fun binOpStrExp {left,oper,right} =
 					 MOVE(TEMP res, externalCall("_stringcmp", [TEMP l, TEMP r]))],
 					 TEMP res))
 	end
+
+fun stmToExp s = EXP (unEx s)
+
 end
+
+
+
+

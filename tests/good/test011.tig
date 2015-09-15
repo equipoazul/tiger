@@ -1,0 +1,7 @@
+/* an array type and an array variable */
+let
+  type  arrtype = array of int
+  var arr1 : arrtype := arrtype [20] of 42
+in
+  arr1; 0
+end
