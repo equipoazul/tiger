@@ -57,11 +57,12 @@ fun main(args) =
 		                end
 		val _ = println("Fragmentos de string: " ^ Int.toString (List.length(str_frags)) ^ ": " ^ concatWith ", " (List.map (fn (l, s) => "(" ^ l ^ ", " ^ s ^ ")") str_frags))            
 		val _ = println(tigertrans.Ir frags)    
-		(* fun canon_frag (tigerframe.PROC {body, frame}) = (tigercanon.canonizar body, frame)*)
-		fun canon_frag (tigerframe.PROC {body, frame}) = (tigercanon.linearize body, frame)
+		val canonizar = tigercanon.traceSchedule o tigercanon.basicBlocks o tigercanon.linearize
+		fun canon_frag (tigerframe.PROC {body, frame}) = (canonizar body, frame) 
+		(* fun canon_frag (tigerframe.PROC {body, frame}) = (tigercanon.linearize body, frame) *)
 		  | canon_frag _ = raise Fail "error interno (canon_frag): no es proc"
 		val canon_frags = List.map canon_frag func_frags
-		val _ = tigerinterp.inter false canon_frags str_frags
+		val _ = tigerinterp.inter true canon_frags str_frags
 	in
 		print "yes!!\n"
 	end	handle Fail s => print("Fail: "^s^"\n")

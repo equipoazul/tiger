@@ -244,7 +244,7 @@ fun transExp(venv, tenv) =
         {exp=letExp(decs', expbody), ty=tybody}
       end 
     | trexp(BreakExp nl) =
-      {exp=nilExp(), ty=TUnit} 
+      {exp=breakExp(), ty=TUnit} 
       
     | trexp(ArrayExp({typ, size, init}, nl)) =
       let
@@ -256,14 +256,12 @@ fun transExp(venv, tenv) =
         val tysize = trexp size
       in 
         if (#ty tysize) <> TInt then error("Tamaño de array inválido",nl) 
-        else {exp=nilExp(), ty=TArray (#ty t)}
+        else {exp=arrayExp{size=(#exp tysize), init=(#exp tyinit)}, ty=TArray (#ty t)}
       end
-      
-    and trvar(SimpleVar s, nl) =
-      (case tabBusca(s, venv) of 
-         SOME (Var {access=acc, ty=t, level=lv}) => {exp=simpleVar(acc, lv), ty=t}
-        |SOME (VIntro {access=acc, level=lv}) => {exp=simpleVar(acc, lv), ty=TInt} 
-        | _ => error("Variable inexistente", nl))
+    and trvar(SimpleVar s, nl) = (case tabBusca(s, venv) of 
+                                       SOME (Var {access=acc, ty=t, level=lv}) => {exp=simpleVar(acc, lv), ty=t}
+                                      |SOME (VIntro {access=acc, level=lv}) => {exp=simpleVar(acc, lv), ty=TInt} 
+                                      | _ => error("Variable inexistente", nl))
     (*fieldvar-> v.s*) 
     | trvar(FieldVar(v, s), nl) =
       let
@@ -368,7 +366,7 @@ fun transExp(venv, tenv) =
         val funcBatchList = map procBody fs
         val bodies = map (fn {exp=e, ty=t} => functionDec(e, topLevel(), false)) funcBatchList
       in 
-        (venv', tenv, [{var=(CONST 0), exp=seqExp(bodies)}])
+        (venv', tenv, [{var=unitExp(), exp=seqExp(bodies)}])
       end 
     | trdec (venv,tenv) (TypeDec ts) =
         let
