@@ -341,6 +341,9 @@ fun transExp(venv, tenv) =
                                                 |_ => error("Error en el tipo de retorno"^t^".", pos))
                                   |_ => TUnit)
         val venv' = foldr (fn (x, venvv) => tabInserta(#name (#1 x), Func{level=topLevel(), label=name', formals=map #typ (getFormals (#2 x) (#params (#1 x))), result=getResult (#2 x) (#result (#1 x)), extern=false}, venvv))  venv fs      
+
+        (* Creamos los frames de la funcion *)
+
         fun procBody (r, pos) = 
             let
                 val formals = getFormals pos (#params r) 
@@ -349,7 +352,12 @@ fun transExp(venv, tenv) =
                    el body deberia encontrar la funcion que llama (que es ella misma) *)
                 val acc = allocLocal (topLevel()) false
                 val level = getActualLev()
+                val _ = print("=============> Procesando" ^ (#name r)^"\n")
+                val newlev = newLevel({parent=topLevel(), name=(#name r), formals=[]})
+                val _ = pushLevel newlev
+                 (*newLevel{parent={parent, frame, level}, name, formals}*)
                 val b_venv = foldr (fn (x, xs) => tabRInserta(#name x, Var {access=acc, level=level, ty=(#typ x)}, xs)) venv' formals 
+
                 val {exp=expBody, ty=tyBody} = transExp (b_venv, tenv) (#body r)
                 val tipodeclarado = getResult 1 (#result r)
                 val _ = if tiposIguales tipodeclarado TUnit then
@@ -365,7 +373,12 @@ fun transExp(venv, tenv) =
             end  
         (* Obtenemos el body y el tipo de todas las funciones el batch *)             
         val funcBatchList = map procBody fs
-        val functions = map (fn {exp=e, ty=t} => {var=functionDec(e, topLevel(), tiposIguales t TUnit), exp=e}) funcBatchList
+        val functions = map (fn {exp=e, ty=t} => let val _ = preFunctionDec()
+        	                                         val f = {var=functionDec(e, topLevel(), tiposIguales t TUnit), exp=e}
+        	                                         val _ = postFunctionDec()
+        	                                     in
+        	                                     	 f
+    	                                     	 end) funcBatchList
       in 
         (venv', tenv, functions)
       end 

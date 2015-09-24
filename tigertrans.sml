@@ -120,16 +120,22 @@ fun stringExp(s: string) =
 		val str = ".string \""^s^"\""
 		val _ = datosGlobs:=(!datosGlobs @ [STRING(l, len), STRING("", str)])
 	in	Ex(NAME l) end
+
 fun preFunctionDec() =
 	(pushSalida(NONE);
 	actualLevel := !actualLevel+1)
+
 fun functionDec(e, l, proc) =
 	let	val body =
 				if proc then unNx e
 				else MOVE(TEMP rv, unEx e)
 		val body' = procEntryExit1(#frame l, body)
 		val () = procEntryExit{body=Nx body', level=l}
-	in	Ex(CONST 0) end
+	in	
+		Ex(CONST 25)
+	end
+
+
 fun postFunctionDec() =
 	(popSalida(); actualLevel := !actualLevel-1)
 
