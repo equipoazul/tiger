@@ -266,7 +266,7 @@ fun transExp(venv, tenv) =
     | trvar(FieldVar(v, s), nl) =
       let
         val {exp=expVar, ty=tyVar} = trvar(v, nl)
-        val _ = (print("-------------------------\n"); print(tigerit.tree(tigertrans.stmToExp expVar)); ("-------------------------\n\n"))
+        val _ = (print("-------------------------\n"); print(tigerit.tree(tigertrans.stmToExp expVar)); print ("-------------------------\n\n"))
         val (l, u) = (case (tipoReal tyVar) of
                         TRecord l' => l'                  
                         | _ => error(s^" No es un record", nl))

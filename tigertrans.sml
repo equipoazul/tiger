@@ -181,9 +181,10 @@ end
 
 fun recordExp l =
 let
-	val li = List.map (fn (e, i) => CONST i) l
+	val li = List.map (fn (e, i) => unEx e) l
+	val len = CONST (List.length l)
 in
-	Ex (externalCall("_allocRecord", li))
+	Ex (externalCall("_allocRecord", len::li))
 end
 
 fun arrayExp{size, init} =
@@ -249,8 +250,12 @@ fun seqExp ([]:exp list) = Nx (EXP(CONST 0))
 
 
 fun letExp ([], body) = Ex (unEx body)
- |  letExp (inits, body) = seqExp(inits @ [body])
-
+ |  letExp (inits, body) = let
+                            val moves = List.map (fn {var=v, exp=e} => MOVE (unEx v, unEx e)) inits
+                           in
+                             Ex (ESEQ(seq moves,unEx body))
+                           end
+                           
 fun preWhileForExp() = pushSalida(SOME(newlabel()))
 
 fun postWhileForExp() = (popSalida(); ())

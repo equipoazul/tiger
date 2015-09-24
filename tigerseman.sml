@@ -236,7 +236,7 @@ fun transExp(venv, tenv) =
           let
             val (v', t', exp2) = trdec (v, t) d 
           in
-            (v', t', exp1@(map #exp exp2))
+            (v', t', exp1@exp2)
         end
         val (venv', tenv', decs') = List.foldl tmp (venv, tenv, []) decs
         val {exp=expbody,ty=tybody} = transExp (venv', tenv') body
