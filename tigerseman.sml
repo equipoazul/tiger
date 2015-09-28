@@ -90,7 +90,8 @@ fun transExp(venv, tenv) =
                         | _ => error (func^" no es una función", nl)
         val b = List.foldr (fn (x, rest) => (tiposIguales (#1 x) (#2 x)) andalso rest) true (zipEq (#formals envEntry) formalsArgs nl)
       in  
-        if not b then error("Error en los argumentos de la funcion (tipos)", nl) else {exp=callExp(func, false, false, topLevel(), formalsArgsExp), ty=(#result envEntry)} 
+        if not b then error("Error en los argumentos de la funcion (tipos)", nl) 
+        else {exp=callExp(func, #extern envEntry, tiposIguales (#result envEntry) TUnit, #level envEntry, formalsArgsExp), ty=(#result envEntry)} 
       end
     | trexp(OpExp({left, oper=EqOp, right}, nl)) =
       let
@@ -340,20 +341,21 @@ fun transExp(venv, tenv) =
                                                 SOME t' => t'
                                                 |_ => error("Error en el tipo de retorno"^t^".", pos))
                                   |_ => TUnit)
-        val venv' = foldr (fn (x, venvv) => tabInserta(#name (#1 x), Func{level=topLevel(), label=name', formals=map #typ (getFormals (#2 x) (#params (#1 x))), result=getResult (#2 x) (#result (#1 x)), extern=false}, venvv))  venv fs      
+        val venv' = foldr (fn (x, venvv) => tabInserta(#name (#1 x), Func{level=topLevel(), label=name', formals=map #typ (getFormals (#2 x) (#params (#1 x))), result=getResult (#2 x) (#result (#1 x)), extern=true}, venvv))  venv fs      
 
         (* Creamos los frames de la funcion *)
 
         fun procBody (r, pos) = 
             let
                 val formals = getFormals pos (#params r) 
+                val escapes = map (fn x => !(#escape x)) (#params r)
                   
                 (* Aca hay que pasarle el venv' y no el venv por si el body hace una llamada recursiva, si sucede esto
                    el body deberia encontrar la funcion que llama (que es ella misma) *)
                 val acc = allocLocal (topLevel()) false
                 val level = getActualLev()
-                val _ = print("=============> Procesando" ^ (#name r)^"\n")
-                val newlev = newLevel({parent=topLevel(), name=(#name r), formals=[]})
+                val _ = print("=============> Procesando " ^ (#name r)^"\n")
+                val newlev = newLevel({parent=topLevel(), name=(#name r), formals=escapes})
                 val _ = pushLevel newlev
                  (*newLevel{parent={parent, frame, level}, name, formals}*)
                 val b_venv = foldr (fn (x, xs) => tabRInserta(#name x, Var {access=acc, level=level, ty=(#typ x)}, xs)) venv' formals 

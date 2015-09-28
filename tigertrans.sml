@@ -221,6 +221,7 @@ fun callExp (name, external, isproc, lev:level, ls) =
 		   				   		 	preparaArgs t (rt, (MOVE (TEMP t', unEx h))::re)
 		   				   		 end
 		val (la, la') = preparaArgs (rev ls) ([], [])
+		val _ = print "Asssssssdlakjskldajsdjksaajksklsajddsjlkadjlasjlksadjdksa"
 		val ta' = if external then la else fplex::la
 	in 
 		if isproc then Nx (seq(la'@[EXP (CALL (NAME name, ta'))]))
