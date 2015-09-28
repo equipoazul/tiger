@@ -1,0 +1,9 @@
+/* define valid mutually recursive procedures */
+let
+
+function do_nothing1 (a : int, b : string)=
+                ()		
+
+in
+	do_nothing1 (0, "str2"); 0
+end

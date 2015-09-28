@@ -101,6 +101,7 @@ in
 end
 
 val datosGlobs = ref ([]: frag list)
+
 fun procEntryExit{level: level, body} =
 	let	val label = STRING(name(#frame level), "")
 		val body' = PROC{frame= #frame level, body=unNx body}
@@ -132,7 +133,7 @@ fun functionDec(e, l, proc) =
 		val body' = procEntryExit1(#frame l, body)
 		val () = procEntryExit{body=Nx body', level=l}
 	in	
-		Ex(CONST 25)
+	   Ex (TEMP rv)
 	end
 
 
@@ -345,6 +346,7 @@ fun ifThenElseExp {test,then',else'} =
 					   MOVE (TEMP r, expThen),
 					   LABEL l2,
 					   MOVE (TEMP r, expElse)]), TEMP r))
+
 	end
 
 fun ifThenElseExpUnit {test,then',else'} =
@@ -397,14 +399,17 @@ fun binOpIntRelExp {left,oper,right} =
 					 | _ => raise Fail "Error interno al interpretar operaciones binarias internas"  
 		val lexp = unEx left
 		val rexp = unEx right
-		val (t, f) = (newtemp(), newtemp())
+		val (t, f) = (newlabel(), newlabel())
 	in
-		Nx (seq([LABEL t,
-				 MOVE (TEMP r, CONST 1),
-				 LABEL f,
+ 		Ex (ESEQ(seq([
+ 		         CJUMP (oper, lexp, rexp, t, f),
+ 		         LABEL t,
 				 MOVE (TEMP r, CONST 0),
-				 CJUMP (oper, lexp, rexp, t, f)]))
+				 LABEL f,
+				 MOVE (TEMP r, CONST 1)]), TEMP r))
 	end
+	
+
 
 fun binOpStrExp {left,oper,right} =
 	let

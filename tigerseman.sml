@@ -369,13 +369,13 @@ fun transExp(venv, tenv) =
                                 error("El tipo declarado y el de retorno no coinciden", 666)
                             else ()
             in
-                {exp=expBody, ty=tyBody}
+                {exp=expBody, ty=tyBody, lvl=newlev}
             end  
         (* Obtenemos el body y el tipo de todas las funciones el batch *)             
         val funcBatchList = map procBody fs
-        val functions = map (fn {exp=e, ty=t} => let val _ = preFunctionDec()
-        	                                         val f = {var=functionDec(e, topLevel(), tiposIguales t TUnit), exp=e}
-        	                                         val _ = postFunctionDec()
+        val functions = map (fn {exp=e, ty=t, lvl=l} => let val _ = preFunctionDec()
+        	                                                val f = {var=functionDec(e, l, tiposIguales t TUnit), exp=e}
+               	                                            val _ = postFunctionDec()
         	                                     in
         	                                     	 f
     	                                     	 end) funcBatchList
