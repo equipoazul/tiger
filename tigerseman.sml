@@ -343,23 +343,25 @@ fun transExp(venv, tenv) =
                                   |_ => TUnit)
         val venv' = foldr (fn (x, venvv) => tabInserta(#name (#1 x), Func{level=topLevel(), label=name', formals=map #typ (getFormals (#2 x) (#params (#1 x))), result=getResult (#2 x) (#result (#1 x)), extern=true}, venvv))  venv fs      
 
-        (* Creamos los frames de la funcion *)
-
-        fun procBody (r, pos) = 
-            let
+        (* f: {name: symbol, params: field list, result: symbol option, body: exp} * pos) *)
+        fun procArgs (r, pos) = 
+            let 
                 val formals = getFormals pos (#params r) 
                 val escapes = map (fn x => !(#escape x)) (#params r)
-                  
-                (* Aca hay que pasarle el venv' y no el venv por si el body hace una llamada recursiva, si sucede esto
-                   el body deberia encontrar la funcion que llama (que es ella misma) *)
-                val acc = allocLocal (topLevel()) false
                 val level = getActualLev()
                 val _ = print("=============> Procesando " ^ (#name r)^"\n")
-                val newlev = newLevel({parent=topLevel(), name=(#name r), formals=escapes})
-                val _ = pushLevel newlev
+                val newlevel = newLevel {parent=topLevel(), name=(#name r), formals=escapes}
+                val acc = map (fn x => (allocArg newlevel x)) escapes
+                
                  (*newLevel{parent={parent, frame, level}, name, formals}*)
-                val b_venv = foldr (fn (x, xs) => tabRInserta(#name x, Var {access=acc, level=level, ty=(#typ x)}, xs)) venv' formals 
-
+                val b_venv = foldr (fn (x, xs) => tabRInserta(#name (#1(x)), Var {access=(#2(x)), level=level, ty=(#typ (#1(x)))}, xs)) venv' (ListPair.zip (formals, acc))
+            in
+               (b_venv, newlevel)     
+            end
+ 
+            
+        fun procBody (r, pos) b_venv = 
+            let
                 val {exp=expBody, ty=tyBody} = transExp (b_venv, tenv) (#body r)
                 val tipodeclarado = getResult 1 (#result r)
                 val _ = if tiposIguales tipodeclarado TUnit then
@@ -371,16 +373,27 @@ fun transExp(venv, tenv) =
                                 error("El tipo declarado y el de retorno no coinciden", 666)
                             else ()
             in
-                {exp=expBody, ty=tyBody, lvl=newlev}
+                {exp=expBody, ty=tyBody}
             end  
+        
         (* Obtenemos el body y el tipo de todas las funciones el batch *)             
-        val funcBatchList = map procBody fs
-        val functions = map (fn {exp=e, ty=t, lvl=l} => let val _ = preFunctionDec()
+        (*val funcBatchList = map procBody fs*)
+        val functions = map (fn f => let val _ = preFunctionDec()
+                                         val (b_venv, l) = procArgs f
+                                         val {exp=e, ty=t} = procBody f b_venv
+                                         val ret = {var=functionDec(e, l, tiposIguales t TUnit), exp=e}
+                                         val _ = postFunctionDec()
+                                     in
+                                         ret
+                                     end) fs
+        (*val functions = map (fn {exp=e, ty=t, lvl=l} => let val _ = preFunctionDec()
+                                                            val b_venv = map procArgs fs
+                                                            val _ = map procBody                                                    
         	                                                val f = {var=functionDec(e, l, tiposIguales t TUnit), exp=e}
                	                                            val _ = postFunctionDec()
         	                                     in
         	                                     	 f
-    	                                     	 end) funcBatchList
+    	                                     	 end) fs*)
       in 
         (venv', tenv, functions)
       end 

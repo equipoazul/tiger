@@ -90,7 +90,8 @@ fun transExp(venv, tenv) =
                         | _ => error (func^" no es una función", nl)
         val b = List.foldr (fn (x, rest) => (tiposIguales (#1 x) (#2 x)) andalso rest) true (zipEq (#formals envEntry) formalsArgs nl)
       in  
-        if not b then error("Error en los argumentos de la funcion (tipos)", nl) else {exp=callExp(func, false, false, topLevel(), formalsArgsExp), ty=(#result envEntry)} 
+        if not b then error("Error en los argumentos de la funcion (tipos)", nl) 
+        else {exp=callExp(func, #extern envEntry, tiposIguales (#result envEntry) TUnit, #level envEntry, formalsArgsExp), ty=(#result envEntry)} 
       end
     | trexp(OpExp({left, oper=EqOp, right}, nl)) =
       let
@@ -236,7 +237,7 @@ fun transExp(venv, tenv) =
           let
             val (v', t', exp2) = trdec (v, t) d 
           in
-            (v', t', exp1@(map #exp exp2))
+            (v', t', exp1@exp2)
         end
         val (venv', tenv', decs') = List.foldl tmp (venv, tenv, []) decs
         val {exp=expbody,ty=tybody} = transExp (venv', tenv') body
@@ -340,16 +341,27 @@ fun transExp(venv, tenv) =
                                                 SOME t' => t'
                                                 |_ => error("Error en el tipo de retorno"^t^".", pos))
                                   |_ => TUnit)
-        val venv' = foldr (fn (x, venvv) => tabInserta(#name (#1 x), Func{level=topLevel(), label=name', formals=map #typ (getFormals (#2 x) (#params (#1 x))), result=getResult (#2 x) (#result (#1 x)), extern=false}, venvv))  venv fs      
-        fun procBody (r, pos) = 
-            let
+        val venv' = foldr (fn (x, venvv) => tabInserta(#name (#1 x), Func{level=topLevel(), label=name', formals=map #typ (getFormals (#2 x) (#params (#1 x))), result=getResult (#2 x) (#result (#1 x)), extern=true}, venvv))  venv fs      
+
+        (* f: {name: symbol, params: field list, result: symbol option, body: exp} * pos) *)
+        fun procArgs (r, pos) = 
+            let 
                 val formals = getFormals pos (#params r) 
-                  
-                (* Aca hay que pasarle el venv' y no el venv por si el body hace una llamada recursiva, si sucede esto
-                   el body deberia encontrar la funcion que llama (que es ella misma) *)
-                val acc = allocLocal (topLevel()) false
+                val escapes = map (fn x => !(#escape x)) (#params r)
                 val level = getActualLev()
-                val b_venv = foldr (fn (x, xs) => tabRInserta(#name x, Var {access=acc, level=level, ty=(#typ x)}, xs)) venv' formals 
+                val _ = print("=============> Procesando " ^ (#name r)^"\n")
+                val newlevel = newLevel {parent=topLevel(), name=(#name r), formals=escapes}
+                val acc = map (fn x => (allocArg newlevel x)) [true]
+                
+                 (*newLevel{parent={parent, frame, level}, name, formals}*)
+                val b_venv = foldr (fn (x, xs) => tabRInserta(#name (#1(x)), Var {access=(#2(x)), level=level, ty=(#typ (#1(x)))}, xs)) venv' (ListPair.zip (formals, acc))
+            in
+               (b_venv, newlevel)     
+            end
+ 
+            
+        fun procBody (r, pos) b_venv = 
+            let
                 val {exp=expBody, ty=tyBody} = transExp (b_venv, tenv) (#body r)
                 val tipodeclarado = getResult 1 (#result r)
                 val _ = if tiposIguales tipodeclarado TUnit then
@@ -363,9 +375,25 @@ fun transExp(venv, tenv) =
             in
                 {exp=expBody, ty=tyBody}
             end  
+        
         (* Obtenemos el body y el tipo de todas las funciones el batch *)             
-        val funcBatchList = map procBody fs
-        val functions = map (fn {exp=e, ty=t} => {var=functionDec(e, topLevel(), tiposIguales t TUnit), exp=e}) funcBatchList
+        (*val funcBatchList = map procBody fs*)
+        val functions = map (fn f => let val _ = preFunctionDec()
+                                         val (b_venv, l) = procArgs f
+                                         val {exp=e, ty=t} = procBody f b_venv
+                                         val ret = {var=functionDec(e, l, tiposIguales t TUnit), exp=e}
+                                         val _ = postFunctionDec()
+                                     in
+                                         ret
+                                     end) fs
+        (*val functions = map (fn {exp=e, ty=t, lvl=l} => let val _ = preFunctionDec()
+                                                            val b_venv = map procArgs fs
+                                                            val _ = map procBody                                                    
+        	                                                val f = {var=functionDec(e, l, tiposIguales t TUnit), exp=e}
+               	                                            val _ = postFunctionDec()
+        	                                     in
+        	                                     	 f
+    	                                     	 end) fs*)
       in 
         (venv', tenv, functions)
       end 

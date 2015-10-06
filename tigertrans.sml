@@ -228,7 +228,9 @@ fun callExp (name, external, isproc, lev:level, ls) =
 		else
 			let val tmp = newtemp()
 			in
-				Ex (ESEQ (seq(la'@[EXP (CALL (NAME name, ta')),
+				(*Ex (ESEQ (seq(la'@[EXP (CALL (NAME name, ta')),
+								   MOVE (TEMP tmp, TEMP rv)]), TEMP tmp))*)
+   			   Ex (ESEQ (seq([MOVE (MEM (BINOP (MINUS, TEMP fp, CONST 12)), CONST 55)]@[EXP (CALL (NAME name, ta')),
 								   MOVE (TEMP tmp, TEMP rv)]), TEMP tmp))
 			end
 	end

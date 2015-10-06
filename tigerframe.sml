@@ -86,6 +86,5 @@ fun allocLocal (f: frame) b =
 fun exp(InFrame k) e = MEM(BINOP(PLUS, TEMP(fp), CONST k))
 | exp(InReg l) e = TEMP l
 fun externalCall(s, l) = CALL(NAME s, l)
-
 fun procEntryExit1 (frame,body) = body
 end
