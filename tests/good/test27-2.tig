@@ -1,0 +1,8 @@
+/* locals hide globals */
+let
+	var a := 25
+
+	function g (b : int) : int = a 
+in
+ g (43)
+end

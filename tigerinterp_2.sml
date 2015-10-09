@@ -1,15 +1,15 @@
 (*
-	Intérprete de código intermedio canonizado
+	IntÃ©rprete de cÃ³digo intermedio canonizado
 	inter a b c recibe:
-	a: bool - false sólo ejecuta el código, true muestra en cada paso la instrucción a ejecutar y el estado de la memoria y temporarios
-	b: (tigertree.stm list*tigerframe.frame) list - cada elemento de la lista es un par con la lista de tigertree.stm devuelta por el canonizador y el frame de cada función
-	c: (tigertemp.label*string) list - Una lista con un elemento por cada string definido en el código. Cada elemento es un par formado por el label y el string.
+	a: bool - false sÃ³lo ejecuta el cÃ³digo, true muestra en cada paso la instrucciÃ³n a ejecutar y el estado de la memoria y temporarios
+	b: (tigertree.stm list*tigerframe.frame) list - cada elemento de la lista es un par con la lista de tigertree.stm devuelta por el canonizador y el frame de cada funciÃ³n
+	c: (tigertemp.label*string) list - Una ista con un elemento por cada string definido en el cÃ³digo. Cada elemento es un par formado por el label y el string.
 	inter usa: 
 		Constantes de tigerframe: wSz, rv, fp
-		Funciones de tigerframe: formals, exp. formals (Appel, pág 135) debe devolver una lista con los tigerframe.access de cada argumento pasado a la función, esto es el tigerframe.access que se usa en el body de la función para referirse a cada argumento. También debe devolver un tigerframe.access para el static link, como primer elemento de la lista.
-	Nota: en una máquina de N bits los enteros de ML tienen N-1 bits. El intérprete fallará si se usan números muy grandes.
+		Funciones de tigerframe: formals, exp. formals (Appel, pÃ¡g 135) debe devolver una lista con los tigerframe.access de cada argumento pasado a la funciÃ³n, esto es el tigerframe.access que se usa en el body de la funciÃ³n para referirse a cada argumento. TambiÃ©n debe devolver un tigerframe.access para el static link, como primer elemento de la lista.
+	Nota: en una mÃ¡quina de N bits los enteros de ML tienen N-1 bits. El intÃ©rprete fallarÃ¡ si se usan nÃºmeros muy grandes.
 *)
-structure tigerinterp =
+structure tigerinterp:>tigerinterp =
 struct
 	open tigertab
 	open Dynarray
@@ -18,6 +18,8 @@ struct
 	fun inter showdebug (funfracs: (stm list*tigerframe.frame) list) (stringfracs: (tigertemp.label*string) list) =
 	let
 		(* Memoria y registros *)
+	        (*val _ = print("stringfracs")
+                val _ = List.map (fn (x,y) => print("Guardamos str: "^y^" en el lab:"^x^"\n")) stringfracs*)
 		local
 			val tabTemps: (tigertemp.temp, int ref) Tabla ref = ref (tabNueva())
 			val tabMem: (int, int ref) Tabla ref = ref (tabNueva())
@@ -58,7 +60,7 @@ struct
 			end
 		end
 
-		(* alocación de memoria *)
+		(* alocaciÃ³n de memoria *)
 		local
 			val nextfree = ref 0
 		in
@@ -95,27 +97,76 @@ struct
 					(update(stringArray, idx, str); storeMem addr idx; addr)
 				end
 		end
-		val _ = List.map (fn (lab, str) => storeLabel lab (storeString str)) stringfracs
+		val _ = List.map (fn (lab, str) => (storeLabel lab (storeString str))) stringfracs
 
 		(* Funciones de biblioteca *)
+                (*
+                   Funcion auxiliar para hacer andar las funciones que manipulan strings 
+                   Asumimos como hipÃ³tesis que si se trae de memoria una cadena que empieza
+                   con .long entonces esta era una cadena que viene del fuente tiger y que
+                   el string estÃ¡ en strPtr+tigerframe.wSz y tiene el formato .string "[el string]"
+                   Si no tiene un .long entonces viene de entrada standar y el formateado es distinto
+                *)
+                fun getRealString(strPtr:int):string =
+                   let
+                        val str = explode (loadString strPtr)
+                        val (str2,delFuente) = case str of
+                                                #"."::( #"l"::( #"o"::( #"n"::( #"g"::_)))) => (explode (loadString (strPtr + tigerframe.wSz)),true)
+                                               | _ => (str,false)
+                        (* format1 lleva los \x0a y \x09 a \n y \t respectivamente*)
+                        fun format1 [] = []
+                        | format1 (#"\\"::(#"x"::(#"0"::(#"a"::xs)))) = #"\n"::format1 xs
+                        | format1 (#"\\"::(#"x"::(#"0"::(#"9"::xs)))) = #"\t"::format1 xs
+                        | format1 (x::xs) = x::format1 xs
+                        
+                        (*front quita la comilla al final de un string del fuente*)
+                        fun front [] = raise Fail "front en []"
+                        | front [x] = []
+                        | front (x::xs) = x :: front xs
+
+                        (*ripFront quita el .string " del inicio de un string del fuente*)
+                        fun ripFront xs = List.drop(xs, 9)
+
+                        val finalStr = if delFuente 
+                                       then (front o ripFront o format1) str2
+                                       else str2
+                   in
+			implode finalStr
+                   end
+              
+                
+
 		fun initArray(siz::init::rest) =
 		let
-			val mem = getNewMem(siz)
-			val l = (mem+1, siz)::(List.tabulate(siz, (fn x => (mem+tigerframe.wSz*x, init))))
+			val mem = getNewMem(siz+1)
+			val l = (mem, siz)::(List.tabulate(siz, (fn x => (mem+tigerframe.wSz*(x+1), init))))
 			val _ = List.map (fn (a,v) => storeMem a v) l
 		in
-			mem
+			mem+tigerframe.wSz
 		end
-		| initArray _ = raise Fail("No debería pasar (initArray)")
+		| initArray _ = raise Fail("No deberÃ­a pasar (initArray)")
 
 		fun checkIndexArray(arr::idx::rest) =
+		let
+			val siz = loadMem (arr-tigerframe.wSz)
+			(* val siz = loadMem (arr+1) *)
+            val _ = print("Size:"^makestring arr^"\n")
+			val _ = if (idx>=siz orelse idx<0) then raise Fail("Indice fuera de rango"^" siz:"^Int.toString siz^" idx:"^Int.toString idx^"\n") else ()
+		in
+			0
+		end
+		| checkIndexArray _ = raise Fail("No deberÃ­a pasar (checkIndexArray)")
+		
+		
+		fun checkindex(arr::idx::rest) =
 		let
 			val siz = loadMem (arr+1)
 			val _ = if (idx>=siz orelse idx<0) then raise Fail("Índice fuara de rango\n") else ()
 		in
 			0
 		end
-		| checkIndexArray _ = raise Fail("No debería pasar (checkIndexArray)")
+
+		| checkindex _ = raise Fail("No deberÃ­a pasar (checkindex)")
 		
 		fun allocRecord(ctos::vals) =
 		let
@@ -126,7 +177,7 @@ struct
 		in
 			mem
 		end
-		| allocRecord _ = raise Fail("No debería pasar (allocRecord)")
+		| allocRecord _ = raise Fail("No deberÃ­a pasar (allocRecord)")
 		
 		fun checkNil(r::rest) =
 		let
@@ -134,12 +185,16 @@ struct
 		in
 			0
 		end
-		| checkNil _ = raise Fail("No debería pasar (checkNil)")
+		| checkNil _ = raise Fail("No deberÃ­a pasar (checkNil)")
 
 		fun stringCompare(strPtr1::strPtr2::rest) =
 		let
-			val str1 = loadString strPtr1
-			val str2 = loadString strPtr2
+                        val str1 = getRealString strPtr1
+                        val str2 = getRealString strPtr2
+                      (* 
+                        val _ = print("ComparaciÃ³n entre "^str1^" y "^str2^"\n")
+                        val _ = if str1 = str2 then print("SON IGUALES\n") else print("SON DISTINTAS\n")
+                      *)
 			val res = String.compare(str1, str2)
 		in
 			case res of
@@ -147,27 +202,27 @@ struct
 				| EQUAL => 0
 				| GREATER => 1
 		end
-		| stringCompare _ = raise Fail("No debería pasar (stringCompare)")
+		| stringCompare _ = raise Fail("No deberÃ­a pasar (stringCompare)")
 
 		fun printFun(strPtr::rest) =
 		let
-			val str = loadString strPtr
+			val str = getRealString strPtr 
 			val _ = print(str)
 		in
 			0
 		end
-		| printFun _ = raise Fail("No debería pasar (printFun)")
+		| printFun _ = raise Fail("No deberÃ­a pasar (printFun)")
 
 		fun flushFun(args) = 0
 
 		fun ordFun(strPtr::rest) =
 		let
-			val str = loadString strPtr
-			val ch = hd(explode(str))
+                        val str = getRealString strPtr
+                        val ch = (hd o explode) str
 		in
-			ord(ch)
+                        ord(ch)
 		end
-		| ordFun _ = raise Fail("No debería pasar (ordFun)")
+		| ordFun _ = raise Fail("No deberÃ­a pasar (ordFun)")
 
 		fun chrFun(i::rest) =
 		let
@@ -176,42 +231,61 @@ struct
 		in
 			storeString str
 		end
-		| chrFun _ = raise Fail("No debería pasar (chrFun)")
+		| chrFun _ = raise Fail("No deberÃ­a pasar (chrFun)")
 
 		fun sizeFun(strPtr::rest) =
 		let
-			val str = loadString strPtr
+			val str = getRealString strPtr (* loadString strPtr*)
 		in
 			String.size(str)
 		end
-		| sizeFun _ = raise Fail("No debería pasar (sizeFun)")
+		| sizeFun _ = raise Fail("No deberÃ­a pasar (sizeFun)")
 
 		fun substringFun(strPtr::first::n::rest) =
 		let
-			val str = loadString strPtr
+			val str = getRealString strPtr (*loadString strPtr*)
 			val substr = String.substring(str, first, n)
 		in
 			storeString substr
 		end
-		| substringFun _ = raise Fail("No debería pasar (substringFun)")
+		| substringFun _ = raise Fail("No deberÃ­a pasar (substringFun)")
 
 		fun concatFun(strPtr1::strPtr2::rest) =
 		let
-			val str1 = loadString strPtr1
-			val str2 = loadString strPtr2
+			val str1 = getRealString strPtr1 (*loadString strPtr1*)
+			val str2 = getRealString strPtr2 (* loadString strPtr2*)
 			val res = str1^str2
 		in
 			storeString res
 		end
-		| concatFun _ = raise Fail("No debería pasar (concatFun)")
+		| concatFun _ = raise Fail("No deberÃ­a pasar (concatFun)")
 
 		fun notFun(v::rest) =
 			if (v=0) then 1 else 0
-		| notFun _ = raise Fail("No debería pasar (notFun)")
+		| notFun _ = raise Fail("No deberÃ­a pasar (notFun)")
 
 		fun getstrFun(args) = 
 		let
-			val str = TextIO.inputLine TextIO.stdIn
+
+			(*
+                          Estaba asÃ­
+                          val str = TextIO.inputLine TextIO.stdIn 
+                        *)
+                        (*
+                          Tiger llama a esta funciÃ³n con getchar, asÃ­ que espera un string de longitud 1
+                        *)
+                        val chr = TextIO.input1 TextIO.stdIn 
+                        val str = case chr of
+                                     NONE => raise Fail "error input NONE"
+                                     | SOME c => implode [c]
+                        (*
+                           NOTA: hay que usar implode [c] y no Char.toString c porque
+                           implode [#"\n"] = "\n"
+                           Char.toString #"\n" = "\\n"
+                          
+                        *)
+                        (*if c = #"\n" then Char.toString (#"\n") else Char.toString c*)
+                        (*val _ = print("Ingresaron un "^str^" \n")*)
 		in
 			storeString str
 		end
@@ -220,7 +294,9 @@ struct
 			tabInserList(tabNueva(),
 				[("_initArray", initArray),
 				("_checkIndexArray", checkIndexArray),
+				("_checkindex", checkindex),
 				("_allocRecord", allocRecord),
+				("_allocArray", initArray),
 				("_checkNil", checkNil),
 				("_stringcmp", stringCompare),
 				("print", printFun),
@@ -233,7 +309,7 @@ struct
 				("not", notFun),
 				("getstr", getstrFun)])
 
-		(* Evalúa una expresión, devuelve el valor (entero) *)
+		(* EvalÃºa una expresiÃ³n, devuelve el valor (entero) *)
 		fun evalExp(CONST t) = t
 		| evalExp(NAME n) = loadLabel n
 		| evalExp(TEMP t) = loadTemp t
@@ -266,7 +342,7 @@ struct
 					NAME l => l
 					| _ => raise Fail("CALL a otra cosa (no implemetado)\n")
 				val eargs = List.map evalExp args
-				(*Si lab es de biblioteca, usar la función de la tabla*)
+				(*Si lab es de biblioteca, usar la funciÃ³n de la tabla*)
 				val rv = case tabBusca(lab, tabLib) of
 					SOME f => f(eargs)
 					| NONE => evalFun(lab, eargs)
@@ -307,14 +383,17 @@ struct
 		end
 		| evalStm(SEQ(_,_)) = raise Fail("No canonizado\n")
 		| evalStm(LABEL _) = NONE
-		(* Ejecuta una llamada a función *)
+		(* Ejecuta una llamada a funciÃ³n *)
 		and evalFun(f, args) =
 			let
-				(* Encontrar la función*)
+				(* Encontrar la funciÃ³n*)
+				(*val _ = print("Fragmentos funfracs: " ^ Int.toString (List.length(funfracs)) ^ "\n")*)
 				val ffrac = List.filter (fn (body, frame) => tigerframe.name(frame)=f) funfracs
-				val _ = if (List.length(ffrac)<>1) then raise Fail ("No se encuentra la función, o repetida: "^f^"\n") else ()
-				val [(body, frame)] = ffrac
-				(* Mostrar qué se está haciendo, si showdebug *)
+				val _ = if (List.length(ffrac)>1) then raise Fail ("Funcion repetida: "^f^"\n") 
+				        else if (List.length(ffrac)<1) then raise Fail ("Funcion no encontrada: "^f^"\n")
+				        else ()
+				val [(body, frame)] = ffrac 
+				(* Mostrar quÃ© se estÃ¡ haciendo, si showdebug *)
 				val _ = if showdebug then (print((tigerframe.name frame)^":\n");List.app (print o tigerit.tree) body; print("Argumentos: "); List.app (fn n => (print(Int.toString(n)); print("  "))) args; print("\n")) else ()
 
 				fun execute l =
@@ -327,7 +406,7 @@ struct
 							case evalStm x of
 								SOME lab =>
 									let
-										fun f [] = raise Fail("No está el label en la función\n")
+										fun f [] = raise Fail("No estÃ¡ el label en la funciÃ³n\n")
 										| f (x::xs) =
 											(case x of
 												LABEL y => if (y=lab) then (x::xs) else f xs
@@ -347,12 +426,16 @@ struct
 				val fpPrev = loadTemp tigerframe.fp
 				val _ = storeTemp tigerframe.fp (fpPrev-1024*1024)
 				(* Poner argumentos donde la función los espera *)
-				val formals = map (fn x => tigerframe.exp x (TEMP tigerframe.fp)) (tigerframe.formals frame)
+				val formals = map (fn x => tigerframe.exp x (*(TEMP tigerframe.fp)*)) (tigerframe.formals frame)
 				val formalsValues = ListPair.zip(formals, args)
+				
+				(*val _ = print("formals (interp): " ^ List.map tigerit.tree formals*)
 				val _ = map (fn (x,y) => 
 					case x of
 						TEMP t => storeTemp t y
-						| MEM m => storeMem (evalExp m) y) formalsValues
+						| MEM m => storeMem (evalExp m) y 
+                        | _ => raise Fail "Esto no es una dirección de memoria ni registro") 
+
 				(* Ejecutar la lista de instrucciones *)
 				val _ = execute body
 				val rv = loadTemp tigerframe.rv
@@ -362,5 +445,6 @@ struct
 			in
 				rv
 			end
-	in (print("Comienzo de ejecución...\n"); evalFun("_tigermain", []); print("Fin de ejecución.\n")) end
+	in (print("Comienzo de ejecuciÃ³n...\n"); evalFun("_tigermain", []); print("Fin de ejecuciÃ³n.\n")) end
 end
+

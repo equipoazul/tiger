@@ -341,7 +341,8 @@ fun transExp(venv, tenv) =
                                                 SOME t' => t'
                                                 |_ => error("Error en el tipo de retorno"^t^".", pos))
                                   |_ => TUnit)
-        val venv' = foldr (fn (x, venvv) => tabInserta(#name (#1 x), Func{level=topLevel(), label=name', formals=map #typ (getFormals (#2 x) (#params (#1 x))), result=getResult (#2 x) (#result (#1 x)), extern=true}, venvv))  venv fs      
+         (* SIEMPRE va en false el extern. No se discute. Lo dijo Guille. *)
+        val venv' = foldr (fn (x, venvv) => tabInserta(#name (#1 x), Func{level=topLevel(), label=name', formals=map #typ (getFormals (#2 x) (#params (#1 x))), result=getResult (#2 x) (#result (#1 x)), extern=false}, venvv))  venv fs      
 
         (* f: {name: symbol, params: field list, result: symbol option, body: exp} * pos) *)
         fun procArgs (r, pos) = 
@@ -350,8 +351,9 @@ fun transExp(venv, tenv) =
                 val escapes = map (fn x => !(#escape x)) (#params r)
                 val level = getActualLev()
                 val _ = print("=============> Procesando " ^ (#name r)^"\n")
-                val newlevel = newLevel {parent=topLevel(), name=(#name r), formals=escapes}
+                val newlevel = newLevel {parent=topLevel(), name=(#name r)}
                 val acc = map (fn x => (allocArg newlevel x)) escapes
+                val _ = map (fn ac => addAccFrame ac newlevel) acc
                 
                  (*newLevel{parent={parent, frame, level}, name, formals}*)
                 val b_venv = foldr (fn (x, xs) => tabRInserta(#name (#1(x)), Var {access=(#2(x)), level=level, ty=(#typ (#1(x)))}, xs)) venv' (ListPair.zip (formals, acc))

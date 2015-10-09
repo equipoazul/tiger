@@ -42,33 +42,39 @@ val specialregs = [rv, fp, sp]
 val argregs = []
 val callersaves = []
 val calleesaves = []
+type register = string
+datatype access = InFrame of int | InReg of tigertemp.label
+
+
+fun  printAccess (InFrame k) = print ("InFrame " ^ Int.toString(k))
+    |printAccess (InReg k) = print ("InReg " ^ k)
 
 type frame = {
 	name: string,
-	formals: bool list,
+	formals: access list ref,
 	locals: bool list,
 	actualArg: int ref,
 	actualLocal: int ref,
 	actualReg: int ref
 }
-type register = string
-datatype access = InFrame of int | InReg of tigertemp.label
 datatype frag = PROC of {body: tigertree.stm, frame: frame}
 	| STRING of tigertemp.label * string
-fun newFrame{name, formals} = {
+fun newFrame{name} = {
 	name=name,
-	formals=formals,
+	formals=ref [InFrame(fpPrevLev)],
+	(*formals=ref [],*)
 	locals=[],
 	actualArg=ref argsInicial,
 	actualLocal=ref localsInicial,
 	actualReg=ref regInicial
 }
+fun addAccFrame access (frame:frame) = ((#formals frame) := !(#formals frame) @ [access] ; map printAccess (!(#formals frame)); ())
 fun name(f: frame) = #name f
 fun string(l, s) = l^tigertemp.makeString(s)^"\n"
-fun formals({formals=f, ...}: frame) = 
-	let	fun aux(n, []) = []
+fun formals({formals=f, ...}: frame) = !f
+	(*let	fun aux(n, []) = []
 		| aux(n, h::t) = InFrame(n)::aux(n+argsGap, t)
-	in aux(argsInicial, f) end
+	in aux(argsInicial, f) end *)
 fun maxRegFrame(f: frame) = !(#actualReg f)
 fun allocArg (f: frame) b = 
 	case b of
@@ -87,4 +93,6 @@ fun exp(InFrame k) e = MEM(BINOP(PLUS, TEMP(fp), CONST k))
 | exp(InReg l) e = TEMP l
 fun externalCall(s, l) = CALL(NAME s, l)
 fun procEntryExit1 (frame,body) = body
+
+
 end

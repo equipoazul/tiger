@@ -18,12 +18,12 @@ val actualLevel = ref ~1 (* _tigermain debe tener level = 0. *)
 fun getActualLev() = !actualLevel
 
 val outermost: level = {parent=NONE,
-	frame=newFrame{name="_tigermain", formals=[]}, level=0}
+	frame=newFrame{name="_tigermain"}, level=0}
 	(*frame=newFrame{name="_tigermain", formals=[]}, level=getActualLev()}*)
-fun newLevel{parent={parent, frame, level}, name, formals} =
+fun newLevel{parent={parent, frame, level}, name} =
 	{
 	parent=SOME frame,
-	frame=newFrame{name=name, formals=formals},
+	frame=newFrame{name=name},
 	level=level+1}
 fun allocArg{parent, frame, level} b = tigerframe.allocArg frame b
 fun allocLocal{parent, frame, level} b = tigerframe.allocLocal frame b
@@ -152,9 +152,11 @@ fun simpleVar(acc, nivel) =
         |InFrame k => 
             let 
                 fun aux 0 = TEMP fp
-                    |aux n = MEM (BINOP (PLUS, aux(!actualLevel - 1), aux(n-1)))
+                    |aux n = if n < 0 then raise Fail "(simpleVar) Error de memoria!\n"
+                             else MEM (BINOP (PLUS, aux(n - 1), CONST fpPrevLev))
+                             (*else MEM (BINOP (PLUS, aux(!actualLevel - 1), aux(n-1)))*)
              in
-                Ex (MEM (BINOP (PLUS, aux(!actualLevel - 1), CONST k)))
+                Ex (MEM (BINOP (PLUS, aux(!actualLevel - nivel), CONST k)))
             end
 
 fun varDec(acc) = simpleVar(acc, getActualLev())
@@ -203,13 +205,14 @@ in
 end
 
 fun callExp (name, external, isproc, lev:level, ls) = 
-	let fun memArray 0 = TEMP fp
-		   |memArray n = MEM (BINOP (PLUS, memArray (n-1), CONST fpPrevLev))
+	let fun memArray 0 = (print ("Holaaaa") ; TEMP fp)
+		   |memArray n = if n < 0 then raise Fail "Error de memoria"
+		                 else (print (Int.toString(n)); MEM (BINOP (PLUS, memArray (n-1), CONST fpPrevLev)))
 		   val fplex = if (#level lev) = !actualLevel then 
-		   					MEM (BINOP (PLUS, TEMP fp, CONST fpPrevLev))
+		   					(print ("Holaaaa2") ; MEM (BINOP (PLUS, TEMP fp, CONST fpPrevLev)))
 	   				   else if (#level lev) < !actualLevel then 
-	   				   		memArray (!actualLevel - ((#level lev) + 1))
-	   				   	else TEMP fp
+	   				   		(print ("Holaaaa3") ; memArray (!actualLevel - ((#level lev) + 1)))
+	   				   	else (print ("Holaaaa4") ; TEMP fp)
 		fun preparaArgs [] (rt, re) = (rt, re)
 		   |preparaArgs (h::t) (rt, re) = 
 		   				case h of
@@ -221,16 +224,13 @@ fun callExp (name, external, isproc, lev:level, ls) =
 		   				   		 	preparaArgs t (rt, (MOVE (TEMP t', unEx h))::re)
 		   				   		 end
 		val (la, la') = preparaArgs (rev ls) ([], [])
-		val _ = print "Asssssssdlakjskldajsdjksaajksklsajddsjlkadjlasjlksadjdksa"
 		val ta' = if external then la else fplex::la
 	in 
 		if isproc then Nx (seq(la'@[EXP (CALL (NAME name, ta'))]))
 		else
 			let val tmp = newtemp()
 			in
-				(*Ex (ESEQ (seq(la'@[EXP (CALL (NAME name, ta')),
-								   MOVE (TEMP tmp, TEMP rv)]), TEMP tmp))*)
-   			   Ex (ESEQ (seq([MOVE (MEM (BINOP (MINUS, TEMP fp, CONST 12)), CONST 55)]@[EXP (CALL (NAME name, ta')),
+				Ex (ESEQ (seq(la'@[EXP (CALL (NAME name, ta')),
 								   MOVE (TEMP tmp, TEMP rv)]), TEMP tmp))
 			end
 	end
@@ -258,6 +258,8 @@ fun seqExp ([]:exp list) = Nx (EXP(CONST 0))
 				| cond => Ex (ESEQ(seq(unx exps), unEx cond))
 		end
 
+
+fun addAccFrame access (level:level) =  tigerframe.addAccFrame access (#frame level) (*((#frame) level) @ [access]*)
 
 fun letExp ([], body) = Ex (unEx body)
  |  letExp (inits, body) = let

@@ -9,7 +9,9 @@ val fp : tigertemp.temp
 datatype access = InFrame of int | InReg of tigertemp.label
 val fpPrev : int
 val fpPrevLev : int
-val newFrame : {name: tigertemp.label, formals: bool list} -> frame
+val newFrame : {name: tigertemp.label} -> frame
+(* Esta funcion agrega los accces al frame alojado en el level que le pasamos *)
+val addAccFrame : access -> frame -> unit 
 val name : frame -> tigertemp.label
 val string : tigertemp.label * string -> string
 val formals : frame -> access list
