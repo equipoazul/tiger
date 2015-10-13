@@ -205,14 +205,12 @@ in
 end
 
 fun callExp (name, external, isproc, lev:level, ls) = 
-	let fun memArray 0 = (print ("Holaaaa") ; TEMP fp)
+	let fun memArray 0 = TEMP fp
 		   |memArray n = if n < 0 then raise Fail "Error de memoria"
 		                 else (print (Int.toString(n)); MEM (BINOP (PLUS, memArray (n-1), CONST fpPrevLev)))
-		   val fplex = if (#level lev) = !actualLevel then 
-		   					(print ("Holaaaa2") ; MEM (BINOP (PLUS, TEMP fp, CONST fpPrevLev)))
-	   				   else if (#level lev) < !actualLevel then 
-	   				   		(print ("Holaaaa3") ; memArray (!actualLevel - ((#level lev) + 1)))
-	   				   	else (print ("Holaaaa4") ; TEMP fp)
+		   val fplex = if (#level lev) = !actualLevel then MEM (BINOP (PLUS, TEMP fp, CONST fpPrevLev))
+	   				       else if (#level lev) < !actualLevel then memArray (!actualLevel - ((#level lev) - 1))
+	   				   	   else TEMP fp
 		fun preparaArgs [] (rt, re) = (rt, re)
 		   |preparaArgs (h::t) (rt, re) = 
 		   				case h of

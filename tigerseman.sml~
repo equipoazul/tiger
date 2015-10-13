@@ -276,7 +276,7 @@ fun transExp(venv, tenv) =
               SOME (str, typfv, index) => {exp=fieldVar(expVar, index), ty=typfv} (*TODO, hay que usar fieldvar pero no se que va en los parametros*)
             | _ => error("Campo de record \""^s^"\" inexistente", nl)
         end
-    (*fieldvar-> a[i]*) 
+    (*suscriptvar-> a[i]*) 
     | trvar(SubscriptVar(v, e), nl) =
       let
         val {exp=expVar, ty=tyVar} = trvar(v, nl)
@@ -341,21 +341,44 @@ fun transExp(venv, tenv) =
                                                 SOME t' => t'
                                                 |_ => error("Error en el tipo de retorno"^t^".", pos))
                                   |_ => TUnit)
-        val venv' = foldr (fn (x, venvv) => tabInserta(#name (#1 x), Func{level=topLevel(), label=name', formals=map #typ (getFormals (#2 x) (#params (#1 x))), result=getResult (#2 x) (#result (#1 x)), extern=false}, venvv))  venv fs      
+           
 
+        (* SIEMPRE va en false el extern. No se discute. Lo dijo Guille. *)
+        val venv' = foldr (fn (x, venvv) => let 
+                                                val f_name = (#name (#1 x))
+                                                val f_formals = map #typ (getFormals (#2 x) (#params (#1 x)))                           
+                                                val f_result = getResult (#2 x) (#result (#1 x))
+                                            in
+                                                tabInserta(f_name, 
+                                                           Func{level=newLevel{parent=topLevel(), name=f_name}, 
+                                                                label=name', 
+                                                                formals=f_formals, 
+                                                                result=f_result, 
+                                                                extern=false}, venvv)
+                                            end) venv fs
+        
         (* f: {name: symbol, params: field list, result: symbol option, body: exp} * pos) *)
         fun procArgs (r, pos) = 
             let 
                 val formals = getFormals pos (#params r) 
                 val escapes = map (fn x => !(#escape x)) (#params r)
                 val level = getActualLev()
-                val _ = print("=============> Procesando " ^ (#name r)^"\n")
-                val newlevel = newLevel {parent=topLevel(), name=(#name r)}
+                val newlevel = case tabBusca(#name r, venv') of
+                                    SOME (Func {level=l, ...}) => l
+                                    |_ => error("Funcion no encontrada en el entorno", pos)
                 val acc = map (fn x => (allocArg newlevel x)) escapes
                 val _ = map (fn ac => addAccFrame ac newlevel) acc
-                
-                 (*newLevel{parent={parent, frame, level}, name, formals}*)
-                val b_venv = foldr (fn (x, xs) => tabRInserta(#name (#1(x)), Var {access=(#2(x)), level=level, ty=(#typ (#1(x)))}, xs)) venv' (ListPair.zip (formals, acc))
+
+                val b_venv = foldr (fn (x, xs) => let 
+                                                      val arg_name = #name (#1(x))
+                                                      val arg_acc = #2 (x)
+                                                      val arg_typ = #typ (#1(x))
+                                                  in
+                                                      tabRInserta(arg_name, 
+                                                                 Var {access=arg_acc, 
+                                                                      level=level, 
+                                                                      ty=arg_typ}, xs) 
+                                                  end) venv' (ListPair.zip (formals, acc))
             in
                (b_venv, newlevel)     
             end
@@ -364,14 +387,14 @@ fun transExp(venv, tenv) =
         fun procBody (r, pos) b_venv = 
             let
                 val {exp=expBody, ty=tyBody} = transExp (b_venv, tenv) (#body r)
-                val tipodeclarado = getResult 1 (#result r)
+                val tipodeclarado = getResult pos (#result r)
                 val _ = if tiposIguales tipodeclarado TUnit then
                             if not (tiposIguales tyBody tipodeclarado) then 
-                                error("No se puede retornar un valor en un procedure", 666)
+                                error("No se puede retornar un valor en un procedure", pos)
                             else ()
                         else
                             if not (tiposIguales tyBody tipodeclarado) then 
-                                error("El tipo declarado y el de retorno no coinciden", 666)
+                                error("El tipo declarado y el de retorno no coinciden", pos)
                             else ()
             in
                 {exp=expBody, ty=tyBody}
@@ -387,14 +410,6 @@ fun transExp(venv, tenv) =
                                      in
                                          ret
                                      end) fs
-        (*val functions = map (fn {exp=e, ty=t, lvl=l} => let val _ = preFunctionDec()
-                                                            val b_venv = map procArgs fs
-                                                            val _ = map procBody                                                    
-        	                                                val f = {var=functionDec(e, l, tiposIguales t TUnit), exp=e}
-               	                                            val _ = postFunctionDec()
-        	                                     in
-        	                                     	 f
-    	                                     	 end) fs*)
       in 
         (venv', tenv, functions)
       end 

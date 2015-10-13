@@ -71,7 +71,7 @@ fun newFrame{name} = {
 fun addAccFrame access (frame:frame) = ((#formals frame) := !(#formals frame) @ [access] ; map printAccess (!(#formals frame)); ())
 fun name(f: frame) = #name f
 fun string(l, s) = l^tigertemp.makeString(s)^"\n"
-fun formals({formals=f, ...}: frame) = !f
+fun formals({formals=f, ...}: frame) = (map printAccess (!f); !f)
 	(*let	fun aux(n, []) = []
 		| aux(n, h::t) = InFrame(n)::aux(n+argsGap, t)
 	in aux(argsInicial, f) end *)
@@ -89,8 +89,8 @@ fun allocLocal (f: frame) b =
 		let	val ret = InFrame(!(#actualLocal f)+localsGap)
 		in	#actualLocal f:=(!(#actualLocal f)-1); ret end
 	| false => InReg(tigertemp.newtemp())
-fun exp(InFrame k) e = MEM(BINOP(PLUS, TEMP(fp), CONST k))
-| exp(InReg l) e = TEMP l
+fun exp(InFrame k) = MEM(BINOP(PLUS, TEMP(fp), CONST k))
+| exp(InReg l) = TEMP l
 fun externalCall(s, l) = CALL(NAME s, l)
 fun procEntryExit1 (frame,body) = body
 
