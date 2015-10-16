@@ -267,12 +267,27 @@ fun transExp(venv, tenv) =
     | trvar(FieldVar(v, s), nl) =
       let
         val {exp=expVar, ty=tyVar} = trvar(v, nl)
+
+        (* Buscamos que variable accede para obtener su access *)
+        (* TODO hay que ver que pasa si no es simplevarrrrrrrrrrrrrrrr *)
+        val simplvar = (case v of 
+                            SimpleVar ve => ve
+                          | FieldVar (v, s) => s
+                          | _ => error ("Campo de record invalido 1", nl))
+
+        val acc = (case tabBusca(simplvar, venv) of 
+                             SOME (Var {access=acc, ty=t, level=lv}) => acc
+                            |SOME (VIntro {access=acc, level=lv}) => acc
+                            | _ => error("Campo de record invalido 2", nl) )
+
+
         val (l, u) = (case (tipoReal tyVar) of
                         TRecord l' => l'                  
                         | _ => error(s^" No es un record", nl))
         in
           case List.find (fn x =>(#1)x = s) l of
-              SOME (str, typfv, index) => {exp=fieldVar(expVar, index), ty=typfv} (*TODO, hay que usar fieldvar pero no se que va en los parametros*)
+              (*SOME (str, typfv, index) => {exp=fieldVar(expVar, index), ty=typfv}*)
+              SOME (str, typfv, index) => {exp=fieldVar(expVar, acc), ty=typfv}
             | _ => error("Campo de record \""^s^"\" inexistente", nl)
         end
     (*suscriptvar-> a[i]*) 

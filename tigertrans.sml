@@ -161,17 +161,26 @@ fun simpleVar(acc, nivel) =
 
 fun varDec(acc) = simpleVar(acc, getActualLev())
 
+(*fun fieldVar(var, field) = *)
 fun fieldVar(var, field) = 
 let
 	val a = unEx var
 	val ra = newtemp()
 	val ri = newtemp()
+	val access = (case field of
+					InReg r => TEMP r
+					| InFrame n => CONST n)
 in
-	Ex( ESEQ(seq[MOVE(TEMP ra, a),
-		MOVE(TEMP ri, CONST field),
+Ex( ESEQ(seq[MOVE(TEMP ra, access),
+		MOVE(TEMP ri, CONST 1), (* EL CONST 1 CLARAMENTE ESTA MAL! *)
 		EXP(externalCall("_checkIndexArray", [TEMP ra, TEMP ri]))],
 		MEM(BINOP(PLUS, TEMP ra,
 			BINOP(MUL, TEMP ri, CONST tigerframe.wSz)))))
+(*	Ex( ESEQ(seq[MOVE(TEMP ra, a),
+		MOVE(TEMP ri, CONST field),
+		EXP(externalCall("_checkIndexArray", [TEMP ra, TEMP ri]))],
+		MEM(BINOP(PLUS, TEMP ra,
+			BINOP(MUL, TEMP ri, CONST tigerframe.wSz))))) *)
 end
 
 fun subscriptVar(arr, ind) =
