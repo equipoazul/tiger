@@ -28,4 +28,5 @@ struct
 	  | notRel UGE = ULT
 	  | notRel ULE = UGT
 	  | notRel UGT = ULE
+
 end

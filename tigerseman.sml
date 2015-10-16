@@ -282,7 +282,7 @@ fun transExp(venv, tenv) =
       in
         (case tyVar of
               TArray (t, u) =>  (case (trexp e) of
-                                      {exp=expExp, ty=TInt} => {exp=subscriptVar(expVar, expExp), ty=tyVar}
+                                      {exp=expExp, ty=TInt} => {exp=subscriptVar(expVar, expExp), ty=t}
                                       | _ => error("La expresión utilizada como índice no es entero.", nl))
               | _ => error("No es un arreglo", nl))
       end
@@ -387,6 +387,7 @@ fun transExp(venv, tenv) =
             let
                 val {exp=expBody, ty=tyBody} = transExp (b_venv, tenv) (#body r)
                 val tipodeclarado = getResult pos (#result r)
+                val _ = print ("Tipos de retorno: " ^ (printTigerTip tipodeclarado) ^ " --  " ^ (printTigerTip tyBody) ^ "\n")
                 val _ = if tiposIguales tipodeclarado TUnit then
                             if not (tiposIguales tyBody tipodeclarado) then 
                                 error("No se puede retornar un valor en un procedure", pos)
