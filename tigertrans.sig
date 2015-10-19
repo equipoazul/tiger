@@ -24,8 +24,8 @@ val intExp : int -> exp
 val stringExp : string -> exp
 val simpleVar : access * int -> exp
 val varDec : access -> exp
-(*val fieldVar : exp * int -> exp*)
-val fieldVar : exp * access -> exp
+val fieldVar : exp * int -> exp
+(*val fieldVar : exp * access -> exp*)
 val subscriptVar : exp * exp -> exp
 val recordExp : (exp * int) list -> exp
 val callExp : tigertemp.label * bool * bool * level * exp list -> exp

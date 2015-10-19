@@ -146,7 +146,7 @@ struct
 		end
 		| initArray _ = raise Fail("No debería pasar (initArray)")
 
-		fun checkIndexArray(arr::idx::rest) =
+		fun checkIndexArray(arr ::idx::rest) =
 		let
 			val siz = loadMem (arr-tigerframe.wSz)
 			val _ = print("Size:"^makestring arr^"\n")

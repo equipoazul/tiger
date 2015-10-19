@@ -47,6 +47,11 @@ val tab_vars : (string, EnvEntry) Tabla = tabInserList(
 fun tipoReal (TTipo (s, ref (SOME (t)))) = tipoReal t
   | tipoReal t = t
 
+fun qs [] = []
+| qs((e as (h: string, _))::t) =
+  let val (m, Me) = List.partition (fn(x, _) => x<h) t
+  in  qs m@[e]@qs Me end
+  
 fun tiposIguales (TRecord _) TNil = true
   | tiposIguales TNil (TRecord _) = true 
   | tiposIguales (TRecord (_, u1)) (TRecord (_, u2 )) = (u1=u2)
@@ -135,6 +140,7 @@ fun transExp(venv, tenv) =
         (* Traducir cada expresión de fields *)
         val tfields = map (fn (sy,ex) => (sy, trexp ex)) fields
 
+        (*val _ = map (fn x => (print x; 0)) (qs [("z", 1), ("b", 2), ("a", 3))])*)
         (* Buscar el tipo *)
         val (tyr, cs) = case tabBusca(typ, tenv) of
                             SOME t => (case tipoReal t of
@@ -146,9 +152,9 @@ fun transExp(venv, tenv) =
           | verificar _ (c::cs) [] = error("Faltan campos", nl)
           | verificar _ [] (c::cs) = error("Sobran campos", nl)
           | verificar n ((s,t,_)::cs) ((sy,{exp,ty})::ds) =
-            if s<>sy then error("Error de campo", nl)
+            if s<>sy then error("Error de campo " ^ s ^ " " ^ sy , nl)
             else if tiposIguales ty t then (exp, n)::(verificar (n+1) cs ds)
-               else error("Error de tipo del campo "^s, nl)
+               else error("Error de tipo del campo "^s, nl)       
         val lf = verificar 0 cs tfields
       in
         {exp=recordExp lf, ty=tyr}
@@ -267,27 +273,13 @@ fun transExp(venv, tenv) =
     | trvar(FieldVar(v, s), nl) =
       let
         val {exp=expVar, ty=tyVar} = trvar(v, nl)
-
-        (* Buscamos que variable accede para obtener su access *)
-        (* TODO hay que ver que pasa si no es simplevarrrrrrrrrrrrrrrr *)
-        val simplvar = (case v of 
-                            SimpleVar ve => ve
-                          | FieldVar (v, s) => s
-                          | _ => error ("Campo de record invalido 1", nl))
-
-        val acc = (case tabBusca(simplvar, venv) of 
-                             SOME (Var {access=acc, ty=t, level=lv}) => acc
-                            |SOME (VIntro {access=acc, level=lv}) => acc
-                            | _ => error("Campo de record invalido 2", nl) )
-
-
         val (l, u) = (case (tipoReal tyVar) of
                         TRecord l' => l'                  
                         | _ => error(s^" No es un record", nl))
         in
+          (*val _ = map (fn x => (#1)x ^ "  ---  " ^ (makestring ((#3)x)) ^ "\n") l*)
           case List.find (fn x =>(#1)x = s) l of
-              (*SOME (str, typfv, index) => {exp=fieldVar(expVar, index), ty=typfv}*)
-              SOME (str, typfv, index) => {exp=fieldVar(expVar, acc), ty=typfv}
+              SOME (str, typfv, index) => {exp=fieldVar(expVar, (print("---> "^makestring index^"\n"); index)), ty=typfv} (*TODO, hay que usar fieldvar pero no se que va en los parametros*)
             | _ => error("Campo de record \""^s^"\" inexistente", nl)
         end
     (*suscriptvar-> a[i]*) 
@@ -468,8 +460,11 @@ fun transExp(venv, tenv) =
                                                           |({name, typ=ArrayTy t, ...}, l) =>
                                                                 (name, TArray (buscaEnv env' t, ref ())) :: l
                                                           |(_, l) => l) [] lf
-                                    val (_, lf'') = List.foldl (fn ((x,y), (n,l)) => (n+1, (x, y, n) :: l)) (0, []) lf'
-                                    val env'' = tabInserta(name, TRecord (lf'', ref ()), env') 
+                                    val (_, lf'') = List.foldl (fn ((x,y), (n,l)) => (n+1, (x, y, n) :: l)) (0, []) (List.rev lf')
+                                    val _ = map (fn (x, y, z) => (print(x ^ "--" ^ (makestring z)); 0)) lf''
+                                    
+                                    
+                                    val env'' = tabInserta(name, TRecord ((List.rev lf''), ref ()), env') 
                                 in
                                     precs t env''
                                 end
