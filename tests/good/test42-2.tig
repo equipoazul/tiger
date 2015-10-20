@@ -5,6 +5,5 @@ let
 
   var rec2 := rectype2 {name="Allos", dates=arrtype1 [3] of 1900}
 in
-  rec2.dates[0] := 2323;
-  rec2.dates[2] := 2323; 0
+  if (rec2.name = "Allos") then rec2.dates[0] := 2323 else rec2.dates[2] := 2323;0
 end

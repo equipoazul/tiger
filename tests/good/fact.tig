@@ -2,9 +2,12 @@
 let
   /* calculate n! */
   function fact (n : int) : int =
-    if  n = 0
-      then 1
-      else n * fact (n - 1)
+    if  n > 50
+      then 42
+      else 56 /*n * fact (n - 1)*/
+
+  function sumauno (n : int) : int = n + 1
 in
-  fact (10)
+  fact (48)
+  /*sumauno(35)*/
 end

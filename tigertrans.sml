@@ -180,7 +180,7 @@ in
 			BINOP(MUL, TEMP ri, CONST tigerframe.wSz))))) *)
 	Ex( ESEQ(seq[MOVE(TEMP ra, a),
 		MOVE(TEMP ri, CONST field),
-		EXP(externalCall("_checkNil", [TEMP ra, TEMP ri]))],
+		EXP(externalCall("_checkNil", [TEMP ra]))],
 		MEM(BINOP(PLUS, TEMP ra,
 			BINOP(MUL, TEMP ri, CONST tigerframe.wSz)))))
 end
@@ -249,8 +249,14 @@ fun callExp (name, external, isproc, lev:level, ls) =
  |  letExp (inits, body) = Ex (ESEQ(seq inits,unEx body))*)
 
 
-fun breakExp() = 
-	Nx (LABEL (topSalida())) 
+fun breakExp() =
+  let 
+     val a = topSalida()
+     val _ = print("Soy el break y quiero saltar a "^a^"\n")
+  in 
+	(*Nx (LABEL (topSalida()))*)
+	Nx (JUMP (NAME a, [a]))
+ end
 
 fun seqExp ([]:exp list) = Nx (EXP(CONST 0))
 	| seqExp (exps:exp list) =
@@ -277,7 +283,12 @@ fun letExp ([], body) = Ex (unEx body)
                              Ex (ESEQ(seq moves,unEx body))
                            end
                            
-fun preWhileForExp() = pushSalida(SOME(newlabel()))
+fun preWhileForExp() = let
+                          val l = newlabel()
+                          val _ = print("Meto "^l^" en la pila\n")
+                       in
+                          pushSalida(SOME(l))
+                       end
 
 fun postWhileForExp() = (popSalida(); ())
 
@@ -351,15 +362,19 @@ fun ifThenExp{test, then'} =
 fun ifThenElseExp {test,then',else'} =
 	let
 		val cf = unCx test
-		val (l1, l2, r) = (newlabel(), newlabel(), newtemp())
+		val cfe = unEx test
+		val (l1, l2, l3, r) = (newlabel(), newlabel(), newlabel(), newtemp())
 		val expThen = unEx then'
 		val expElse = unEx else'
+		val _ = print ("\n=============================\n" ^ tigertree.printExp cfe ^ "\n=============================\n")
 	in
 		Ex ( ESEQ(seq([cf(l1,l2),
 					   LABEL l1,
-					   MOVE (TEMP r, expThen),
+					    MOVE (TEMP r, expThen),
+					    JUMP (NAME l3, [l3]),
 					   LABEL l2,
-					   MOVE (TEMP r, expElse)]), TEMP r))
+					    MOVE (TEMP r, expElse),
+					   LABEL l3]), TEMP r))
 
 	end
 
@@ -397,7 +412,7 @@ fun binOpIntExp {left, oper, right} =
 		val lexp = unEx left
 		val rexp = unEx right
 	in
-		Ex (MEM (BINOP (oper, lexp, rexp)))
+		Ex (BINOP (oper, lexp, rexp))
 	end
 
 fun binOpIntRelExp {left,oper,right} =
@@ -413,6 +428,8 @@ fun binOpIntRelExp {left,oper,right} =
 					 | _ => raise Fail "Error interno al interpretar operaciones binarias internas"  
 		val lexp = unEx left
 		val rexp = unEx right
+		val _ = print("============================>"^tigertree.printExp lexp^"\n")
+		val _ = print("============================>"^tigertree.printExp rexp^"\n")
 		val (t, f) = (newlabel(), newlabel())
 	in
  		Ex (ESEQ(seq([

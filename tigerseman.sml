@@ -193,7 +193,9 @@ fun transExp(venv, tenv) =
           val {exp=elseexp, ty=tyelse} = trexp else'
       in
         case tipoReal tytest of
-          TInt => if tiposIguales tythen tyelse then {exp=if tipoReal tythen=TUnit then ifThenElseExpUnit {test=testexp,then'=thenexp,else'=elseexp} else ifThenElseExp {test=testexp,then'=thenexp,else'=elseexp}, ty=tythen}
+          TInt => if tiposIguales tythen tyelse then 
+                     {exp=if tipoReal tythen=TUnit then ifThenElseExpUnit {test=testexp,then'=thenexp,else'=elseexp} 
+                          else ifThenElseExp {test=testexp,then'=thenexp,else'=elseexp}, ty=tythen}
                   else error("Tipos distintos then-else.", nl)
           | _ => error("La condición del if debe ser entera.", nl)
       end
@@ -209,11 +211,16 @@ fun transExp(venv, tenv) =
     | trexp(WhileExp({test, body}, nl)) =
       let
         val ttest = trexp test
+        val _ = preWhileForExp()
         val tbody = trexp body
+        val res = if tipoReal (#ty ttest) = TInt andalso #ty tbody = TUnit 
+                  then whileExp {test=(#exp ttest), body=(#exp tbody), lev=topLevel()}
+                  else if tipoReal (#ty ttest) <> TInt then error("Error de tipo en la condición", nl)
+                       else error("El cuerpo de un while no puede devolver un valor", nl)
+                       
+        val _ = postWhileForExp()
       in
-        if tipoReal (#ty ttest) = TInt andalso #ty tbody = TUnit then {exp=whileExp {test=(#exp ttest), body=(#exp tbody), lev=topLevel()}, ty=TUnit}
-        else if tipoReal (#ty ttest) <> TInt then error("Error de tipo en la condición", nl)
-        else error("El cuerpo de un while no puede devolver un valor", nl)
+         {exp=res , ty=TUnit}
       end
     | trexp(ForExp({var, escape, lo, hi, body}, nl)) = 
       let  

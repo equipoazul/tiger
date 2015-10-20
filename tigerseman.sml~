@@ -209,11 +209,16 @@ fun transExp(venv, tenv) =
     | trexp(WhileExp({test, body}, nl)) =
       let
         val ttest = trexp test
+        val _ = preWhileForExp()
         val tbody = trexp body
+        val res = if tipoReal (#ty ttest) = TInt andalso #ty tbody = TUnit 
+                  then whileExp {test=(#exp ttest), body=(#exp tbody), lev=topLevel()}
+                  else if tipoReal (#ty ttest) <> TInt then error("Error de tipo en la condición", nl)
+                       else error("El cuerpo de un while no puede devolver un valor", nl)
+                       
+        val _ = postWhileForExp()
       in
-        if tipoReal (#ty ttest) = TInt andalso #ty tbody = TUnit then {exp=whileExp {test=(#exp ttest), body=(#exp tbody), lev=topLevel()}, ty=TUnit}
-        else if tipoReal (#ty ttest) <> TInt then error("Error de tipo en la condición", nl)
-        else error("El cuerpo de un while no puede devolver un valor", nl)
+         {exp=res , ty=TUnit}
       end
     | trexp(ForExp({var, escape, lo, hi, body}, nl)) = 
       let  
@@ -460,11 +465,11 @@ fun transExp(venv, tenv) =
                                                           |({name, typ=ArrayTy t, ...}, l) =>
                                                                 (name, TArray (buscaEnv env' t, ref ())) :: l
                                                           |(_, l) => l) [] lf
-                                    val (_, lf'') = List.foldl (fn ((x,y), (n,l)) => (n+1, (x, y, n) :: l)) (0, []) lf'
+                                    val (_, lf'') = List.foldl (fn ((x,y), (n,l)) => (n+1, (x, y, n) :: l)) (0, []) (List.rev lf')
                                     val _ = map (fn (x, y, z) => (print(x ^ "--" ^ (makestring z)); 0)) lf''
                                     
                                     
-                                    val env'' = tabInserta(name, TRecord (lf'', ref ()), env') 
+                                    val env'' = tabInserta(name, TRecord ((List.rev lf''), ref ()), env') 
                                 in
                                     precs t env''
                                 end
