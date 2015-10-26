@@ -1,13 +1,9 @@
-/* define a recursive function */
 let
   /* calculate n! */
   function fact (n : int) : int =
-    if  n > 50
-      then 42
-      else 56 /*n * fact (n - 1)*/
-
-  function sumauno (n : int) : int = n + 1
+    if  n = 0
+      then 1
+      else n * fact (n - 1)
 in
-  fact (48)
-  /*sumauno(35)*/
+  fact (10)
 end

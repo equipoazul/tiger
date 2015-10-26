@@ -193,9 +193,7 @@ fun transExp(venv, tenv) =
           val {exp=elseexp, ty=tyelse} = trexp else'
       in
         case tipoReal tytest of
-          TInt => if tiposIguales tythen tyelse then 
-                     {exp=if tipoReal tythen=TUnit then ifThenElseExpUnit {test=testexp,then'=thenexp,else'=elseexp} 
-                          else ifThenElseExp {test=testexp,then'=thenexp,else'=elseexp}, ty=tythen}
+          TInt => if tiposIguales tythen tyelse then {exp=if tipoReal tythen=TUnit then ifThenElseExpUnit {test=testexp,then'=thenexp,else'=elseexp} else ifThenElseExp {test=testexp,then'=thenexp,else'=elseexp}, ty=tythen}
                   else error("Tipos distintos then-else.", nl)
           | _ => error("La condición del if debe ser entera.", nl)
       end
@@ -425,7 +423,7 @@ fun transExp(venv, tenv) =
                                          ret
                                      end) fs
       in 
-        (venv', tenv, functions)
+        (venv', tenv, [])
       end 
     | trdec (venv,tenv) (TypeDec ts) =
         let

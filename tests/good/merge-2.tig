@@ -1,6 +1,6 @@
 let
  type any = {any : int}
- var buffer := (print("Primer GC\n"); getchar ())
+ var buffer := getstr ()
 
  function readint (any : any) : int =
    let var i := 0
@@ -8,12 +8,12 @@ let
          ord ("0") <= ord (s) & ord (s) <= ord ("9")
        function skipto () =
    	 while buffer = " " | buffer = "\n"
-   	   do buffer := (print("SKIPTO GC\n") ; getchar ())
+   	   do buffer := getstr ()
    in skipto ();
       any.any := isdigit (buffer);
       while isdigit (buffer)
    	do (i := i * 10 + ord (buffer) - ord ("0");
-            buffer := (print("\033[1;31mWHILE GC\n") ; getchar ()));
+            buffer := getstr ());
       i
    end
 
@@ -48,7 +48,7 @@ let
    else (printint (l.first); print (" "); printlist (l.rest))
 
    var list1 := readlist ()
-   var list2 := (print("ULTIMO GC\n");buffer := getchar (); readlist ())
+   var list2 := (buffer := getstr (); readlist ())
 
 in printlist (merge (list1,list2)); 0
 end

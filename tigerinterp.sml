@@ -18,7 +18,7 @@ struct
 	fun inter showdebug (funfracs: (stm list*tigerframe.frame) list) (stringfracs: (tigertemp.label*string) list) =
 	let
 		(* Memoria y registros *)
-	        (*val _ = print("stringfracs")
+		(*val _ = print("stringfracs")
                 val _ = List.map (fn (x,y) => print("Guardamos str: "^y^" en el lab:"^x^"\n")) stringfracs*)
 		local
 			val tabTemps: (tigertemp.temp, int ref) Tabla ref = ref (tabNueva())
@@ -295,7 +295,8 @@ struct
 				("substring", substringFun),
 				("concat", concatFun),
 				("not", notFun),
-				("getstr", getstrFun)])
+				("getstr", getstrFun),
+				("getchar", getstrFun)])
 
 		(* Evalúa una expresión, devuelve el valor (entero) *)
 		fun evalExp(CONST t) = t

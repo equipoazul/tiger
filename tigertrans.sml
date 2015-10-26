@@ -230,7 +230,7 @@ fun callExp (name, external, isproc, lev:level, ls) =
 		   				   |Ex (TEMP s) => preparaArgs t (TEMP s::rt, re)
 		   				   |_ => let val t' = newtemp()
 		   				   		 in
-		   				   		 	preparaArgs t (rt, (MOVE (TEMP t', unEx h))::re)
+		   				   		 	preparaArgs t ([TEMP t']@rt, (MOVE (TEMP t', unEx h))::re)
 		   				   		 end
 		val (la, la') = preparaArgs (rev ls) ([], [])
 		val ta' = if external then la else fplex::la
@@ -240,7 +240,7 @@ fun callExp (name, external, isproc, lev:level, ls) =
 			let val tmp = newtemp()
 			in
 				Ex (ESEQ (seq(la'@[EXP (CALL (NAME name, ta')),
-								   MOVE (TEMP tmp, TEMP rv)]), TEMP tmp))
+								   MOVE (TEMP tmp, TEMP rv)]), TEMP rv))
 			end
 	end
 
@@ -299,11 +299,11 @@ let
 	val (l1, l2, l3) = (newlabel(), newlabel(), topSalida())
 in
 	Nx (seq[LABEL l1,
-		cf(l2,l3),
-		LABEL l2,
-		expb,
-		JUMP(NAME l1, [l1]),
-		LABEL l3])
+		        cf(l2,l3),
+		      LABEL l2,
+		         expb,
+		         JUMP(NAME l1, [l1]),
+		      LABEL l3])
 end
 
 fun forExp {lo, hi, var, body} =
@@ -428,16 +428,9 @@ fun binOpIntRelExp {left,oper,right} =
 					 | _ => raise Fail "Error interno al interpretar operaciones binarias internas"  
 		val lexp = unEx left
 		val rexp = unEx right
-		val _ = print("============================>"^tigertree.printExp lexp^"\n")
-		val _ = print("============================>"^tigertree.printExp rexp^"\n")
 		val (t, f) = (newlabel(), newlabel())
 	in
- 		Ex (ESEQ(seq([
- 		         CJUMP (oper, lexp, rexp, t, f),
- 		         LABEL t,
-				 MOVE (TEMP r, CONST 0),
-				 LABEL f,
-				 MOVE (TEMP r, CONST 1)]), TEMP r))
+	  Cx (fn (t,f) => CJUMP(oper, lexp, rexp, t, f))
 	end
 	
 
@@ -457,10 +450,10 @@ fun binOpStrExp {left,oper,right} =
 	 	val (l, r, res) = (newtemp(), newtemp(), newtemp())
 
 	in
-		Ex (ESEQ(seq[MOVE(TEMP l, lexp),
-				     MOVE(TEMP r, rexp),
-					 MOVE(TEMP res, externalCall("_stringcmp", [TEMP l, TEMP r]))],
-					 TEMP res))
+		Cx (fn (t, f) => (seq[MOVE(TEMP l, lexp),
+				                  MOVE(TEMP r, rexp),
+					                MOVE(TEMP res, externalCall("_stringcmp", [TEMP l, TEMP r])),
+					                CJUMP(oper, TEMP res, CONST 0, t, f)]))
 	end
 
 fun stmToExp s = EXP (unEx s)

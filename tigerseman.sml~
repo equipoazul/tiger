@@ -423,7 +423,7 @@ fun transExp(venv, tenv) =
                                          ret
                                      end) fs
       in 
-        (venv', tenv, functions)
+        (venv', tenv, [])
       end 
     | trdec (venv,tenv) (TypeDec ts) =
         let
