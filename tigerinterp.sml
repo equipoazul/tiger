@@ -360,7 +360,7 @@ struct
 					EQ => ee1=ee2
 					| NE => ee1<>ee2
 					| LT => ee1<ee2
-					| GT => (print (makestring ee1 ^ "  >  " ^ makestring ee2 ^ "\n"); ee1>ee2)
+					| GT => ee1>ee2
 					| LE => ee1<=ee2
 					| GE => ee1>=ee2
 					| ULT => Word.fromInt(ee1)<Word.fromInt(ee2)

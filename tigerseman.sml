@@ -284,7 +284,7 @@ fun transExp(venv, tenv) =
         in
           (*val _ = map (fn x => (#1)x ^ "  ---  " ^ (makestring ((#3)x)) ^ "\n") l*)
           case List.find (fn x =>(#1)x = s) l of
-              SOME (str, typfv, index) => {exp=fieldVar(expVar, (print("---> "^makestring index^"\n"); index)), ty=typfv} (*TODO, hay que usar fieldvar pero no se que va en los parametros*)
+              SOME (str, typfv, index) => {exp=fieldVar(expVar, index), ty=typfv}
             | _ => error("Campo de record \""^s^"\" inexistente", nl)
         end
     (*suscriptvar-> a[i]*) 
@@ -399,7 +399,7 @@ fun transExp(venv, tenv) =
             let
                 val {exp=expBody, ty=tyBody} = transExp (b_venv, tenv) (#body r)
                 val tipodeclarado = getResult pos (#result r)
-                val _ = print ("Tipos de retorno: " ^ (printTigerTip tipodeclarado) ^ " --  " ^ (printTigerTip tyBody) ^ "\n")
+                (*val _ = print ("Tipos de retorno: " ^ (printTigerTip tipodeclarado) ^ " --  " ^ (printTigerTip tyBody) ^ "\n")*)
                 val _ = if tiposIguales tipodeclarado TUnit then
                             if not (tiposIguales tyBody tipodeclarado) then 
                                 error("No se puede retornar un valor en un procedure", pos)
@@ -466,7 +466,7 @@ fun transExp(venv, tenv) =
                                                                 (name, TArray (buscaEnv env' t, ref ())) :: l
                                                           |(_, l) => l) [] lf
                                     val (_, lf'') = List.foldl (fn ((x,y), (n,l)) => (n+1, (x, y, n) :: l)) (0, []) (List.rev lf')
-                                    val _ = map (fn (x, y, z) => (print(x ^ "--" ^ (makestring z)); 0)) lf''
+                                    (*val _ = map (fn (x, y, z) => (print(x ^ "--" ^ (makestring z)); 0)) lf''*)
                                     
                                     
                                     val env'' = tabInserta(name, TRecord ((List.rev lf''), ref ()), env') 

@@ -47,8 +47,8 @@ let
    if l = nil then print ("\n")
    else (printint (l.first); print (" "); printlist (l.rest))
 
-   var list1 := readlist ()
-   var list2 := (print("ULTIMO GC\n");buffer := getchar (); readlist ())
+ var list1 := readlist ()
+ var list2 := (print("ULTIMO GC\n");buffer := getchar (); readlist ())
 
 in printlist (merge (list1,list2)); 0
 end

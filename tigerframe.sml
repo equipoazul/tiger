@@ -68,10 +68,10 @@ fun newFrame{name} = {
 	actualLocal=ref localsInicial,
 	actualReg=ref regInicial
 }
-fun addAccFrame access (frame:frame) = ((#formals frame) := !(#formals frame) @ [access] ; map printAccess (!(#formals frame)); ())
+fun addAccFrame access (frame:frame) = ((#formals frame) := !(#formals frame) @ [access] ; ())
 fun name(f: frame) = #name f
 fun string(l, s) = l^tigertemp.makeString(s)^"\n"
-fun formals({formals=f, ...}: frame) = (map printAccess (!f); !f)
+fun formals({formals=f, ...}: frame) = !f
 	(*let	fun aux(n, []) = []
 		| aux(n, h::t) = InFrame(n)::aux(n+argsGap, t)
 	in aux(argsInicial, f) end *)

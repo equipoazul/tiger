@@ -165,19 +165,9 @@ fun varDec(acc) = simpleVar(acc, getActualLev())
 fun fieldVar(var, field) = 
 let
 	val a = unEx var
-  val _ = print("\033[31m" ^ printExp(a) ^ "\n")
 	val ra = newtemp()
 	val ri = newtemp()
-	val _ = print ("====================================> RA: " ^ ra ^ "\n")
-	(*val access = (case field of
-					InReg r => TEMP r
-					| InFrame n => CONST n) *)
 in
-(*Ex( ESEQ(seq[MOVE(TEMP ra, access),
-		MOVE(TEMP ri, CONST 1), (* EL CONST 1 CLARAMENTE ESTA MAL! *)
-		EXP(externalCall("_checkIndexArray", [TEMP ra, TEMP ri]))],
-		MEM(BINOP(PLUS, TEMP ra,
-			BINOP(MUL, TEMP ri, CONST tigerframe.wSz))))) *)
 	Ex( ESEQ(seq[MOVE(TEMP ra, a),
 		MOVE(TEMP ri, CONST field),
 		EXP(externalCall("_checkNil", [TEMP ra]))],
@@ -218,7 +208,7 @@ end
 fun callExp (name, external, isproc, lev:level, ls) = 
 	let fun memArray 0 = TEMP fp
 		   |memArray n = if n < 0 then raise Fail "Error de memoria"
-		                 else (print (Int.toString(n)); MEM (BINOP (PLUS, memArray (n-1), CONST fpPrevLev)))
+		                 else MEM (BINOP (PLUS, memArray (n-1), CONST fpPrevLev))
 		   val fplex = if (#level lev) = !actualLevel then MEM (BINOP (PLUS, TEMP fp, CONST fpPrevLev))
 	   				       else if (#level lev) < !actualLevel then memArray (!actualLevel - ((#level lev) - 1))
 	   				   	   else TEMP fp
@@ -354,9 +344,9 @@ fun ifThenExp{test, then'} =
 		val expThen = unNx then'
 	in
 		Nx (seq[cf(l1,l2),
-				LABEL l1,
-				expThen,
-				LABEL l2])
+				    LABEL l1,
+				      expThen,
+				    LABEL l2])
 	end
 
 fun ifThenElseExp {test,then',else'} =
@@ -366,7 +356,6 @@ fun ifThenElseExp {test,then',else'} =
 		val (l1, l2, l3, r) = (newlabel(), newlabel(), newlabel(), newtemp())
 		val expThen = unEx then'
 		val expElse = unEx else'
-		val _ = print ("\n=============================\n" ^ tigertree.printExp cfe ^ "\n=============================\n")
 	in
 		Ex ( ESEQ(seq([cf(l1,l2),
 					   LABEL l1,
@@ -381,15 +370,17 @@ fun ifThenElseExp {test,then',else'} =
 fun ifThenElseExpUnit {test,then',else'} =
 	let
 		val cf = unCx test
-		val (l1, l2) = (newlabel(), newlabel())
+		val (l1, l2, l3) = (newlabel(), newlabel(), newlabel())
 		val expThen = unNx then'
 		val expElse = unNx else'
 	in
 		Nx (seq[cf(l1,l2),
-				LABEL l1,
-				expThen,
-				LABEL l2,
-				expElse])
+				    LABEL l1,
+				      expThen,
+				      JUMP (NAME l3, [l3]),
+				    LABEL l2,
+				      expElse,
+				    LABEL l3])
 	end
 
 fun assignExp{var, exp} =
