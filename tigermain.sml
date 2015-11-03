@@ -62,7 +62,7 @@ fun main(args) =
 		(* fun canon_frag (tigerframe.PROC {body, frame}) = (tigercanon.linearize body, frame) *)
 		  | canon_frag _ = raise Fail "error interno (canon_frag): no es proc"
 		val canon_frags = List.map canon_frag func_frags
-		val _ = tigerinterp.inter false canon_frags str_frags
+		val _ = tigerinterp.inter true canon_frags str_frags
 	in
 		print "yes!!\n"
 	end	handle Fail s => print("Fail: "^s^"\n")

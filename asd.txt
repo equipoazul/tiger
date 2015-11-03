@@ -1,0 +1,1589 @@
+PROCESANDO _tigermain
+PROCESANDO try
+PROCESANDO printboard
+EN SIMPLEVAR
+Meto L2 en la pila
+EN SIMPLEVAR
+Meto L3 en la pila
+EN SIMPLEVAR
+EN SIMPLEVAR
+Nombre ====> print Nivel ====> ~1
+Nombre ====> print Nivel ====> ~1
+Nombre ====> print Nivel ====> ~1
+EN SIMPLEVAR
+Nombre ====> printboard Nivel ====> 1
+EN SIMPLEVAR
+Meto L32 en la pila
+EN SIMPLEVAR
+EN SIMPLEVAR
+EN SIMPLEVAR
+EN SIMPLEVAR
+EN SIMPLEVAR
+EN SIMPLEVAR
+EN SIMPLEVAR
+Nombre ====> try Nivel ====> 1
+EN SIMPLEVAR
+EN SIMPLEVAR
+EN SIMPLEVAR
+Nombre ====> try Nivel ====> 1
+Nombre ====> printboard Nivel ====> 1
+bien!
+Fragmentos: 25
+Fragmentos de funcion: 3: _tigermain, try, printboard, 
+Fragmentos de string: 22: (;;-------, ), (_tigermain, ), (;;-------, ), (try, ), (;;-------, ), (printboard, ), (, .string "\x0a"), (L29, .long 1), (, .string "\x0a"), (L28, .long 1), (, .string "\x0a"), (L25, .long 1), (, .string "\x0a"), (L24, .long 1), (, .string " ."), (L16, .long 2), (, .string " O"), (L15, .long 2), (, .string " ."), (L7, .long 2), (, .string " O"), (L6, .long 2), 
+L6:	.long 2
+	.string " O"
+L7:	.long 2
+	.string " ."
+L15:	.long 2
+	.string " O"
+L16:	.long 2
+	.string " ."
+L24:	.long 1
+	.string "\x0a"
+L25:	.long 1
+	.string "\x0a"
+L28:	.long 1
+	.string "\x0a"
+L29:	.long 1
+	.string "\x0a"
+printboard:
+SEQ(
+ SEQ(
+  MOVE(
+   TEMP T5,
+   CONST 0),
+  SEQ(
+   MOVE(
+    TEMP T20,
+    BINOP(MINUS,
+     MEM(
+      BINOP(PLUS,
+       MEM(
+        BINOP(PLUS,
+         TEMP FP,
+         CONST 8)),
+       CONST ~4)),
+     CONST 1)),
+   SEQ(
+    CJUMP(LE,
+     TEMP T5,
+     TEMP T20,
+     L27,L2),
+    SEQ(
+     LABEL L27,
+     SEQ(
+      SEQ(
+       SEQ(
+        MOVE(
+         TEMP T7,
+         CONST 0),
+        SEQ(
+         MOVE(
+          TEMP T19,
+          BINOP(MINUS,
+           MEM(
+            BINOP(PLUS,
+             MEM(
+              BINOP(PLUS,
+               TEMP FP,
+               CONST 8)),
+             CONST ~4)),
+           CONST 1)),
+         SEQ(
+          CJUMP(LE,
+           TEMP T7,
+           TEMP T19,
+           L23,L3),
+          SEQ(
+           LABEL L23,
+           SEQ(
+            SEQ(
+             MOVE(
+              TEMP T18,
+              ESEQ(
+               SEQ(
+                CJUMP(EQ,
+                 ESEQ(
+                  SEQ(
+                   MOVE(
+                    TEMP T13,
+                    MEM(
+                     BINOP(PLUS,
+                      MEM(
+                       BINOP(PLUS,
+                        TEMP FP,
+                        CONST 8)),
+                      CONST ~6))),
+                   SEQ(
+                    MOVE(
+                     TEMP T14,
+                     TEMP T5),
+                    EXP(
+                     CALL(
+                      NAME _checkIndexArray,
+                       TEMP T13,
+                       TEMP T14)))),
+                  MEM(
+                   BINOP(PLUS,
+                    TEMP T13,
+                    BINOP(MUL,
+                     TEMP T14,
+                     CONST 4)))),
+                 TEMP T7,
+                 L19,L20),
+                SEQ(
+                 LABEL L19,
+                 SEQ(
+                  MOVE(
+                   TEMP T17,
+                   NAME L15),
+                  SEQ(
+                   JUMP(                    NAME L21),
+                   SEQ(
+                    LABEL L20,
+                    SEQ(
+                     MOVE(
+                      TEMP T17,
+                      NAME L16),
+                     LABEL L21)))))),
+               TEMP T17)),
+             EXP(
+              CALL(
+               NAME print,
+                TEMP T18))),
+            SEQ(
+             CJUMP(EQ,
+              TEMP T7,
+              TEMP T19,
+              L3,L22),
+             SEQ(
+              LABEL L22,
+              SEQ(
+               MOVE(
+                TEMP T7,
+                BINOP(PLUS,
+                 TEMP T7,
+                 CONST 1)),
+               SEQ(
+                JUMP(                 NAME L23),
+                LABEL L3))))))))),
+       EXP(
+        CALL(
+         NAME print,
+          NAME L25))),
+      SEQ(
+       CJUMP(EQ,
+        TEMP T5,
+        TEMP T20,
+        L2,L26),
+       SEQ(
+        LABEL L26,
+        SEQ(
+         MOVE(
+          TEMP T5,
+          BINOP(PLUS,
+           TEMP T5,
+           CONST 1)),
+         SEQ(
+          JUMP(           NAME L27),
+          LABEL L2))))))))),
+ EXP(
+  CALL(
+   NAME print,
+    NAME L29)))
+;;-------:
+try:
+SEQ(
+ CJUMP(EQ,
+  TEMP T21,
+  MEM(
+   BINOP(PLUS,
+    MEM(
+     BINOP(PLUS,
+      TEMP FP,
+      CONST 8)),
+    CONST ~4)),
+  L55,L56),
+ SEQ(
+  LABEL L55,
+  SEQ(
+   EXP(
+    CALL(
+     NAME printboard,
+      MEM(
+       BINOP(PLUS,
+        TEMP FP,
+        CONST 8)))),
+   SEQ(
+    JUMP(     NAME L57),
+    SEQ(
+     LABEL L56,
+     SEQ(
+      SEQ(
+       MOVE(
+        TEMP T24,
+        CONST 0),
+       SEQ(
+        MOVE(
+         TEMP T65,
+         BINOP(MINUS,
+          MEM(
+           BINOP(PLUS,
+            MEM(
+             BINOP(PLUS,
+              TEMP FP,
+              CONST 8)),
+            CONST ~4)),
+          CONST 1)),
+        SEQ(
+         CJUMP(LE,
+          TEMP T24,
+          TEMP T65,
+          L54,L32),
+         SEQ(
+          LABEL L54,
+          SEQ(
+           SEQ(
+            CJUMP(NE,
+             ESEQ(
+              SEQ(
+               CJUMP(NE,
+                ESEQ(
+                 SEQ(
+                  CJUMP(EQ,
+                   ESEQ(
+                    SEQ(
+                     MOVE(
+                      TEMP T25,
+                      MEM(
+                       BINOP(PLUS,
+                        MEM(
+                         BINOP(PLUS,
+                          TEMP FP,
+                          CONST 8)),
+                        CONST ~5))),
+                     SEQ(
+                      MOVE(
+                       TEMP T26,
+                       TEMP T24),
+                      EXP(
+                       CALL(
+                        NAME _checkIndexArray,
+                         TEMP T25,
+                         TEMP T26)))),
+                    MEM(
+                     BINOP(PLUS,
+                      TEMP T25,
+                      BINOP(MUL,
+                       TEMP T26,
+                       CONST 4)))),
+                   CONST 0,
+                   L39,L40),
+                  SEQ(
+                   LABEL L39,
+                   SEQ(
+                    MOVE(
+                     TEMP T33,
+                     ESEQ(
+                      SEQ(
+                       MOVE(
+                        TEMP T34,
+                        CONST 1),
+                       SEQ(
+                        CJUMP(EQ,
+                         ESEQ(
+                          SEQ(
+                           MOVE(
+                            TEMP T29,
+                            MEM(
+                             BINOP(PLUS,
+                              MEM(
+                               BINOP(PLUS,
+                                TEMP FP,
+                                CONST 8)),
+                              CONST ~7))),
+                           SEQ(
+                            MOVE(
+                             TEMP T30,
+                             BINOP(PLUS,
+                              TEMP T24,
+                              TEMP T21)),
+                            EXP(
+                             CALL(
+                              NAME _checkIndexArray,
+                               TEMP T29,
+                               TEMP T30)))),
+                          MEM(
+                           BINOP(PLUS,
+                            TEMP T29,
+                            BINOP(MUL,
+                             TEMP T30,
+                             CONST 4)))),
+                         CONST 0,
+                         L42,L43),
+                        SEQ(
+                         LABEL L43,
+                         SEQ(
+                          MOVE(
+                           TEMP T34,
+                           CONST 0),
+                          LABEL L42)))),
+                      TEMP T34)),
+                    SEQ(
+                     JUMP(                      NAME L41),
+                     SEQ(
+                      LABEL L40,
+                      SEQ(
+                       MOVE(
+                        TEMP T33,
+                        CONST 0),
+                       LABEL L41)))))),
+                 TEMP T33),
+                CONST 0,
+                L46,L47),
+               SEQ(
+                LABEL L46,
+                SEQ(
+                 MOVE(
+                  TEMP T40,
+                  ESEQ(
+                   SEQ(
+                    MOVE(
+                     TEMP T41,
+                     CONST 1),
+                    SEQ(
+                     CJUMP(EQ,
+                      ESEQ(
+                       SEQ(
+                        MOVE(
+                         TEMP T37,
+                         MEM(
+                          BINOP(PLUS,
+                           MEM(
+                            BINOP(PLUS,
+                             TEMP FP,
+                             CONST 8)),
+                           CONST ~8))),
+                        SEQ(
+                         MOVE(
+                          TEMP T38,
+                          BINOP(MINUS,
+                           BINOP(PLUS,
+                            TEMP T24,
+                            CONST 7),
+                           TEMP T21)),
+                         EXP(
+                          CALL(
+                           NAME _checkIndexArray,
+                            TEMP T37,
+                            TEMP T38)))),
+                       MEM(
+                        BINOP(PLUS,
+                         TEMP T37,
+                         BINOP(MUL,
+                          TEMP T38,
+                          CONST 4)))),
+                      CONST 0,
+                      L49,L50),
+                     SEQ(
+                      LABEL L50,
+                      SEQ(
+                       MOVE(
+                        TEMP T41,
+                        CONST 0),
+                       LABEL L49)))),
+                   TEMP T41)),
+                 SEQ(
+                  JUMP(                   NAME L48),
+                  SEQ(
+                   LABEL L47,
+                   SEQ(
+                    MOVE(
+                     TEMP T40,
+                     CONST 0),
+                    LABEL L48)))))),
+              TEMP T40),
+             CONST 0,
+             L51,L52),
+            SEQ(
+             LABEL L51,
+             SEQ(
+              SEQ(
+               MOVE(
+                ESEQ(
+                 SEQ(
+                  MOVE(
+                   TEMP T42,
+                   MEM(
+                    BINOP(PLUS,
+                     MEM(
+                      BINOP(PLUS,
+                       TEMP FP,
+                       CONST 8)),
+                     CONST ~5))),
+                  SEQ(
+                   MOVE(
+                    TEMP T43,
+                    TEMP T24),
+                   EXP(
+                    CALL(
+                     NAME _checkIndexArray,
+                      TEMP T42,
+                      TEMP T43)))),
+                 MEM(
+                  BINOP(PLUS,
+                   TEMP T42,
+                   BINOP(MUL,
+                    TEMP T43,
+                    CONST 4)))),
+                CONST 1),
+               SEQ(
+                MOVE(
+                 ESEQ(
+                  SEQ(
+                   MOVE(
+                    TEMP T45,
+                    MEM(
+                     BINOP(PLUS,
+                      MEM(
+                       BINOP(PLUS,
+                        TEMP FP,
+                        CONST 8)),
+                      CONST ~7))),
+                   SEQ(
+                    MOVE(
+                     TEMP T46,
+                     BINOP(PLUS,
+                      TEMP T24,
+                      TEMP T21)),
+                    EXP(
+                     CALL(
+                      NAME _checkIndexArray,
+                       TEMP T45,
+                       TEMP T46)))),
+                  MEM(
+                   BINOP(PLUS,
+                    TEMP T45,
+                    BINOP(MUL,
+                     TEMP T46,
+                     CONST 4)))),
+                 CONST 1),
+                SEQ(
+                 MOVE(
+                  ESEQ(
+                   SEQ(
+                    MOVE(
+                     TEMP T49,
+                     MEM(
+                      BINOP(PLUS,
+                       MEM(
+                        BINOP(PLUS,
+                         TEMP FP,
+                         CONST 8)),
+                       CONST ~8))),
+                    SEQ(
+                     MOVE(
+                      TEMP T50,
+                      BINOP(MINUS,
+                       BINOP(PLUS,
+                        TEMP T24,
+                        CONST 7),
+                       TEMP T21)),
+                     EXP(
+                      CALL(
+                       NAME _checkIndexArray,
+                        TEMP T49,
+                        TEMP T50)))),
+                   MEM(
+                    BINOP(PLUS,
+                     TEMP T49,
+                     BINOP(MUL,
+                      TEMP T50,
+                      CONST 4)))),
+                  CONST 1),
+                 SEQ(
+                  MOVE(
+                   ESEQ(
+                    SEQ(
+                     MOVE(
+                      TEMP T51,
+                      MEM(
+                       BINOP(PLUS,
+                        MEM(
+                         BINOP(PLUS,
+                          TEMP FP,
+                          CONST 8)),
+                        CONST ~6))),
+                     SEQ(
+                      MOVE(
+                       TEMP T52,
+                       TEMP T21),
+                      EXP(
+                       CALL(
+                        NAME _checkIndexArray,
+                         TEMP T51,
+                         TEMP T52)))),
+                    MEM(
+                     BINOP(PLUS,
+                      TEMP T51,
+                      BINOP(MUL,
+                       TEMP T52,
+                       CONST 4)))),
+                   TEMP T24),
+                  SEQ(
+                   SEQ(
+                    MOVE(
+                     TEMP T55,
+                     BINOP(PLUS,
+                      TEMP T21,
+                      CONST 1)),
+                    EXP(
+                     CALL(
+                      NAME try,
+                       MEM(
+                        BINOP(PLUS,
+                         TEMP FP,
+                         CONST 8)),
+                       TEMP T55))),
+                   SEQ(
+                    MOVE(
+                     ESEQ(
+                      SEQ(
+                       MOVE(
+                        TEMP T56,
+                        MEM(
+                         BINOP(PLUS,
+                          MEM(
+                           BINOP(PLUS,
+                            TEMP FP,
+                            CONST 8)),
+                          CONST ~5))),
+                       SEQ(
+                        MOVE(
+                         TEMP T57,
+                         TEMP T24),
+                        EXP(
+                         CALL(
+                          NAME _checkIndexArray,
+                           TEMP T56,
+                           TEMP T57)))),
+                      MEM(
+                       BINOP(PLUS,
+                        TEMP T56,
+                        BINOP(MUL,
+                         TEMP T57,
+                         CONST 4)))),
+                     CONST 0),
+                    SEQ(
+                     MOVE(
+                      ESEQ(
+                       SEQ(
+                        MOVE(
+                         TEMP T59,
+                         MEM(
+                          BINOP(PLUS,
+                           MEM(
+                            BINOP(PLUS,
+                             TEMP FP,
+                             CONST 8)),
+                           CONST ~7))),
+                        SEQ(
+                         MOVE(
+                          TEMP T60,
+                          BINOP(PLUS,
+                           TEMP T24,
+                           TEMP T21)),
+                         EXP(
+                          CALL(
+                           NAME _checkIndexArray,
+                            TEMP T59,
+                            TEMP T60)))),
+                       MEM(
+                        BINOP(PLUS,
+                         TEMP T59,
+                         BINOP(MUL,
+                          TEMP T60,
+                          CONST 4)))),
+                      CONST 0),
+                     MOVE(
+                      ESEQ(
+                       SEQ(
+                        MOVE(
+                         TEMP T63,
+                         MEM(
+                          BINOP(PLUS,
+                           MEM(
+                            BINOP(PLUS,
+                             TEMP FP,
+                             CONST 8)),
+                           CONST ~8))),
+                        SEQ(
+                         MOVE(
+                          TEMP T64,
+                          BINOP(MINUS,
+                           BINOP(PLUS,
+                            TEMP T24,
+                            CONST 7),
+                           TEMP T21)),
+                         EXP(
+                          CALL(
+                           NAME _checkIndexArray,
+                            TEMP T63,
+                            TEMP T64)))),
+                       MEM(
+                        BINOP(PLUS,
+                         TEMP T63,
+                         BINOP(MUL,
+                          TEMP T64,
+                          CONST 4)))),
+                      CONST 0)))))))),
+              LABEL L52))),
+           SEQ(
+            CJUMP(EQ,
+             TEMP T24,
+             TEMP T65,
+             L32,L53),
+            SEQ(
+             LABEL L53,
+             SEQ(
+              MOVE(
+               TEMP T24,
+               BINOP(PLUS,
+                TEMP T24,
+                CONST 1)),
+              SEQ(
+               JUMP(                NAME L54),
+               LABEL L32))))))))),
+      LABEL L57))))))
+;;-------:
+_tigermain:
+MOVE(
+ TEMP RV,
+ ESEQ(
+  SEQ(
+   MOVE(
+    MEM(
+     BINOP(PLUS,
+      TEMP FP,
+      CONST ~4)),
+    CONST 8),
+   SEQ(
+    MOVE(
+     MEM(
+      BINOP(PLUS,
+       TEMP FP,
+       CONST ~5)),
+     CALL(
+      NAME _allocArray,
+       MEM(
+        BINOP(PLUS,
+         TEMP FP,
+         CONST ~4)),
+       CONST 0)),
+    SEQ(
+     MOVE(
+      MEM(
+       BINOP(PLUS,
+        TEMP FP,
+        CONST ~6)),
+      CALL(
+       NAME _allocArray,
+        MEM(
+         BINOP(PLUS,
+          TEMP FP,
+          CONST ~4)),
+        CONST 0)),
+     SEQ(
+      MOVE(
+       MEM(
+        BINOP(PLUS,
+         TEMP FP,
+         CONST ~7)),
+       CALL(
+        NAME _allocArray,
+         BINOP(MINUS,
+          BINOP(PLUS,
+           MEM(
+            BINOP(PLUS,
+             TEMP FP,
+             CONST ~4)),
+           MEM(
+            BINOP(PLUS,
+             TEMP FP,
+             CONST ~4))),
+          CONST 1),
+         CONST 0)),
+      MOVE(
+       MEM(
+        BINOP(PLUS,
+         TEMP FP,
+         CONST ~8)),
+       CALL(
+        NAME _allocArray,
+         BINOP(MINUS,
+          BINOP(PLUS,
+           MEM(
+            BINOP(PLUS,
+             TEMP FP,
+             CONST ~4)),
+           MEM(
+            BINOP(PLUS,
+             TEMP FP,
+             CONST ~4))),
+          CONST 1),
+         CONST 0)))))),
+  ESEQ(
+   SEQ(
+    EXP(
+     CALL(
+      NAME try,
+       TEMP FP,
+       CONST 0)),
+    EXP(
+     CALL(
+      NAME printboard,
+       TEMP FP))),
+   CONST 0)))
+;;-------:
+
+Comienzo de ejecución...
+ O . . . . . . .
+ . . . . O . . .
+ . . . . . . . O
+ . . . . . O . .
+ . . O . . . . .
+ . . . . . . O .
+ . O . . . . . .
+ . . . O . . . .
+
+ O . . . . . . .
+ . . . . . O . .
+ . . . . . . . O
+ . . O . . . . .
+ . . . . . . O .
+ . . . O . . . .
+ . O . . . . . .
+ . . . . O . . .
+
+ O . . . . . . .
+ . . . . . . O .
+ . . . O . . . .
+ . . . . . O . .
+ . . . . . . . O
+ . O . . . . . .
+ . . . . O . . .
+ . . O . . . . .
+
+ O . . . . . . .
+ . . . . . . O .
+ . . . . O . . .
+ . . . . . . . O
+ . O . . . . . .
+ . . . O . . . .
+ . . . . . O . .
+ . . O . . . . .
+
+ . O . . . . . .
+ . . . O . . . .
+ . . . . . O . .
+ . . . . . . . O
+ . . O . . . . .
+ O . . . . . . .
+ . . . . . . O .
+ . . . . O . . .
+
+ . O . . . . . .
+ . . . . O . . .
+ . . . . . . O .
+ O . . . . . . .
+ . . O . . . . .
+ . . . . . . . O
+ . . . . . O . .
+ . . . O . . . .
+
+ . O . . . . . .
+ . . . . O . . .
+ . . . . . . O .
+ . . . O . . . .
+ O . . . . . . .
+ . . . . . . . O
+ . . . . . O . .
+ . . O . . . . .
+
+ . O . . . . . .
+ . . . . . O . .
+ O . . . . . . .
+ . . . . . . O .
+ . . . O . . . .
+ . . . . . . . O
+ . . O . . . . .
+ . . . . O . . .
+
+ . O . . . . . .
+ . . . . . O . .
+ . . . . . . . O
+ . . O . . . . .
+ O . . . . . . .
+ . . . O . . . .
+ . . . . . . O .
+ . . . . O . . .
+
+ . O . . . . . .
+ . . . . . . O .
+ . . O . . . . .
+ . . . . . O . .
+ . . . . . . . O
+ . . . . O . . .
+ O . . . . . . .
+ . . . O . . . .
+
+ . O . . . . . .
+ . . . . . . O .
+ . . . . O . . .
+ . . . . . . . O
+ O . . . . . . .
+ . . . O . . . .
+ . . . . . O . .
+ . . O . . . . .
+
+ . O . . . . . .
+ . . . . . . . O
+ . . . . . O . .
+ O . . . . . . .
+ . . O . . . . .
+ . . . . O . . .
+ . . . . . . O .
+ . . . O . . . .
+
+ . . O . . . . .
+ O . . . . . . .
+ . . . . . . O .
+ . . . . O . . .
+ . . . . . . . O
+ . O . . . . . .
+ . . . O . . . .
+ . . . . . O . .
+
+ . . O . . . . .
+ . . . . O . . .
+ . O . . . . . .
+ . . . . . . . O
+ O . . . . . . .
+ . . . . . . O .
+ . . . O . . . .
+ . . . . . O . .
+
+ . . O . . . . .
+ . . . . O . . .
+ . O . . . . . .
+ . . . . . . . O
+ . . . . . O . .
+ . . . O . . . .
+ . . . . . . O .
+ O . . . . . . .
+
+ . . O . . . . .
+ . . . . O . . .
+ . . . . . . O .
+ O . . . . . . .
+ . . . O . . . .
+ . O . . . . . .
+ . . . . . . . O
+ . . . . . O . .
+
+ . . O . . . . .
+ . . . . O . . .
+ . . . . . . . O
+ . . . O . . . .
+ O . . . . . . .
+ . . . . . . O .
+ . O . . . . . .
+ . . . . . O . .
+
+ . . O . . . . .
+ . . . . . O . .
+ . O . . . . . .
+ . . . . O . . .
+ . . . . . . . O
+ O . . . . . . .
+ . . . . . . O .
+ . . . O . . . .
+
+ . . O . . . . .
+ . . . . . O . .
+ . O . . . . . .
+ . . . . . . O .
+ O . . . . . . .
+ . . . O . . . .
+ . . . . . . . O
+ . . . . O . . .
+
+ . . O . . . . .
+ . . . . . O . .
+ . O . . . . . .
+ . . . . . . O .
+ . . . . O . . .
+ O . . . . . . .
+ . . . . . . . O
+ . . . O . . . .
+
+ . . O . . . . .
+ . . . . . O . .
+ . . . O . . . .
+ O . . . . . . .
+ . . . . . . . O
+ . . . . O . . .
+ . . . . . . O .
+ . O . . . . . .
+
+ . . O . . . . .
+ . . . . . O . .
+ . . . O . . . .
+ . O . . . . . .
+ . . . . . . . O
+ . . . . O . . .
+ . . . . . . O .
+ O . . . . . . .
+
+ . . O . . . . .
+ . . . . . O . .
+ . . . . . . . O
+ O . . . . . . .
+ . . . O . . . .
+ . . . . . . O .
+ . . . . O . . .
+ . O . . . . . .
+
+ . . O . . . . .
+ . . . . . O . .
+ . . . . . . . O
+ O . . . . . . .
+ . . . . O . . .
+ . . . . . . O .
+ . O . . . . . .
+ . . . O . . . .
+
+ . . O . . . . .
+ . . . . . O . .
+ . . . . . . . O
+ . O . . . . . .
+ . . . O . . . .
+ O . . . . . . .
+ . . . . . . O .
+ . . . . O . . .
+
+ . . O . . . . .
+ . . . . . . O .
+ . O . . . . . .
+ . . . . . . . O
+ . . . . O . . .
+ O . . . . . . .
+ . . . O . . . .
+ . . . . . O . .
+
+ . . O . . . . .
+ . . . . . . O .
+ . O . . . . . .
+ . . . . . . . O
+ . . . . . O . .
+ . . . O . . . .
+ O . . . . . . .
+ . . . . O . . .
+
+ . . O . . . . .
+ . . . . . . . O
+ . . . O . . . .
+ . . . . . . O .
+ O . . . . . . .
+ . . . . . O . .
+ . O . . . . . .
+ . . . . O . . .
+
+ . . . O . . . .
+ O . . . . . . .
+ . . . . O . . .
+ . . . . . . . O
+ . O . . . . . .
+ . . . . . . O .
+ . . O . . . . .
+ . . . . . O . .
+
+ . . . O . . . .
+ O . . . . . . .
+ . . . . O . . .
+ . . . . . . . O
+ . . . . . O . .
+ . . O . . . . .
+ . . . . . . O .
+ . O . . . . . .
+
+ . . . O . . . .
+ . O . . . . . .
+ . . . . O . . .
+ . . . . . . . O
+ . . . . . O . .
+ O . . . . . . .
+ . . O . . . . .
+ . . . . . . O .
+
+ . . . O . . . .
+ . O . . . . . .
+ . . . . . . O .
+ . . O . . . . .
+ . . . . . O . .
+ . . . . . . . O
+ O . . . . . . .
+ . . . . O . . .
+
+ . . . O . . . .
+ . O . . . . . .
+ . . . . . . O .
+ . . O . . . . .
+ . . . . . O . .
+ . . . . . . . O
+ . . . . O . . .
+ O . . . . . . .
+
+ . . . O . . . .
+ . O . . . . . .
+ . . . . . . O .
+ . . . . O . . .
+ O . . . . . . .
+ . . . . . . . O
+ . . . . . O . .
+ . . O . . . . .
+
+ . . . O . . . .
+ . O . . . . . .
+ . . . . . . . O
+ . . . . O . . .
+ . . . . . . O .
+ O . . . . . . .
+ . . O . . . . .
+ . . . . . O . .
+
+ . . . O . . . .
+ . O . . . . . .
+ . . . . . . . O
+ . . . . . O . .
+ O . . . . . . .
+ . . O . . . . .
+ . . . . O . . .
+ . . . . . . O .
+
+ . . . O . . . .
+ . . . . . O . .
+ O . . . . . . .
+ . . . . O . . .
+ . O . . . . . .
+ . . . . . . . O
+ . . O . . . . .
+ . . . . . . O .
+
+ . . . O . . . .
+ . . . . . O . .
+ . . . . . . . O
+ . O . . . . . .
+ . . . . . . O .
+ O . . . . . . .
+ . . O . . . . .
+ . . . . O . . .
+
+ . . . O . . . .
+ . . . . . O . .
+ . . . . . . . O
+ . . O . . . . .
+ O . . . . . . .
+ . . . . . . O .
+ . . . . O . . .
+ . O . . . . . .
+
+ . . . O . . . .
+ . . . . . . O .
+ O . . . . . . .
+ . . . . . . . O
+ . . . . O . . .
+ . O . . . . . .
+ . . . . . O . .
+ . . O . . . . .
+
+ . . . O . . . .
+ . . . . . . O .
+ . . O . . . . .
+ . . . . . . . O
+ . O . . . . . .
+ . . . . O . . .
+ O . . . . . . .
+ . . . . . O . .
+
+ . . . O . . . .
+ . . . . . . O .
+ . . . . O . . .
+ . O . . . . . .
+ . . . . . O . .
+ O . . . . . . .
+ . . O . . . . .
+ . . . . . . . O
+
+ . . . O . . . .
+ . . . . . . O .
+ . . . . O . . .
+ . . O . . . . .
+ O . . . . . . .
+ . . . . . O . .
+ . . . . . . . O
+ . O . . . . . .
+
+ . . . O . . . .
+ . . . . . . . O
+ O . . . . . . .
+ . . O . . . . .
+ . . . . . O . .
+ . O . . . . . .
+ . . . . . . O .
+ . . . . O . . .
+
+ . . . O . . . .
+ . . . . . . . O
+ O . . . . . . .
+ . . . . O . . .
+ . . . . . . O .
+ . O . . . . . .
+ . . . . . O . .
+ . . O . . . . .
+
+ . . . O . . . .
+ . . . . . . . O
+ . . . . O . . .
+ . . O . . . . .
+ O . . . . . . .
+ . . . . . . O .
+ . O . . . . . .
+ . . . . . O . .
+
+ . . . . O . . .
+ O . . . . . . .
+ . . . O . . . .
+ . . . . . O . .
+ . . . . . . . O
+ . O . . . . . .
+ . . . . . . O .
+ . . O . . . . .
+
+ . . . . O . . .
+ O . . . . . . .
+ . . . . . . . O
+ . . . O . . . .
+ . O . . . . . .
+ . . . . . . O .
+ . . O . . . . .
+ . . . . . O . .
+
+ . . . . O . . .
+ O . . . . . . .
+ . . . . . . . O
+ . . . . . O . .
+ . . O . . . . .
+ . . . . . . O .
+ . O . . . . . .
+ . . . O . . . .
+
+ . . . . O . . .
+ . O . . . . . .
+ . . . O . . . .
+ . . . . . O . .
+ . . . . . . . O
+ . . O . . . . .
+ O . . . . . . .
+ . . . . . . O .
+
+ . . . . O . . .
+ . O . . . . . .
+ . . . O . . . .
+ . . . . . . O .
+ . . O . . . . .
+ . . . . . . . O
+ . . . . . O . .
+ O . . . . . . .
+
+ . . . . O . . .
+ . O . . . . . .
+ . . . . . O . .
+ O . . . . . . .
+ . . . . . . O .
+ . . . O . . . .
+ . . . . . . . O
+ . . O . . . . .
+
+ . . . . O . . .
+ . O . . . . . .
+ . . . . . . . O
+ O . . . . . . .
+ . . . O . . . .
+ . . . . . . O .
+ . . O . . . . .
+ . . . . . O . .
+
+ . . . . O . . .
+ . . O . . . . .
+ O . . . . . . .
+ . . . . . O . .
+ . . . . . . . O
+ . O . . . . . .
+ . . . O . . . .
+ . . . . . . O .
+
+ . . . . O . . .
+ . . O . . . . .
+ O . . . . . . .
+ . . . . . . O .
+ . O . . . . . .
+ . . . . . . . O
+ . . . . . O . .
+ . . . O . . . .
+
+ . . . . O . . .
+ . . O . . . . .
+ . . . . . . . O
+ . . . O . . . .
+ . . . . . . O .
+ O . . . . . . .
+ . . . . . O . .
+ . O . . . . . .
+
+ . . . . O . . .
+ . . . . . . O .
+ O . . . . . . .
+ . . O . . . . .
+ . . . . . . . O
+ . . . . . O . .
+ . . . O . . . .
+ . O . . . . . .
+
+ . . . . O . . .
+ . . . . . . O .
+ O . . . . . . .
+ . . . O . . . .
+ . O . . . . . .
+ . . . . . . . O
+ . . . . . O . .
+ . . O . . . . .
+
+ . . . . O . . .
+ . . . . . . O .
+ . O . . . . . .
+ . . . O . . . .
+ . . . . . . . O
+ O . . . . . . .
+ . . O . . . . .
+ . . . . . O . .
+
+ . . . . O . . .
+ . . . . . . O .
+ . O . . . . . .
+ . . . . . O . .
+ . . O . . . . .
+ O . . . . . . .
+ . . . O . . . .
+ . . . . . . . O
+
+ . . . . O . . .
+ . . . . . . O .
+ . O . . . . . .
+ . . . . . O . .
+ . . O . . . . .
+ O . . . . . . .
+ . . . . . . . O
+ . . . O . . . .
+
+ . . . . O . . .
+ . . . . . . O .
+ . . . O . . . .
+ O . . . . . . .
+ . . O . . . . .
+ . . . . . . . O
+ . . . . . O . .
+ . O . . . . . .
+
+ . . . . O . . .
+ . . . . . . . O
+ . . . O . . . .
+ O . . . . . . .
+ . . O . . . . .
+ . . . . . O . .
+ . O . . . . . .
+ . . . . . . O .
+
+ . . . . O . . .
+ . . . . . . . O
+ . . . O . . . .
+ O . . . . . . .
+ . . . . . . O .
+ . O . . . . . .
+ . . . . . O . .
+ . . O . . . . .
+
+ . . . . . O . .
+ O . . . . . . .
+ . . . . O . . .
+ . O . . . . . .
+ . . . . . . . O
+ . . O . . . . .
+ . . . . . . O .
+ . . . O . . . .
+
+ . . . . . O . .
+ . O . . . . . .
+ . . . . . . O .
+ O . . . . . . .
+ . . O . . . . .
+ . . . . O . . .
+ . . . . . . . O
+ . . . O . . . .
+
+ . . . . . O . .
+ . O . . . . . .
+ . . . . . . O .
+ O . . . . . . .
+ . . . O . . . .
+ . . . . . . . O
+ . . . . O . . .
+ . . O . . . . .
+
+ . . . . . O . .
+ . . O . . . . .
+ O . . . . . . .
+ . . . . . . O .
+ . . . . O . . .
+ . . . . . . . O
+ . O . . . . . .
+ . . . O . . . .
+
+ . . . . . O . .
+ . . O . . . . .
+ O . . . . . . .
+ . . . . . . . O
+ . . . O . . . .
+ . O . . . . . .
+ . . . . . . O .
+ . . . . O . . .
+
+ . . . . . O . .
+ . . O . . . . .
+ O . . . . . . .
+ . . . . . . . O
+ . . . . O . . .
+ . O . . . . . .
+ . . . O . . . .
+ . . . . . . O .
+
+ . . . . . O . .
+ . . O . . . . .
+ . . . . O . . .
+ . . . . . . O .
+ O . . . . . . .
+ . . . O . . . .
+ . O . . . . . .
+ . . . . . . . O
+
+ . . . . . O . .
+ . . O . . . . .
+ . . . . O . . .
+ . . . . . . . O
+ O . . . . . . .
+ . . . O . . . .
+ . O . . . . . .
+ . . . . . . O .
+
+ . . . . . O . .
+ . . O . . . . .
+ . . . . . . O .
+ . O . . . . . .
+ . . . O . . . .
+ . . . . . . . O
+ O . . . . . . .
+ . . . . O . . .
+
+ . . . . . O . .
+ . . O . . . . .
+ . . . . . . O .
+ . O . . . . . .
+ . . . . . . . O
+ . . . . O . . .
+ O . . . . . . .
+ . . . O . . . .
+
+ . . . . . O . .
+ . . O . . . . .
+ . . . . . . O .
+ . . . O . . . .
+ O . . . . . . .
+ . . . . . . . O
+ . O . . . . . .
+ . . . . O . . .
+
+ . . . . . O . .
+ . . . O . . . .
+ O . . . . . . .
+ . . . . O . . .
+ . . . . . . . O
+ . O . . . . . .
+ . . . . . . O .
+ . . O . . . . .
+
+ . . . . . O . .
+ . . . O . . . .
+ . O . . . . . .
+ . . . . . . . O
+ . . . . O . . .
+ . . . . . . O .
+ O . . . . . . .
+ . . O . . . . .
+
+ . . . . . O . .
+ . . . O . . . .
+ . . . . . . O .
+ O . . . . . . .
+ . . O . . . . .
+ . . . . O . . .
+ . O . . . . . .
+ . . . . . . . O
+
+ . . . . . O . .
+ . . . O . . . .
+ . . . . . . O .
+ O . . . . . . .
+ . . . . . . . O
+ . O . . . . . .
+ . . . . O . . .
+ . . O . . . . .
+
+ . . . . . O . .
+ . . . . . . . O
+ . O . . . . . .
+ . . . O . . . .
+ O . . . . . . .
+ . . . . . . O .
+ . . . . O . . .
+ . . O . . . . .
+
+ . . . . . . O .
+ O . . . . . . .
+ . . O . . . . .
+ . . . . . . . O
+ . . . . . O . .
+ . . . O . . . .
+ . O . . . . . .
+ . . . . O . . .
+
+ . . . . . . O .
+ . O . . . . . .
+ . . . O . . . .
+ O . . . . . . .
+ . . . . . . . O
+ . . . . O . . .
+ . . O . . . . .
+ . . . . . O . .
+
+ . . . . . . O .
+ . O . . . . . .
+ . . . . . O . .
+ . . O . . . . .
+ O . . . . . . .
+ . . . O . . . .
+ . . . . . . . O
+ . . . . O . . .
+
+ . . . . . . O .
+ . . O . . . . .
+ O . . . . . . .
+ . . . . . O . .
+ . . . . . . . O
+ . . . . O . . .
+ . O . . . . . .
+ . . . O . . . .
+
+ . . . . . . O .
+ . . O . . . . .
+ . . . . . . . O
+ . O . . . . . .
+ . . . . O . . .
+ O . . . . . . .
+ . . . . . O . .
+ . . . O . . . .
+
+ . . . . . . O .
+ . . . O . . . .
+ . O . . . . . .
+ . . . . O . . .
+ . . . . . . . O
+ O . . . . . . .
+ . . O . . . . .
+ . . . . . O . .
+
+ . . . . . . O .
+ . . . O . . . .
+ . O . . . . . .
+ . . . . . . . O
+ . . . . . O . .
+ O . . . . . . .
+ . . O . . . . .
+ . . . . O . . .
+
+ . . . . . . O .
+ . . . . O . . .
+ . . O . . . . .
+ O . . . . . . .
+ . . . . . O . .
+ . . . . . . . O
+ . O . . . . . .
+ . . . O . . . .
+
+ . . . . . . . O
+ . O . . . . . .
+ . . . O . . . .
+ O . . . . . . .
+ . . . . . . O .
+ . . . . O . . .
+ . . O . . . . .
+ . . . . . O . .
+
+ . . . . . . . O
+ . O . . . . . .
+ . . . . O . . .
+ . . O . . . . .
+ O . . . . . . .
+ . . . . . . O .
+ . . . O . . . .
+ . . . . . O . .
+
+ . . . . . . . O
+ . . O . . . . .
+ O . . . . . . .
+ . . . . . O . .
+ . O . . . . . .
+ . . . . O . . .
+ . . . . . . O .
+ . . . O . . . .
+
+ . . . . . . . O
+ . . . O . . . .
+ O . . . . . . .
+ . . O . . . . .
+ . . . . . O . .
+ . O . . . . . .
+ . . . . . . O .
+ . . . . O . . .
+
+ . . . . . . . O
+ . . . . . O . .
+ . . . O . . . .
+ . . . . . . O .
+ . . . . O . . .
+ . . . . O . . .
+ . . O . . . . .
+ . . . . O . . .
+
+Fin de ejecución.
+yes!!

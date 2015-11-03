@@ -96,7 +96,7 @@ fun transExp(venv, tenv) =
         val b = List.foldr (fn (x, rest) => (tiposIguales (#1 x) (#2 x)) andalso rest) true (zipEq (#formals envEntry) formalsArgs nl)
       in  
         if not b then error("Error en los argumentos de la funcion (tipos)", nl) 
-        else {exp=callExp(func, #extern envEntry, tiposIguales (#result envEntry) TUnit, #level envEntry, formalsArgsExp), ty=(#result envEntry)} 
+        else {exp=callExp(#label envEntry, #extern envEntry, tiposIguales (#result envEntry) TUnit, #level envEntry, formalsArgsExp), ty=(#result envEntry)} 
       end
     | trexp(OpExp({left, oper=EqOp, right}, nl)) =
       let
@@ -308,7 +308,7 @@ fun transExp(venv, tenv) =
             val {exp=expExp, ty=tyinit} = transExp (venv, tenv) init
             val acc = allocLocal (topLevel()) (!escape)
             val level = getActualLev()
-            val venv' = tabInserta(name, Var{access=acc, level=level, ty=tyinit}, venv)
+            val venv' = tabRInserta(name, Var{access=acc, level=level, ty=tyinit}, venv)
           in 
             (venv', tenv, [{var=varDec acc, exp=expExp}])
           end   
@@ -342,7 +342,6 @@ fun transExp(venv, tenv) =
                                                           | _ => error("No se permiten argumentos de ese tipo.", pos))
                                          | _ => error("Error de tipo en el campo.", pos))
 
-        val name' = tigertemp.newlabel()
         (* Obtiene la lista de argumentos de la funcion *)
         fun getFormals pos params = map (transparams pos) params 
         
@@ -357,14 +356,15 @@ fun transExp(venv, tenv) =
         (* SIEMPRE va en false el extern. No se discute. Lo dijo Guille. *)
         val venv' = foldr (fn (x, venvv) => let 
                                                 val f_name = (#name (#1 x))
+                                                val f_label = if f_name <> "_tigermain" then f_name ^ tigertemp.newlabel()
+                                                                                        else "_tigermain"
                                                 val f_formals = map #typ (getFormals (#2 x) (#params (#1 x)))                           
                                                 val f_result = getResult (#2 x) (#result (#1 x))
-                                                val lev = newLevel{parent=topLevel(), name=f_name}
-                                                val _ = print("PROCESANDO "^f_name^"\n")
+                                                val lev = newLevel{parent=topLevel(), name=f_label}
                                             in
-                                                tabInserta(f_name, 
+                                                tabRInserta(f_name, 
                                                            Func{level=lev, 
-                                                                label=name', 
+                                                                label=f_label, 
                                                                 formals=f_formals, 
                                                                 result=f_result, 
                                                                 extern=false}, venvv)

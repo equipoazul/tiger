@@ -149,7 +149,7 @@ struct
 		fun checkIndexArray(arr ::idx::rest) =
 		let
 			val siz = loadMem (arr-tigerframe.wSz)
-			val _ = print("Size:"^makestring arr^"\n")
+			(*val _ = print("Size:"^makestring arr^"\n") *)
    (*val _ = print("Size:"^makestring arr^"\n")*)
 			val _ = if (idx>=siz orelse idx<0) then raise Fail("Índice fuera de rango"^" siz:"^Int.toString siz^" idx:"^Int.toString idx^"\n") else ()
 		in
