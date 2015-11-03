@@ -1,0 +1,1062 @@
+Saque algo de la pila
+Meto L29 en la pila
+Saque algo de la pila
+Saque algo de la pila
+Meto L34 en la pila
+Saque algo de la pila
+Saque algo de la pila
+Saque algo de la pila
+Saque algo de la pila
+Saque algo de la pila
+Saque algo de la pila
+Saque algo de la pila
+Saque algo de la pila
+bien!
+Fragmentos: 91
+Fragmentos de funcion: 9: _tigermain, printlist, printint, f, merge, readlist, readint, skipto, isdigit, 
+Fragmentos de string: 82: (;;-------, ), (_tigermain, ), (, .string "ULTIMO GC\x0a"), (L103, .long 10), (, .string "ULTIMO GC\x0a"), (L102, .long 10), (;;-------, ), (printlist, ), (, .string " "), (L98, .long 1), (, .string " "), (L97, .long 1), (, .string "\x0a"), (L96, .long 1), (, .string "\x0a"), (L95, .long 1), (;;-------, ), (printint, ), (, .string "0"), (L86, .long 1), (, .string "0"), (L85, .long 1), (, .string "-"), (L82, .long 1), (, .string "-"), (L81, .long 1), (;;-------, ), (f, ), (, .string "0"), (L76, .long 1), (, .string "0"), (L75, .long 1), (, .string "0"), (L74, .long 1), (, .string "0"), (L73, .long 1), (, .string "0"), (L72, .long 1), (, .string "0"), (L71, .long 1), (, .string "0"), (L70, .long 1), (, .string "0"), (L69, .long 1), (;;-------, ), (merge, ), (;;-------, ), (readlist, ), (;;-------, ), (readint, ), (, .string "\x21[1;31mWHILE GC\x0a"), (L38, .long 16), (, .string "\x21[1;31mWHILE GC\x0a"), (L37, .long 16), (, .string "0"), (L36, .long 1), (, .string "0"), (L35, .long 1), (;;-------, ), (skipto, ), (, .string "SKIPTO GC\x0a"), (L31, .long 10), (, .string "SKIPTO GC\x0a"), (L30, .long 10), (, .string "\x0a"), (L21, .long 1), (, .string " "), (L20, .long 1), (;;-------, ), (isdigit, ), (, .string "9"), (L10, .long 1), (, .string "9"), (L9, .long 1), (, .string "0"), (L6, .long 1), (, .string "0"), (L5, .long 1), (, .string "Primer GC\x0a"), (L2, .long 10), (, .string "Primer GC\x0a"), (L1, .long 10), 
+L1:	.long 10
+	.string "Primer GC\x0a"
+L2:	.long 10
+	.string "Primer GC\x0a"
+L5:	.long 1
+	.string "0"
+L6:	.long 1
+	.string "0"
+L9:	.long 1
+	.string "9"
+L10:	.long 1
+	.string "9"
+isdigit:
+MOVE(
+ TEMP RV,
+ ESEQ(
+  SEQ(
+   CJUMP(LE,
+    ESEQ(
+     SEQ(
+      EXP(
+       CALL(
+        NAME ord,
+         NAME L6)),
+      MOVE(
+       TEMP T4,
+       TEMP RV)),
+     TEMP RV),
+    ESEQ(
+     SEQ(
+      EXP(
+       CALL(
+        NAME ord,
+         TEMP T3)),
+      MOVE(
+       TEMP T5,
+       TEMP RV)),
+     TEMP RV),
+    L15,L16),
+   SEQ(
+    LABEL L15,
+    SEQ(
+     MOVE(
+      TEMP T11,
+      ESEQ(
+       SEQ(
+        MOVE(
+         TEMP T12,
+         CONST 1),
+        SEQ(
+         CJUMP(LE,
+          ESEQ(
+           SEQ(
+            EXP(
+             CALL(
+              NAME ord,
+               TEMP T3)),
+            MOVE(
+             TEMP T7,
+             TEMP RV)),
+           TEMP RV),
+          ESEQ(
+           SEQ(
+            EXP(
+             CALL(
+              NAME ord,
+               NAME L10)),
+            MOVE(
+             TEMP T8,
+             TEMP RV)),
+           TEMP RV),
+          L18,L19),
+         SEQ(
+          LABEL L19,
+          SEQ(
+           MOVE(
+            TEMP T12,
+            CONST 0),
+           LABEL L18)))),
+       TEMP T12)),
+     SEQ(
+      JUMP(       NAME L17),
+      SEQ(
+       LABEL L16,
+       SEQ(
+        MOVE(
+         TEMP T11,
+         CONST 0),
+        LABEL L17)))))),
+  TEMP T11))
+;;-------:
+L20:	.long 1
+	.string " "
+L21:	.long 1
+	.string "\x0a"
+L30:	.long 10
+	.string "SKIPTO GC\x0a"
+L31:	.long 10
+	.string "SKIPTO GC\x0a"
+skipto:
+SEQ(
+ LABEL L32,
+ SEQ(
+  CJUMP(NE,
+   ESEQ(
+    SEQ(
+     SEQ(
+      MOVE(
+       TEMP T13,
+       MEM(
+        BINOP(PLUS,
+         MEM(
+          BINOP(PLUS,
+           MEM(
+            BINOP(PLUS,
+             TEMP FP,
+             CONST 8)),
+           CONST 8)),
+         CONST ~4))),
+      SEQ(
+       MOVE(
+        TEMP T14,
+        NAME L20),
+       SEQ(
+        MOVE(
+         TEMP T15,
+         CALL(
+          NAME _stringcmp,
+           TEMP T13,
+           TEMP T14)),
+        CJUMP(EQ,
+         TEMP T15,
+         CONST 0,
+         L24,L25)))),
+     SEQ(
+      LABEL L24,
+      SEQ(
+       MOVE(
+        TEMP T20,
+        CONST 1),
+       SEQ(
+        JUMP(         NAME L26),
+        SEQ(
+         LABEL L25,
+         SEQ(
+          MOVE(
+           TEMP T20,
+           ESEQ(
+            SEQ(
+             MOVE(
+              TEMP T21,
+              CONST 1),
+             SEQ(
+              SEQ(
+               MOVE(
+                TEMP T16,
+                MEM(
+                 BINOP(PLUS,
+                  MEM(
+                   BINOP(PLUS,
+                    MEM(
+                     BINOP(PLUS,
+                      TEMP FP,
+                      CONST 8)),
+                    CONST 8)),
+                  CONST ~4))),
+               SEQ(
+                MOVE(
+                 TEMP T17,
+                 NAME L21),
+                SEQ(
+                 MOVE(
+                  TEMP T18,
+                  CALL(
+                   NAME _stringcmp,
+                    TEMP T16,
+                    TEMP T17)),
+                 CJUMP(EQ,
+                  TEMP T18,
+                  CONST 0,
+                  L27,L28)))),
+              SEQ(
+               LABEL L28,
+               SEQ(
+                MOVE(
+                 TEMP T21,
+                 CONST 0),
+                LABEL L27)))),
+            TEMP T21)),
+          LABEL L26)))))),
+    TEMP T20),
+   CONST 0,
+   L33,L29),
+  SEQ(
+   LABEL L33,
+   SEQ(
+    MOVE(
+     MEM(
+      BINOP(PLUS,
+       MEM(
+        BINOP(PLUS,
+         MEM(
+          BINOP(PLUS,
+           TEMP FP,
+           CONST 8)),
+         CONST 8)),
+       CONST ~4)),
+     ESEQ(
+      EXP(
+       CALL(
+        NAME print,
+         NAME L31)),
+      ESEQ(
+       SEQ(
+        EXP(
+         CALL(
+          NAME getchar)),
+        MOVE(
+         TEMP T22,
+         TEMP RV)),
+       TEMP RV))),
+    SEQ(
+     JUMP(      NAME L32),
+     LABEL L29)))))
+;;-------:
+L35:	.long 1
+	.string "0"
+L36:	.long 1
+	.string "0"
+L37:	.long 16
+	.string "\x21[1;31mWHILE GC\x0a"
+L38:	.long 16
+	.string "\x21[1;31mWHILE GC\x0a"
+readint:
+MOVE(
+ TEMP RV,
+ ESEQ(
+  MOVE(
+   TEMP T2,
+   CONST 0),
+  ESEQ(
+   SEQ(
+    EXP(
+     CALL(
+      NAME skipto,
+       MEM(
+        BINOP(PLUS,
+         TEMP FP,
+         CONST 8)))),
+    SEQ(
+     MOVE(
+      ESEQ(
+       SEQ(
+        MOVE(
+         TEMP T25,
+         TEMP T1),
+        SEQ(
+         MOVE(
+          TEMP T26,
+          CONST 0),
+         EXP(
+          CALL(
+           NAME _checkNil,
+            TEMP T25)))),
+       MEM(
+        BINOP(PLUS,
+         TEMP T25,
+         BINOP(MUL,
+          TEMP T26,
+          CONST 4)))),
+      ESEQ(
+       SEQ(
+        MOVE(
+         TEMP T23,
+         MEM(
+          BINOP(PLUS,
+           MEM(
+            BINOP(PLUS,
+             TEMP FP,
+             CONST 8)),
+           CONST ~4))),
+        SEQ(
+         EXP(
+          CALL(
+           NAME isdigit,
+            MEM(
+             BINOP(PLUS,
+              TEMP FP,
+              CONST 8)),
+            TEMP T23)),
+         MOVE(
+          TEMP T24,
+          TEMP RV))),
+       TEMP RV)),
+     SEQ(
+      LABEL L39,
+      SEQ(
+       CJUMP(NE,
+        ESEQ(
+         SEQ(
+          MOVE(
+           TEMP T27,
+           MEM(
+            BINOP(PLUS,
+             MEM(
+              BINOP(PLUS,
+               TEMP FP,
+               CONST 8)),
+             CONST ~4))),
+          SEQ(
+           EXP(
+            CALL(
+             NAME isdigit,
+              MEM(
+               BINOP(PLUS,
+                TEMP FP,
+                CONST 8)),
+              TEMP T27)),
+           MOVE(
+            TEMP T28,
+            TEMP RV))),
+         TEMP RV),
+        CONST 0,
+        L40,L34),
+       SEQ(
+        LABEL L40,
+        SEQ(
+         SEQ(
+          MOVE(
+           TEMP T2,
+           BINOP(MINUS,
+            BINOP(PLUS,
+             BINOP(MUL,
+              TEMP T2,
+              CONST 10),
+             ESEQ(
+              SEQ(
+               MOVE(
+                TEMP T30,
+                MEM(
+                 BINOP(PLUS,
+                  MEM(
+                   BINOP(PLUS,
+                    TEMP FP,
+                    CONST 8)),
+                  CONST ~4))),
+               SEQ(
+                EXP(
+                 CALL(
+                  NAME ord,
+                   TEMP T30)),
+                MOVE(
+                 TEMP T31,
+                 TEMP RV))),
+              TEMP RV)),
+            ESEQ(
+             SEQ(
+              EXP(
+               CALL(
+                NAME ord,
+                 NAME L36)),
+              MOVE(
+               TEMP T33,
+               TEMP RV)),
+             TEMP RV))),
+          MOVE(
+           MEM(
+            BINOP(PLUS,
+             MEM(
+              BINOP(PLUS,
+               TEMP FP,
+               CONST 8)),
+             CONST ~4)),
+           ESEQ(
+            EXP(
+             CALL(
+              NAME print,
+               NAME L38)),
+            ESEQ(
+             SEQ(
+              EXP(
+               CALL(
+                NAME getchar)),
+              MOVE(
+               TEMP T35,
+               TEMP RV)),
+             TEMP RV)))),
+         SEQ(
+          JUMP(           NAME L39),
+          LABEL L34))))))),
+   TEMP T2)))
+;;-------:
+readlist:
+MOVE(
+ TEMP RV,
+ ESEQ(
+  SEQ(
+   MOVE(
+    TEMP T36,
+    CALL(
+     NAME _allocRecord,
+      CONST 1,
+      CONST 0)),
+   MOVE(
+    TEMP T38,
+    ESEQ(
+     SEQ(
+      EXP(
+       CALL(
+        NAME readint,
+         MEM(
+          BINOP(PLUS,
+           TEMP FP,
+           CONST 8)),
+         TEMP T36)),
+      MOVE(
+       TEMP T37,
+       TEMP RV)),
+     TEMP RV))),
+  ESEQ(
+   SEQ(
+    CJUMP(NE,
+     ESEQ(
+      SEQ(
+       MOVE(
+        TEMP T39,
+        TEMP T36),
+       SEQ(
+        MOVE(
+         TEMP T40,
+         CONST 0),
+        EXP(
+         CALL(
+          NAME _checkNil,
+           TEMP T39)))),
+      MEM(
+       BINOP(PLUS,
+        TEMP T39,
+        BINOP(MUL,
+         TEMP T40,
+         CONST 4)))),
+     CONST 0,
+     L42,L43),
+    SEQ(
+     LABEL L42,
+     SEQ(
+      MOVE(
+       TEMP T42,
+       CALL(
+        NAME _allocRecord,
+         CONST 2,
+         TEMP T38,
+         ESEQ(
+          SEQ(
+           EXP(
+            CALL(
+             NAME readlist,
+              MEM(
+               BINOP(PLUS,
+                TEMP FP,
+                CONST 8)))),
+           MOVE(
+            TEMP T41,
+            TEMP RV)),
+          TEMP RV))),
+      SEQ(
+       JUMP(        NAME L44),
+       SEQ(
+        LABEL L43,
+        SEQ(
+         MOVE(
+          TEMP T42,
+          CONST 0),
+         LABEL L44)))))),
+   TEMP T42)))
+;;-------:
+merge:
+MOVE(
+ TEMP RV,
+ ESEQ(
+  SEQ(
+   CJUMP(EQ,
+    TEMP T43,
+    CONST 0,
+    L63,L64),
+   SEQ(
+    LABEL L63,
+    SEQ(
+     MOVE(
+      TEMP T73,
+      TEMP T44),
+     SEQ(
+      JUMP(       NAME L65),
+      SEQ(
+       LABEL L64,
+       SEQ(
+        MOVE(
+         TEMP T73,
+         ESEQ(
+          SEQ(
+           CJUMP(EQ,
+            TEMP T44,
+            CONST 0,
+            L58,L59),
+           SEQ(
+            LABEL L58,
+            SEQ(
+             MOVE(
+              TEMP T71,
+              TEMP T43),
+             SEQ(
+              JUMP(               NAME L60),
+              SEQ(
+               LABEL L59,
+               SEQ(
+                MOVE(
+                 TEMP T71,
+                 ESEQ(
+                  SEQ(
+                   CJUMP(LT,
+                    ESEQ(
+                     SEQ(
+                      MOVE(
+                       TEMP T47,
+                       TEMP T43),
+                      SEQ(
+                       MOVE(
+                        TEMP T48,
+                        CONST 0),
+                       EXP(
+                        CALL(
+                         NAME _checkNil,
+                          TEMP T47)))),
+                     MEM(
+                      BINOP(PLUS,
+                       TEMP T47,
+                       BINOP(MUL,
+                        TEMP T48,
+                        CONST 4)))),
+                    ESEQ(
+                     SEQ(
+                      MOVE(
+                       TEMP T49,
+                       TEMP T44),
+                      SEQ(
+                       MOVE(
+                        TEMP T50,
+                        CONST 0),
+                       EXP(
+                        CALL(
+                         NAME _checkNil,
+                          TEMP T49)))),
+                     MEM(
+                      BINOP(PLUS,
+                       TEMP T49,
+                       BINOP(MUL,
+                        TEMP T50,
+                        CONST 4)))),
+                    L53,L54),
+                   SEQ(
+                    LABEL L53,
+                    SEQ(
+                     MOVE(
+                      TEMP T69,
+                      CALL(
+                       NAME _allocRecord,
+                        CONST 2,
+                        ESEQ(
+                         SEQ(
+                          MOVE(
+                           TEMP T52,
+                           TEMP T43),
+                          SEQ(
+                           MOVE(
+                            TEMP T53,
+                            CONST 0),
+                           EXP(
+                            CALL(
+                             NAME _checkNil,
+                              TEMP T52)))),
+                         MEM(
+                          BINOP(PLUS,
+                           TEMP T52,
+                           BINOP(MUL,
+                            TEMP T53,
+                            CONST 4)))),
+                        ESEQ(
+                         SEQ(
+                          MOVE(
+                           TEMP T58,
+                           ESEQ(
+                            SEQ(
+                             MOVE(
+                              TEMP T56,
+                              TEMP T43),
+                             SEQ(
+                              MOVE(
+                               TEMP T57,
+                               CONST 1),
+                              EXP(
+                               CALL(
+                                NAME _checkNil,
+                                 TEMP T56)))),
+                            MEM(
+                             BINOP(PLUS,
+                              TEMP T56,
+                              BINOP(MUL,
+                               TEMP T57,
+                               CONST 4))))),
+                          SEQ(
+                           EXP(
+                            CALL(
+                             NAME merge,
+                              MEM(
+                               BINOP(PLUS,
+                                TEMP FP,
+                                CONST 8)),
+                              TEMP T58,
+                              TEMP T44)),
+                           MOVE(
+                            TEMP T59,
+                            TEMP RV))),
+                         TEMP RV))),
+                     SEQ(
+                      JUMP(                       NAME L55),
+                      SEQ(
+                       LABEL L54,
+                       SEQ(
+                        MOVE(
+                         TEMP T69,
+                         CALL(
+                          NAME _allocRecord,
+                           CONST 2,
+                           ESEQ(
+                            SEQ(
+                             MOVE(
+                              TEMP T60,
+                              TEMP T44),
+                             SEQ(
+                              MOVE(
+                               TEMP T61,
+                               CONST 0),
+                              EXP(
+                               CALL(
+                                NAME _checkNil,
+                                 TEMP T60)))),
+                            MEM(
+                             BINOP(PLUS,
+                              TEMP T60,
+                              BINOP(MUL,
+                               TEMP T61,
+                               CONST 4)))),
+                           ESEQ(
+                            SEQ(
+                             MOVE(
+                              TEMP T66,
+                              ESEQ(
+                               SEQ(
+                                MOVE(
+                                 TEMP T64,
+                                 TEMP T44),
+                                SEQ(
+                                 MOVE(
+                                  TEMP T65,
+                                  CONST 1),
+                                 EXP(
+                                  CALL(
+                                   NAME _checkNil,
+                                    TEMP T64)))),
+                               MEM(
+                                BINOP(PLUS,
+                                 TEMP T64,
+                                 BINOP(MUL,
+                                  TEMP T65,
+                                  CONST 4))))),
+                             SEQ(
+                              EXP(
+                               CALL(
+                                NAME merge,
+                                 MEM(
+                                  BINOP(PLUS,
+                                   TEMP FP,
+                                   CONST 8)),
+                                 TEMP T43,
+                                 TEMP T66)),
+                              MOVE(
+                               TEMP T67,
+                               TEMP RV))),
+                            TEMP RV))),
+                        LABEL L55)))))),
+                  TEMP T69)),
+                LABEL L60)))))),
+          TEMP T71)),
+        LABEL L65)))))),
+  TEMP T73))
+;;-------:
+L69:	.long 1
+	.string "0"
+L70:	.long 1
+	.string "0"
+L71:	.long 1
+	.string "0"
+L72:	.long 1
+	.string "0"
+L73:	.long 1
+	.string "0"
+L74:	.long 1
+	.string "0"
+L75:	.long 1
+	.string "0"
+L76:	.long 1
+	.string "0"
+f:
+SEQ(
+ CJUMP(GT,
+  TEMP T75,
+  CONST 0,
+  L77,L78),
+ SEQ(
+  LABEL L77,
+  SEQ(
+   SEQ(
+    SEQ(
+     MOVE(
+      TEMP T79,
+      BINOP(DIV,
+       TEMP T75,
+       CONST 10)),
+     EXP(
+      CALL(
+       NAME f,
+        MEM(
+         BINOP(PLUS,
+          MEM(
+           BINOP(PLUS,
+            TEMP FP,
+            CONST 8)),
+          CONST 8)),
+        TEMP T79))),
+    SEQ(
+     MOVE(
+      TEMP T104,
+      ESEQ(
+       SEQ(
+        MOVE(
+         TEMP T102,
+         BINOP(PLUS,
+          BINOP(MINUS,
+           TEMP T75,
+           BINOP(MUL,
+            BINOP(DIV,
+             TEMP T75,
+             CONST 10),
+            CONST 10)),
+          ESEQ(
+           SEQ(
+            EXP(
+             CALL(
+              NAME ord,
+               NAME L76)),
+            MOVE(
+             TEMP T100,
+             TEMP RV)),
+           TEMP RV))),
+        SEQ(
+         EXP(
+          CALL(
+           NAME chr,
+            TEMP T102)),
+         MOVE(
+          TEMP T103,
+          TEMP RV))),
+       TEMP RV)),
+     EXP(
+      CALL(
+       NAME print,
+        TEMP T104)))),
+   LABEL L78)))
+;;-------:
+L81:	.long 1
+	.string "-"
+L82:	.long 1
+	.string "-"
+L85:	.long 1
+	.string "0"
+L86:	.long 1
+	.string "0"
+printint:
+EXP(
+ ESEQ(
+  SEQ(
+   CJUMP(LT,
+    TEMP T74,
+    CONST 0,
+    L90,L91),
+   SEQ(
+    LABEL L90,
+    SEQ(
+     SEQ(
+      EXP(
+       CALL(
+        NAME print,
+         NAME L82)),
+      SEQ(
+       MOVE(
+        TEMP T108,
+        BINOP(MINUS,
+         CONST 0,
+         TEMP T74)),
+       EXP(
+        CALL(
+         NAME f,
+          MEM(
+           BINOP(PLUS,
+            TEMP FP,
+            CONST 8)),
+          TEMP T108)))),
+     SEQ(
+      JUMP(       NAME L92),
+      SEQ(
+       LABEL L91,
+       SEQ(
+        SEQ(
+         CJUMP(GT,
+          TEMP T74,
+          CONST 0,
+          L87,L88),
+         SEQ(
+          LABEL L87,
+          SEQ(
+           EXP(
+            CALL(
+             NAME f,
+              MEM(
+               BINOP(PLUS,
+                TEMP FP,
+                CONST 8)),
+              TEMP T74)),
+           SEQ(
+            JUMP(             NAME L89),
+            SEQ(
+             LABEL L88,
+             SEQ(
+              EXP(
+               CALL(
+                NAME print,
+                 NAME L86)),
+              LABEL L89)))))),
+        LABEL L92)))))),
+  CONST 0))
+;;-------:
+L95:	.long 1
+	.string "\x0a"
+L96:	.long 1
+	.string "\x0a"
+L97:	.long 1
+	.string " "
+L98:	.long 1
+	.string " "
+printlist:
+SEQ(
+ CJUMP(EQ,
+  TEMP T110,
+  CONST 0,
+  L99,L100),
+ SEQ(
+  LABEL L99,
+  SEQ(
+   EXP(
+    CALL(
+     NAME print,
+      NAME L96)),
+   SEQ(
+    JUMP(     NAME L101),
+    SEQ(
+     LABEL L100,
+     SEQ(
+      SEQ(
+       SEQ(
+        MOVE(
+         TEMP T116,
+         ESEQ(
+          SEQ(
+           MOVE(
+            TEMP T114,
+            TEMP T110),
+           SEQ(
+            MOVE(
+             TEMP T115,
+             CONST 0),
+            EXP(
+             CALL(
+              NAME _checkNil,
+               TEMP T114)))),
+          MEM(
+           BINOP(PLUS,
+            TEMP T114,
+            BINOP(MUL,
+             TEMP T115,
+             CONST 4))))),
+        EXP(
+         CALL(
+          NAME printint,
+           MEM(
+            BINOP(PLUS,
+             TEMP FP,
+             CONST 8)),
+           TEMP T116))),
+       SEQ(
+        EXP(
+         CALL(
+          NAME print,
+           NAME L98)),
+        SEQ(
+         MOVE(
+          TEMP T121,
+          ESEQ(
+           SEQ(
+            MOVE(
+             TEMP T119,
+             TEMP T110),
+            SEQ(
+             MOVE(
+              TEMP T120,
+              CONST 1),
+             EXP(
+              CALL(
+               NAME _checkNil,
+                TEMP T119)))),
+           MEM(
+            BINOP(PLUS,
+             TEMP T119,
+             BINOP(MUL,
+              TEMP T120,
+              CONST 4))))),
+         EXP(
+          CALL(
+           NAME printlist,
+            MEM(
+             BINOP(PLUS,
+              TEMP FP,
+              CONST 8)),
+            TEMP T121))))),
+      LABEL L101))))))
+;;-------:
+L102:	.long 10
+	.string "ULTIMO GC\x0a"
+L103:	.long 10
+	.string "ULTIMO GC\x0a"
+_tigermain:
+MOVE(
+ TEMP RV,
+ ESEQ(
+  SEQ(
+   MOVE(
+    MEM(
+     BINOP(PLUS,
+      TEMP FP,
+      CONST ~4)),
+    ESEQ(
+     EXP(
+      CALL(
+       NAME print,
+        NAME L2)),
+     ESEQ(
+      SEQ(
+       EXP(
+        CALL(
+         NAME getchar)),
+       MOVE(
+        TEMP T0,
+        TEMP RV)),
+      TEMP RV))),
+   SEQ(
+    MOVE(
+     TEMP T123,
+     ESEQ(
+      SEQ(
+       EXP(
+        CALL(
+         NAME readlist,
+          TEMP FP)),
+       MOVE(
+        TEMP T122,
+        TEMP RV)),
+      TEMP RV)),
+    MOVE(
+     TEMP T126,
+     ESEQ(
+      SEQ(
+       EXP(
+        CALL(
+         NAME print,
+          NAME L103)),
+       MOVE(
+        MEM(
+         BINOP(PLUS,
+          TEMP FP,
+          CONST ~4)),
+        ESEQ(
+         SEQ(
+          EXP(
+           CALL(
+            NAME getchar)),
+          MOVE(
+           TEMP T124,
+           TEMP RV)),
+         TEMP RV))),
+      ESEQ(
+       SEQ(
+        EXP(
+         CALL(
+          NAME readlist,
+           TEMP FP)),
+        MOVE(
+         TEMP T125,
+         TEMP RV)),
+       TEMP RV))))),
+  ESEQ(
+   SEQ(
+    MOVE(
+     TEMP T129,
+     ESEQ(
+      SEQ(
+       EXP(
+        CALL(
+         NAME merge,
+          TEMP FP,
+          TEMP T123,
+          TEMP T126)),
+       MOVE(
+        TEMP T128,
+        TEMP RV)),
+      TEMP RV)),
+    EXP(
+     CALL(
+      NAME printlist,
+       TEMP FP,
+       TEMP T129))),
+   CONST 0)))
+;;-------:
+
+Comienzo de ejecución...
+Primer GC
+Fail: error input NONE

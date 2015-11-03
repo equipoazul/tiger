@@ -1,0 +1,14 @@
+let
+	var buffer := getchar()
+	function pepe(m : int) : int =
+		let
+			var t := 4
+			 function skipto () =
+				while buffer = " " | buffer = "\n"
+				   do buffer := (print("S;") ; getchar ())
+		in
+			skipto();m
+		end
+in
+	pepe(5)
+end

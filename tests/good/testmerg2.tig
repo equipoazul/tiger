@@ -1,0 +1,14 @@
+let
+ var buffer := "X"
+ function pepe(x:int) =
+    buffer := "A"
+ function pepa(y:int) =
+    buffer := "C"
+in
+  pepa(3);
+  pepe(5);
+  print("B:>>");
+  print(buffer);
+  print("<<\n");
+  0 
+end 

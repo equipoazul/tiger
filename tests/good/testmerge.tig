@@ -1,0 +1,61 @@
+let
+ type any = {any : int}
+ var buffer1 := "X"
+ var buffer := getchar ()
+ type list = {first : int, rest : list}
+
+ function readint (any : any) : int =
+   let var i := 0
+       function isdigit (s : string) : int =
+         ord ("3") <= ord (s) & ord (s) <= ord ("9")
+       function skipto () =
+	(print("ENTRAMOS\n");
+	 print("B:>>");
+         print(buffer);
+	 print("<<\n");
+   	 while buffer = " " | buffer = "\n"
+   	   do (
+		print("K;");
+		buffer := getchar ();
+		print("P;")
+		))
+   in skipto ();
+	print("Pos space\n");
+      any.any := isdigit (buffer);
+      while isdigit (buffer)
+   	do (i := i * 10 + ord (buffer) - ord ("0");
+            buffer := (print("WHILE GC\n") ; getchar ()));
+      i
+   end
+
+function readlist () : list =
+   let var any := any{any=0}
+       var i := readint (any)
+   in (printint(any.any);print("<<<>>>"));if any.any
+        then list{first=i,rest=readlist ()}
+        else nil
+   end
+
+ function printint (i : int) =
+   let function f (i : int) =
+        if i > 0
+	then (f (i/10); print (chr (i-i/10*10+ord ("0"))))
+   in if i < 0 then (print ("-"); f (-i))
+      else if i>0 then f (i)
+      else print ("0")
+   end
+
+ function printlist (l : list) =
+   if l = nil then print ("\n")
+   else (printint (l.first); print (";"); printlist (l.rest))
+ 
+var an :any := any{any=0}
+ var list1 := readint(an)
+in
+	print("Primer Int\n");
+	printint(list1);
+	list1 := readint(an);
+	print("\nSegundo Int\n");
+	printint(list1);
+	0
+end

@@ -20,6 +20,7 @@ fun getActualLev() = !actualLevel
 val outermost: level = {parent=NONE,
 	frame=newFrame{name="_tigermain"}, level=0}
 	(*frame=newFrame{name="_tigermain", formals=[]}, level=getActualLev()}*)
+    (*frame=newFrame{name="_tigermain"}, level=getActualLev()}*)
 fun newLevel{parent={parent, frame, level}, name} =
 	{
 	parent=SOME frame,
@@ -152,11 +153,14 @@ fun simpleVar(acc, nivel) =
         |InFrame k => 
             let 
                 fun aux 0 = TEMP fp
-                    |aux n = if n < 0 then raise Fail "(simpleVar) Error de memoria!\n"
-                             else MEM (BINOP (PLUS, aux(n - 1), CONST fpPrevLev))
+                    |aux n = (print("EN SIMPLEVAR\n"); 
+                             if n < 0 then raise Fail "(simpleVar) Error de memoria!\n"
+                             else MEM (BINOP (PLUS, aux(n - 1), CONST fpPrevLev)))
                              (*else MEM (BINOP (PLUS, aux(!actualLevel - 1), aux(n-1)))*)
              in
-                Ex (MEM (BINOP (PLUS, aux(!actualLevel - nivel), CONST k)))
+                if (!actualLevel = nivel) then Ex (MEM (BINOP (PLUS, TEMP fp, CONST k))) 
+                  else if (nivel < !actualLevel) then Ex (MEM (BINOP (PLUS, aux(!actualLevel - nivel), CONST k)))
+                  else Ex (TEMP fp) 
             end
 
 fun varDec(acc) = simpleVar(acc, getActualLev())
@@ -209,9 +213,9 @@ fun callExp (name, external, isproc, lev:level, ls) =
 	let fun memArray 0 = TEMP fp
 		   |memArray n = if n < 0 then raise Fail "Error de memoria"
 		                 else MEM (BINOP (PLUS, memArray (n-1), CONST fpPrevLev))
-		   val fplex = if (#level lev) = !actualLevel then MEM (BINOP (PLUS, TEMP fp, CONST fpPrevLev))
-	   				       else if (#level lev) < !actualLevel then memArray (!actualLevel - ((#level lev) - 1))
-	   				   	   else TEMP fp
+		   val fplex = if (#level lev) = !actualLevel then (print("========================> = "); print(name); MEM (BINOP (PLUS, TEMP fp, CONST fpPrevLev)))
+	   				       else if (#level lev) < !actualLevel then  memArray (!actualLevel - #level lev)
+	   				   	   else (print("=================================> <"); print(name); TEMP fp)
 		fun preparaArgs [] (rt, re) = (rt, re)
 		   |preparaArgs (h::t) (rt, re) = 
 		   				case h of
@@ -230,7 +234,7 @@ fun callExp (name, external, isproc, lev:level, ls) =
 			let val tmp = newtemp()
 			in
 				Ex (ESEQ (seq(la'@[EXP (CALL (NAME name, ta')),
-								   MOVE (TEMP tmp, TEMP rv)]), TEMP rv))
+								   MOVE (TEMP tmp, TEMP rv)]), TEMP tmp))
 			end
 	end
 
