@@ -1,8 +1,0 @@
-/* error : initializing nil expressions not constrained by record type */
-let 
-	type rectype = {name : string, id : int}
-
-	var a : rectype := rectype {name = "asd", id = 2}
-in
-	a.name := nil;0
-end

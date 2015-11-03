@@ -18,14 +18,17 @@ val actualLevel = ref ~1 (* _tigermain debe tener level = 0. *)
 fun getActualLev() = !actualLevel
 
 val outermost: level = {parent=NONE,
-	frame=newFrame{name="_tigermain"}, level=0}
-	(*frame=newFrame{name="_tigermain", formals=[]}, level=getActualLev()}*)
-    (*frame=newFrame{name="_tigermain"}, level=getActualLev()}*)
+    frame=newFrame{name="_tigermain"}, level=getActualLev()}
 fun newLevel{parent={parent, frame, level}, name} =
+    (*let 
+       val _ = print("CREANDO NUEVO NIVEL PARA "^name^"\n")
+       val _ = print("Nivel: " ^ makestring level ^"\n")
+    in*)
 	{
 	parent=SOME frame,
 	frame=newFrame{name=name},
 	level=level+1}
+	(*end*)
 fun allocArg{parent, frame, level} b = tigerframe.allocArg frame b
 fun allocLocal{parent, frame, level} b = tigerframe.allocLocal frame b
 fun formals{parent, frame, level} = tigerframe.formals frame
@@ -210,12 +213,14 @@ in
 end
 
 fun callExp (name, external, isproc, lev:level, ls) = 
-	let fun memArray 0 = TEMP fp
+	let 
+	    val _ = (print("Nombre ====> "); print(name); print(" Nivel ====> "); print(Int.toString(#level lev)); print("\n"))
+	    fun memArray 0 = TEMP fp
 		   |memArray n = if n < 0 then raise Fail "Error de memoria"
 		                 else MEM (BINOP (PLUS, memArray (n-1), CONST fpPrevLev))
-		   val fplex = if (#level lev) = !actualLevel then (print("========================> = "); print(name); MEM (BINOP (PLUS, TEMP fp, CONST fpPrevLev)))
+		   val fplex = if (#level lev) = !actualLevel then (MEM (BINOP (PLUS, TEMP fp, CONST fpPrevLev)))
 	   				       else if (#level lev) < !actualLevel then  memArray (!actualLevel - #level lev)
-	   				   	   else (print("=================================> <"); print(name); TEMP fp)
+	   				   	   else TEMP fp
 		fun preparaArgs [] (rt, re) = (rt, re)
 		   |preparaArgs (h::t) (rt, re) = 
 		   				case h of

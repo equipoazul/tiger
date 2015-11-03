@@ -1,8 +1,8 @@
 /* locals hide globals */
 let
-	var a := 25
+	var a :=0
 
 	function g (a : int) : int = a 
 in
- g (43)
+ g (2)
 end

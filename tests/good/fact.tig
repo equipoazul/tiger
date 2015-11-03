@@ -1,3 +1,4 @@
+/* define a recursive function */
 let
   /* calculate n! */
   function fact (n : int) : int =
