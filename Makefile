@@ -1,8 +1,8 @@
 # Unix makefile for tigermain example
 
 HOME=/usr
-MOSMLHOME=${HOME}
-#MOSMLHOME=/usr/local
+#MOSMLHOME=${HOME}
+MOSMLHOME=/usr/local
 MOSMLTOOLS=camlrunm $(MOSMLHOME)/tools
 MOSMLLEX=mosmllex
 MOSMLYACC=mosmlyac -v
@@ -27,7 +27,8 @@ EXEFILE=
 
 GRALOBJS= tigerabs.uo tigergrm.uo tigerlex.uo tigermain.uo \
 	tigernlin.uo tigerpp.uo tigerescap.uo tigertab.uo tigerseman.uo tigertemp.uo topsort.uo tigertree.uo \
-	tigerframe.uo tigertrans.uo tigerit.uo tigerpila.uo tigerinterp.uo tigerutils.uo
+	tigerframe.uo tigertrans.uo tigerit.uo tigerpila.uo tigerinterp.uo tigerutils.uo \
+	tigerassem.uo tigercodegen.uo
 
 all: tiger
 
@@ -97,4 +98,8 @@ tigercanon.uo: tigercanon.ui tigertree.uo tigertab.ui tigerframe.ui \
     tigertemp.ui 
 tigerlex.uo: tigergrm.ui tigernlin.uo 
 tigercanon.ui: tigertree.uo tigerframe.ui tigertemp.ui 
+tigerassem.uo: tigertemp.ui tigertemp.uo
+tigercodegen.ui: tigertree.uo tigerframe.ui tigerassem.uo tigerframe.ui tigerframe.uo 
+tigercodegen.uo: tigerframe.ui tigerframe.uo tigercodegen.ui tigertree.uo tigerit.uo \
+		    tigerassem.uo tigertemp.ui
 

@@ -2,6 +2,7 @@ open tigerlex
 open tigergrm
 open tigerescap
 open tigerseman
+open tigerassem
 open BasicIO Nonstdio
 
 fun lexstream(is: instream) =
@@ -62,7 +63,15 @@ fun main(args) =
 		(* fun canon_frag (tigerframe.PROC {body, frame}) = (tigercanon.linearize body, frame) *)
 		  | canon_frag _ = raise Fail "error interno (canon_frag): no es proc"
 		val canon_frags = List.map canon_frag func_frags
-		val _ = tigerinterp.inter true canon_frags str_frags
+		(*val _ = tigerinterp.inter true canon_frags str_frags*)
+        val instrlist = let
+                          fun aplanar (x, frame) = List.map (fn y => (frame, y)) x
+                          val stm_tpl = List.map aplanar canon_frags
+                          (*val assems = List.map (fn (x, y) => tigercodegen.codegen x y) (List.concat stm_tpl)*)
+                        in
+                          List.map (fn (x, y) => tigercodegen.codegen x y) (List.concat stm_tpl)
+                        end
+        
 	in
 		print "yes!!\n"
 	end	handle Fail s => print("Fail: "^s^"\n")

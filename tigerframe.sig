@@ -21,6 +21,7 @@ val sp : tigertemp.temp
 val maxRegFrame : frame -> int
 val wSz : int
 val log2WSz : int
+val argregs : tigertemp.temp list
 val calldefs : tigertemp.temp list
 val callersaves : tigertemp.temp list
 val exp : access -> tigertree.exp
