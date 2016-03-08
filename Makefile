@@ -2,7 +2,7 @@
 
 HOME=/usr
 #MOSMLHOME=${HOME}
-MOSMLHOME=/usr/local
+MOSMLHOME=/usr/local/
 MOSMLTOOLS=camlrunm $(MOSMLHOME)/tools
 MOSMLLEX=mosmllex
 MOSMLYACC=mosmlyac -v
@@ -91,15 +91,16 @@ tigerpila.uo: tigerpila.ui
 tigersres.uo: tigertab.ui tigertips.uo tigertemp.ui tigerabs.uo \
     tigertrans.ui 
 tigertab.uo: tigertab.ui 
+tigerassem.uo: tigertemp.ui tigertemp.uo tigertab.uo
+tigercodegen.ui: tigertree.uo tigerframe.ui tigerassem.uo tigerframe.ui tigerframe.uo 
+tigercodegen.uo: tigerframe.ui tigerframe.uo tigercodegen.ui tigertree.uo tigerit.uo \
+		    tigerassem.uo tigertemp.ui
 tigermain.uo: tigerseman.ui tigerescap.ui tigerinterp.ui tigergrm.ui tigerlex.uo \
-    tigerpp.uo tigercanon.ui tigercanon.uo tigerinterp.uo tigerinterp.ui
+    tigerpp.uo tigercanon.ui tigercanon.uo tigerinterp.uo tigerinterp.ui tigercodegen.ui 
 tigertemp.uo: tigertemp.ui 
 tigercanon.uo: tigercanon.ui tigertree.uo tigertab.ui tigerframe.ui \
     tigertemp.ui 
 tigerlex.uo: tigergrm.ui tigernlin.uo 
 tigercanon.ui: tigertree.uo tigerframe.ui tigertemp.ui 
-tigerassem.uo: tigertemp.ui tigertemp.uo
-tigercodegen.ui: tigertree.uo tigerframe.ui tigerassem.uo tigerframe.ui tigerframe.uo 
-tigercodegen.uo: tigerframe.ui tigerframe.uo tigercodegen.ui tigertree.uo tigerit.uo \
-		    tigerassem.uo tigertemp.ui
+
 

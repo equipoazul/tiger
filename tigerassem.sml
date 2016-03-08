@@ -13,9 +13,10 @@
 			| LABEL of {assem: string, lab: tigertemp.label}
 			| MOVE of {assem: string, dst: temp, src: temp}
 
-		fun format saytemp =
+		val format =
 			let	fun speak(assem,dst,src,jump) =
 					let	val saylab = tigertab.name
+					    fun saytemp t = t
 						fun f(#"`":: #"s":: i::rest) = 
 							(explode(saytemp(List.nth(src,ord i - ord #"0")))
 								@ f rest)
@@ -38,12 +39,15 @@
 					"\t"^speak(assem,
 						List.map tigertemp.temp2string dst,
 						List.map tigertemp.temp2string src,j)
-		| LABEL{assem,...} => assem
-		| MOVE{assem,dst,src} =>
-			"\t"^speak(assem,
-				[tigertemp.temp2string dst],
-				[tigertemp.temp2string src],nil)
+		        | LABEL{assem,...} => assem
+		        | MOVE{assem,dst,src} =>
+			        "\t"^speak(assem,
+				        [tigertemp.temp2string dst],
+				        [tigertemp.temp2string src],nil)
 end
+    fun strAssem i = (format i) ^ "\n"
+
+    fun printAssem i = (print o strAssem) i
 
 end
 

@@ -176,21 +176,21 @@ fun codegen frame stm =
 							| TEMP n =>
 									if n=tigerframe.fp then
 										(OPER{assem="PUSH fp\n",
-										src=[], dst=[], jump=NONE}, "") before print "Elegimos bien0\n"
+										src=[], dst=[], jump=NONE}, "") (*before print "Elegimos bien0\n" *)
 									else
 										(OPER{assem="PUSH `s0\n",
 										src=[n], dst=[], jump=NONE}, "")
 							| MEM(TEMP n) =>
 										if n=tigerframe.fp then
 											(OPER{assem="PUSH M[fp]\n",
-											src=[], dst=[], jump=NONE}, "") before print "Elegimos bien1\n"
+											src=[], dst=[], jump=NONE}, "") (* before print "Elegimos bien1\n" *)
 										else
 											(OPER{assem="PUSH M[`s0]\n",
 											src=[n], dst=[], jump=NONE}, "")
 							| MEM(BINOP(PLUS, TEMP n, CONST c)) =>
 										if n=tigerframe.fp then
 											(OPER{assem="PUSH M[fp+"^st(c)^"]\n",
-											src=[], dst=[], jump=NONE}, "") before print "Elegimos bien1\n"
+											src=[], dst=[], jump=NONE}, "") (* before print "Elegimos bien1\n" *)
 										else
 											(OPER{assem="PUSH M[`s0+"^st(c)^"]\n",
 											src=[n], dst=[], jump=NONE}, "")
@@ -365,5 +365,5 @@ fun codegen frame stm =
 				result(fn r =>
 					munchStm(T.EXP(CALL(exp, explist))))
 			| ESEQ(stm, exp) => raise Fail "ESEQ incompleto!"
-	in	munchStm stm; rev(!ilist) before print"salimos de codegen\n" end
+	in	munchStm stm; rev(!ilist) (* before print"salimos de codegen\n" *) end
 end
