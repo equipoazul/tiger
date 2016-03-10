@@ -1,12 +1,11 @@
-
-
 signature tigergraph =
 sig
-    type node = int
-    type edge = {from: node, to: node}
-    type graph = {nodes: node list ref, edges: edge list ref}
+    type node
+    type edge
+    type graph
         
     val nodes: graph -> node list
+    val edges: graph -> edge list
     val succ: node -> node list
     val pred: node -> node list
     val adj: node -> node list
@@ -18,10 +17,16 @@ sig
     val mk_edge : { from: node, to: node } -> unit
     val rm_edge : { from: node, to: node } -> unit
     
+    (* Funciones de impresion *)
+    val printNodes : node list -> unit
+    val printEdges : edge list -> unit
+    
+    val gr: graph
+    
 (*    structure Table: TABLE *)
 (*    sharing type Table.key = node *)
     
-    val nodename: node -> string (* for debugging *)
+   val nodename: node -> string (* for debugging *)
 end
 (*
 structure Flow:
@@ -33,9 +38,4 @@ sig
                    use: tigertemp.temp list Table.table,
                    ismove: bool Table.table}
 end*)
-                   
 
-(*mk_edge = { from:node, to:node } -> unit
-rm_edge = { from: node, to: node } -> unit
-nodename: node -> string*)
-  
