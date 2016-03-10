@@ -52,5 +52,9 @@ and   printRelOp (EQ) = "EQ"
     | printRelOp (ULE) = "ULE"
     | printRelOp (UGT) = "UGT"
     | printRelOp (UGE) = "UGE"
+    
+fun inList elem list = List.exists (fn x => x = elem) list
+
+fun unionList l1 l2 = l1 @ (List.filter (fn x => not (inList x l1)) l2)
 
 end

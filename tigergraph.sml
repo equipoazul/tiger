@@ -1,6 +1,7 @@
 structure tigergraph :> tigergraph =
 struct
-
+    open tigerutils
+    
     exception GraphEdge
     type node = int
     type edge = {from: node, to: node}
@@ -27,7 +28,7 @@ struct
                      nodes
                  end
 
-    fun adj n = (pred n) @ (succ n)
+    fun adj n = tigerutils.unionList (pred n) (succ n)
 
     fun eq (n,m) = n = m
              

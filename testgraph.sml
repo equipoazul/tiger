@@ -1,6 +1,6 @@
 open BasicIO Nonstdio
 open tigergraph
-
+open tigerutils
 
 (*val gr = newGraph ()*)
 
@@ -14,6 +14,7 @@ fun main(args) = let val _ = print "Jamon crudo\n"
                      val _ = mk_edge {from = n1, to = n2}
                      val _ = mk_edge {from = n1, to = n3}
                      val _ = mk_edge {from = n3, to = n0}
+                     val _ = mk_edge {from = n0, to = n3}
 (*                     val _ = rm_edge {from = n0, to = n1}*)
 
                      val _ = printNodes (nodes gr)
@@ -22,6 +23,9 @@ fun main(args) = let val _ = print "Jamon crudo\n"
                      val _ = printNodes (succ n3)
                      val _ = print "Prueba predecesor\n"
                      val _ = printNodes (pred n3)
+                     val _ = printNodes (adj n3)
+                    
+                     
                  in 
                      ()
                  end
