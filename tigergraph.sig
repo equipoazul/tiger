@@ -1,6 +1,6 @@
 signature tigergraph =
 sig
-    type node
+    type node = int
     type edge
     type graph
         
@@ -21,21 +21,8 @@ sig
     val printNodes : node list -> unit
     val printEdges : edge list -> unit
     
+    val nodename: node -> string (* for debugging *)
+    
     val gr: graph
-    
-(*    structure Table: TABLE *)
-(*    sharing type Table.key = node *)
-    
-   val nodename: node -> string (* for debugging *)
 end
-(*
-structure Flow:
-sig
-    structure Graph
-    datatype flowgraph =
-        FGRAPH of {control: graph,
-                   def: tigertemp.temp list Table.table,
-                   use: tigertemp.temp list Table.table,
-                   ismove: bool Table.table}
-end*)
 
