@@ -1,0 +1,82 @@
+structure tigerflow :> tigerflow =
+struct
+
+    open tigergraph
+    open tigertab
+    open tigerassem
+  
+    val iTable = tabNueva()
+
+    fun   createNodes [] fg = ()
+        | createNodes (x::xs) fg  = let
+                                      val n = newNode fg
+                                      val _ = tabInserta(x, n, iTable)
+                                    in
+                                      createNodes xs fg
+                                    end  
+    
+    fun getNode i = case tabBusca(i, iTable) of
+                             SOME n => n
+                           | _ => raise Fail "Error al buscar instrucciones en la tabla"
+    fun getLabelNode l = case tabBusca(LABEL {lab=l, assem="LABEL " ^ l ^":"}, iTable) of
+                             SOME n => n
+                           | _ => raise Fail "Error al buscar instrucciones en la tabla"
+    
+    fun instrs2graph' [] fg = (fg, nodes (#control fg))
+       | instrs2graph' (x::xs) fg = let
+                                      val n1 = getNode x
+                                      val (n2, lastNode) = if xs <> [] then (getNode (List.hd xs), false)
+                                                           else (~1, true)                                     
+                                                           
+                                      val _ = case x of
+                                                OPER {assem = s,
+                                                      dst = dst,
+                                                      src = src,
+                                                      jump = jmp} => let
+                                                                          val _ = tabInserta(n1, dst, #def fg) 
+                                                                          val _ = tabInserta(n1, src, #use fg)
+                                                                          val _ = tabInserta(n1, false, #ismove fg)
+                                                                          val _ = case jmp of
+                                                                                     NONE => if lastNode then mk_edge {from=n1, to=n2}
+                                                                                             else () 
+                                                                                   | SOME l => let 
+                                                                                                  val labnode_l = map getLabelNode l
+                                                                                                  val _ = map (fn nl => mk_edge {from=n1, to=nl}) labnode_l
+                                                                                               in 
+                                                                                                 ()
+                                                                                               end
+                                                                      in 
+                                                                          ()
+                                                                      end
+                                                | MOVE {dst = dst, src = src, ...} => let val _ = tabInserta(n1, [dst], #def fg)
+                                                                                          val _ = tabInserta(n1, [src], #use fg)
+                                                                                          val _ = tabInserta(n1, true, #ismove fg)
+                                                                                          val _ = mk_edge {from=n1, to=n2}
+                                                                                      in 
+                                                                                          ()
+                                                                                      end
+                                                | _ => let val _ = tabInserta(n1, false, #ismove fg)
+                                                           val _ = mk_edge {from=n1, to=n2}
+                                                       in
+                                                          ()
+                                                       end
+                                              
+                                   in 
+                                      instrs2graph' xs
+                                   end
+                                   
+    fun instrs2graph l = let 
+                            val bTable = tabNueva()
+                            val defTable = tabNueva()
+                            val useTable = tabNueva()
+                            val fg =  {control = gr,
+                                        def = tTable, 
+                                        use = tTable,
+                                        ismove = bTable}
+                            val _ = createNodes l (#control fg)
+                        in
+                            instrs2graph' l fg
+                        end
+                                  
+end
+

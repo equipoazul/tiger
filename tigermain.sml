@@ -4,6 +4,7 @@ open tigerescap
 open tigerseman
 (*open tigerassem*)
 open tigercodegen
+open tigerflow
 open BasicIO Nonstdio
 
 fun lexstream(is: instream) =
@@ -68,14 +69,16 @@ fun main(args) =
         val instrlist = let
                           fun aplanar (x, frame) = List.map (fn y => (frame, y)) x
                           val stm_tpl = List.map aplanar canon_frags
-                          val assems = List.map (fn (x, y) => tigercodegen.codegen x y) (List.concat stm_tpl)
+                          val assems = List.concat (List.map (fn (x, y) => tigercodegen.codegen x y) (List.concat stm_tpl))
+                          val _ = map tigerassem.printAssem assems
+                          val graph = instrs2graph assems
                         in
                           (*List.map (fn (x, y) => tigercodegen.codegen x y) (List.concat stm_tpl) *)
                           (* map (fn ins => case ins of
                                         OPER {assem=x, ...} =>  print("OPER ->  " ^ x ^ "\n")
                                       | LABEL {assem=x, ...} =>  print("LABEL -> " ^ x ^ "\n")
                                       | MOVE {assem=x, ...} =>  print("MOVE ->  " ^ x ^ "\n")) (List.concat assems) *)
-                           map tigerassem.printAssem (List.concat assems)
+                          tigerflow.printGraphFlow (#1 graph)
                         end
         
 	in

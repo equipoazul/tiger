@@ -20,6 +20,7 @@ sig
     (* Funciones de impresion *)
     val printNodes : node list -> unit
     val printEdges : edge list -> unit
+    val printGraph : graph -> unit
     
     val nodename: node -> string (* for debugging *)
     

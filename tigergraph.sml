@@ -73,6 +73,8 @@ struct
                      ()
                    end
                    
+    fun printGraph g = (printNodes (nodes g); printEdges (edges g))
+                   
                    
     
 end 
