@@ -100,7 +100,7 @@ tigergraph.uo: tigerutils.uo tigergraph.ui
 tigerflow.ui : tigergraph.ui
 tigerflow.uo : tigergraph.uo
 tigermain.uo: tigerseman.ui tigerescap.ui tigerinterp.ui tigergrm.ui tigerlex.uo \
-    tigerpp.uo tigercanon.ui tigercanon.uo tigerinterp.uo tigerinterp.ui tigercodegen.ui 
+    tigerpp.uo tigercanon.ui tigercanon.uo tigerinterp.uo tigerinterp.ui tigercodegen.ui tigerflow.ui
 tigertemp.uo: tigertemp.ui 
 tigercanon.uo: tigercanon.ui tigertree.uo tigertab.ui tigerframe.ui \
     tigertemp.ui 

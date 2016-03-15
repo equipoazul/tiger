@@ -143,6 +143,15 @@ fun codegen frame stm =
 				let	val e' = munchExp e
 				in	emit(OPER{assem="JMP `s0\n",
 						src=[e'], dst=[], jump=SOME l}) end
+			| CJUMP(relop, CONST c1, CONST c2, l1, l2) =>
+				let	
+				    val tmp = tigertemp.newtemp()
+				    val _ = emit(MOVE{assem="MOV `d0,`s0\n",
+	    			                  src=st c1, dst=tmp})
+	    	    in
+				    emit(OPER{assem="CMP `s0,"^st(c2)^"\n",
+    						  src=[tmp], dst=[], jump=NONE})
+				end
 			| CJUMP(relop, e1, CONST c2, l1, l2) =>
 				let	val () = emit(OPER{assem="CMP `s0,"^st(c2)^"\n",
 						src=[munchExp e1], dst=[], jump=NONE})

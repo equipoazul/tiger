@@ -1,0 +1,4 @@
+Lista de preguntas
+------------------
+
+1) En la tabla de use y def, pueden ir constantes o solo temporales? por ejemplo if (10 > 20) then 30 else 40 me da en el nodo 1 el "temporal"

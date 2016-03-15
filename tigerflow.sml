@@ -48,8 +48,8 @@ struct
         in
             print("FLOWGRAPH: \n");
             tigergraph.printGraph g;
-            printTab (!(#use(f))) "Use";
-            printTab (!(#def(f))) "Def"
+            printTab (!(#use(f))) "Use\n";
+            printTab (!(#def(f))) "Def\n"
         end
         
                                   
@@ -61,8 +61,10 @@ struct
                                   def = defTable, 
                                   use = useTable,
                                   ismove = bTable}
+                                  
         val labelList = createNodes l (FGRAPH fg) []
-
+        
+        fun admittedRegs r = (tigerutils.inList r ["RV", "EAX"]) orelse String.isPrefix "T" r
                                                                
         fun instrs2graph' [] n fg labelList = fg
            | instrs2graph' (x::xs) n fg labelList = 
@@ -74,8 +76,12 @@ struct
                           OPER {assem = s,
                                 dst = dst,
                                 src = src,
-                                jump = jmp} => let  val _ = (#def fg) := tabInserta(n, dst, !(#def fg)) 
-                                                    val _ = (#use fg) := tabInserta(n, src, !(#use fg))
+                                jump = jmp} => let  val validDst = List.filter admittedRegs dst
+                                                    val validSrc = List.filter admittedRegs src
+                                                    val _ = if validDst <> [] then (#def fg) := tabInserta(n, dst, !(#def fg)) 
+                                                            else ()
+                                                    val _ = if validSrc <> [] then (#use fg) := tabInserta(n, src, !(#use fg))
+                                                            else ()
                                                     val _ = (#ismove fg) := tabInserta(n, false, !(#ismove fg))
                                                     val _ = case jmp of
                                                                NONE => if lastNode then ()
@@ -89,8 +95,10 @@ struct
                                                 in 
                                                     ()
                                                 end
-                          | MOVE {dst = dst, src = src, ...} => let val _ = (#def fg) := tabInserta(n, [dst], !(#def fg))
-                                                                    val _ = (#use fg) := tabInserta(n, [src], !(#use fg))
+                          | MOVE {dst = dst, src = src, ...} => let val _ = if admittedRegs dst then (#def fg) := tabInserta(n, [dst], !(#def fg))
+                                                                            else ()
+                                                                    val _ = if admittedRegs src then (#use fg) := tabInserta(n, [src], !(#use fg))
+                                                                            else ()
                                                                     val _ = (#ismove fg) := tabInserta(n, true, !(#ismove fg))
                                                                     val _ = if lastNode then ()
                                                                             else mk_edge {from=n, to=n2}
