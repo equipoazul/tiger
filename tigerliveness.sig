@@ -13,7 +13,7 @@ sig
                    moves: (tigergraph.node * tigergraph.node) list}
                    
     (*val interferenceGraph : tigerflow.flowgraph -> igraph * (tigergraph.node -> tigertemp.temp list)*)
-    val liveAnalysis: tigerflow.flowgraph -> tigergraph.node list -> unit 
+    val liveAnalysis: tigerflow.flowgraph * tigergraph.node list -> unit 
     
     val liveIn : liveSet ref
     val liveOut : liveSet ref

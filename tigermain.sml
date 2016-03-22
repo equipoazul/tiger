@@ -72,6 +72,8 @@ fun main(args) =
                           val assems = List.concat (List.map (fn (x, y) => tigercodegen.codegen x y) (List.concat stm_tpl))
                           val _ = map tigerassem.printAssem assems
                           val graph = instrs2graph assems
+                          val _ = tigerliveness.liveAnalysis graph 
+                          (*tigergraph.nodes (#control graph)*)
                         in
                           (*List.map (fn (x, y) => tigercodegen.codegen x y) (List.concat stm_tpl) *)
                           (* map (fn ins => case ins of
