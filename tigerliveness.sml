@@ -62,10 +62,10 @@ struct
                 val out = case tabBusca(n, !liveOut) of 
                                       NONE => raise Fail "Error al buscar un nodo en la tabla liveOut"
                                     | SOME c => ref c*)
-                val use = case tabBusca(n, !(#use fg)) of 
-                                      NONE => Splayset.empty String.compare 
+                val use = case tabBusca(n, !(#use fg)) of
+                                      NONE => Splayset.empty String.compare
                                     | SOME tList => listToSet tList
-                val def = case tabBusca(n, !(#def fg)) of 
+                val def = case tabBusca(n, !(#def fg)) of
                                       NONE => Splayset.empty String.compare 
                                     | SOME tList => listToSet tList
 
