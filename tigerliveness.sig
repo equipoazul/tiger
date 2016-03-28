@@ -8,15 +8,16 @@ sig
 
     datatype igraph =
         IGRAPH of {graph: tigergraph.graph,
-                   tnode: tigertemp.temp -> tigergraph.node,
-                   gtemp: tigergraph.node -> tigertemp.temp,
-                   moves: (tigergraph.node * tigergraph.node) list}
+                   tnode: (tigertemp.temp,tigergraph.node) tigertab.Tabla ref,
+                   gtemp: (tigergraph.node, tigertemp.temp) tigertab.Tabla ref,
+                   moves: (tigergraph.node * tigergraph.node) list ref}
                    
     (*val interferenceGraph : tigerflow.flowgraph -> igraph * (tigergraph.node -> tigertemp.temp list)*)
     val liveAnalysis: tigerflow.flowgraph * tigergraph.node list -> unit 
     
     val liveIn : liveSet ref
     val liveOut : liveSet ref
+    val interGraph : igraph ref
 
 end
 

@@ -5,6 +5,7 @@ struct
     open tigertemp
     open tigertab
     open tigerflow 
+    open tigerutils    
     
     (*type liveSet = node Splayset.set * tigertemp.temp list
     type liveMap = (tigergraph.node, liveSet) tigertab.Tabla*)
@@ -12,12 +13,17 @@ struct
 
     val liveIn = ref (tabNueva())
     val liveOut = ref (tabNueva())
-
+    
     datatype igraph =
        IGRAPH of {graph: tigergraph.graph,
-                  tnode: tigertemp.temp -> tigergraph.node,
-                  gtemp: tigergraph.node -> tigertemp.temp,
-                  moves: (tigergraph.node * tigergraph.node) list}
+                  tnode: (tigertemp.temp,tigergraph.node) tigertab.Tabla ref,
+                  gtemp: (tigergraph.node, tigertemp.temp) tigertab.Tabla ref,
+                  moves: (tigergraph.node * tigergraph.node) list ref}
+
+    val interGraph = ref (IGRAPH {graph = tigergraph.newGraph(),
+                                  tnode = ref (tabNueva()), 
+                                  gtemp = ref (tabNueva()),
+                                  moves = ref []})
                    
     fun initList ns l = List.map (fn x => l := tabInserta(x, Splayset.empty String.compare, !l)) ns
     
@@ -44,13 +50,7 @@ struct
                ()
              end
             | liveAnalysis' ((FGRAPH fg), (n::ns)) =
-              let 
-                fun listToSet l = 
-                  let
-                    val emptySet = Splayset.empty String.compare
-                  in
-                    Splayset.addList (emptySet, l)
-                  end            
+              let       
                   
                 val inn' = ref (Splayset.empty String.compare)
                 val out' = ref (Splayset.empty String.compare)
@@ -64,10 +64,10 @@ struct
                                     | SOME c => ref c*)
                 val use = case tabBusca(n, !(#use fg)) of
                                       NONE => Splayset.empty String.compare
-                                    | SOME tList => listToSet tList
+                                    | SOME tList => tigerutils.listToSet tList
                 val def = case tabBusca(n, !(#def fg)) of
                                       NONE => Splayset.empty String.compare 
-                                    | SOME tList => listToSet tList
+                                    | SOME tList => tigerutils.listToSet tList
 
                 val _ = inn := Splayset.union (use, (Splayset.difference (!out, def)));
                 val _ = out := List.foldr Splayset.union (Splayset.empty String.compare) (getSuccIn n)
@@ -88,6 +88,16 @@ struct
            printGraph (#control fg); 
            liveAnalysis' (FGRAPH fg, ns))
       end
+
+
+    (*val interferenceGraph : tigerflow.flowgraph -> igraph * (tigergraph.node -> tigertemp.temp list)*)
+    (*fun interferenceGraph (fg as FGRAPH {control, def, use, ismove}) =
+      let
+        
+      in
+        
+      end*)
+
 
 end
 
