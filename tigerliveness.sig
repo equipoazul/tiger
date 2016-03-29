@@ -12,12 +12,8 @@ sig
                    gtemp: (tigergraph.node, tigertemp.temp) tigertab.Tabla ref,
                    moves: (tigergraph.node * tigergraph.node) list ref}
                    
-    (*val interferenceGraph : tigerflow.flowgraph -> igraph * (tigergraph.node -> tigertemp.temp list)*)
-    val liveAnalysis: tigerflow.flowgraph * tigergraph.node list -> unit 
-    
-    val liveIn : liveSet ref
-    val liveOut : liveSet ref
-    val interGraph : igraph ref
+    val newInterGraph: unit -> igraph
+    val liveAnalysis: tigerflow.flowgraph * tigergraph.node list -> liveSet * liveSet 
 
 end
 

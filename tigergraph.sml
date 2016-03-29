@@ -8,27 +8,25 @@ struct
     type graph = {nodes: node list ref, edges: edge list ref}
         
     fun newGraph() = {nodes = ref [], edges = ref []} : graph
-    
-    val gr = newGraph ()
 
     fun nodes g = (!(#nodes (g:graph)))
     fun edges g = (!(#edges (g:graph)))
     
-    fun succ n = let
-                     val edges = List.filter (fn x => (#from x) = n) (!(#edges gr))
-                     val nodes = List.map (fn {from=inode, to=onode} => onode) edges
-                 in
-                     nodes
-                 end
+    fun succ (g as {edges, nodes}) n = let
+                                         val eds = List.filter (fn x => (#from x) = n) (!edges)
+                                         val nods = List.map (fn {from=inode, to=onode} => onode) eds
+                                       in
+                                         nods
+                                       end
         
-    fun pred n = let
-                     val edges = List.filter (fn x => (#to x) = n) (!(#edges gr))
-                     val nodes = List.map (fn {from=inode, to=onode} => inode) edges
-                 in
-                     nodes
-                 end
+    fun pred (g as {edges, nodes}) n = let
+                                         val edgs = List.filter (fn x => (#to x) = n) (!edges)
+                                         val nods = List.map (fn {from=inode, to=onode} => inode) edgs
+                                       in
+                                         nods
+                                       end
 
-    fun adj n = tigerutils.unionList (pred n) (succ n)
+    fun adj g n = tigerutils.unionList (pred g n) (succ g n)
 
     fun eq (n,m) = n = m
              
@@ -41,19 +39,17 @@ struct
                                                 ret
                                             end
                           
-    fun mk_edge e = let
-                        val edges = (#edges gr)
-                        val _ = edges := ( e :: (!edges) )
-                    in
-                        ()
-                    end
+    fun mk_edge (g as {edges, nodes}) e = let
+                                            val _ = edges := ( e :: (!edges) )
+                                          in
+                                            ()
+                                          end
                             
-    fun rm_edge e = let
-                        val edges = (#edges gr)
-                        val _ = edges := List.filter (fn e1 => e1 <> e ) (!edges) 
-                    in
-                        ()
-                    end
+    fun rm_edge (g as {edges, nodes}) e = let
+                                            val _ = edges := List.filter (fn e1 => e1 <> e ) (!edges) 
+                                          in
+                                            ()
+                                          end
                          
     fun nodename n = Int.toString(n)
     

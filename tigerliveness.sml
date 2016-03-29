@@ -10,44 +10,60 @@ struct
     (*type liveSet = node Splayset.set * tigertemp.temp list
     type liveMap = (tigergraph.node, liveSet) tigertab.Tabla*)
     type liveSet = (tigergraph.node, string Splayset.set) tigertab.Tabla
-
-    val liveIn = ref (tabNueva())
-    val liveOut = ref (tabNueva())
     
     datatype igraph =
        IGRAPH of {graph: tigergraph.graph,
                   tnode: (tigertemp.temp,tigergraph.node) tigertab.Tabla ref,
                   gtemp: (tigergraph.node, tigertemp.temp) tigertab.Tabla ref,
-                  moves: (tigergraph.node * tigergraph.node) list ref}
-
-    val interGraph = ref (IGRAPH {graph = tigergraph.newGraph(),
-                                  tnode = ref (tabNueva()), 
-                                  gtemp = ref (tabNueva()),
-                                  moves = ref []})
-                   
-    fun initList ns l = List.map (fn x => l := tabInserta(x, Splayset.empty String.compare, !l)) ns
+                  moves: (tigergraph.node * tigergraph.node) list ref}   
     
-    fun getSuccIn n = let
-                          val succs = succ n
-                      in
-                         List.map (fn x => case tabBusca(x, !liveIn) of
-                            NONE => raise Fail "Error al buscar un nodo en la tabla liveIn (1)"
-                          | SOME c => c) succs
-                      end
+    fun newInterGraph() =
+            let
+                val g = newGraph()
+                val tn = ref (tabNueva())
+                val gt = ref (tabNueva())
+                val m = ref []
+                val ig = IGRAPH {
+                            graph = g,
+                            tnode = tn,
+                            gtemp = gt,
+                            moves = m}
+            in 
+                ig
+            end
+                
     
     fun printSet s = List.foldr (fn (x, xs) => x ^ "," ^ xs) "" (Splayset.listItems s)
     fun printLiveT t = map (fn (x,y) => print ( (Int.toString x) ^ " -> " ^ (printSet y) ^ "\n") ) (tigertab.tabAList t)
     
     fun liveAnalysis (FGRAPH fg, ns) = 
       let
+        fun initList ns = let
+                               val t = ref (tabNueva():liveSet)
+                               val _ = List.map (fn x => t := tabInserta(x, Splayset.empty String.compare, !t)) ns
+                            in
+                                t
+                            end
+        val ns = (nodes (#control fg))
+        val liveIn = initList ns 
+        val liveOut = initList ns
+
+        fun getSuccIn n = let
+                          val succs = succ (#control fg) n
+                      in
+                         List.map (fn x => case tabBusca(x, !liveIn) of
+                            NONE => raise Fail "Error al buscar un nodo en la tabla liveIn (1)"
+                          | SOME c => c) succs 
+                      end
+                      
         fun liveAnalysis' ((FGRAPH fg), []) = 
              let
                val _ = print "Live In\n"
-               val _ = printLiveT (!(liveIn))
+               val _ = printLiveT (!liveIn)
                val _ = print "Live Out\n"
-               val _ = printLiveT (!(liveOut))
+               val _ = printLiveT (!liveOut)
              in
-               ()
+               (!liveIn, !liveOut)
              end
             | liveAnalysis' ((FGRAPH fg), (n::ns)) =
               let       
@@ -56,12 +72,6 @@ struct
                 val out' = ref (Splayset.empty String.compare)
                 val inn = ref (Splayset.empty String.compare)  
                 val out = ref (Splayset.empty String.compare)  
-                (* val inn = case tabBusca(n, !liveIn) of 
-                                      NONE => raise Fail "Error al buscar un nodo en la tabla liveIn (2)"
-                                    | SOME c => ref c
-                val out = case tabBusca(n, !liveOut) of 
-                                      NONE => raise Fail "Error al buscar un nodo en la tabla liveOut"
-                                    | SOME c => ref c*)
                 val use = case tabBusca(n, !(#use fg)) of
                                       NONE => Splayset.empty String.compare
                                     | SOME tList => tigerutils.listToSet tList
@@ -83,21 +93,8 @@ struct
                     liveAnalysis' ((FGRAPH fg), ns)
                 end
       in
-          (initList (nodes (#control fg)) liveIn;
-           initList (nodes (#control fg)) liveOut;
-           printGraph (#control fg); 
-           liveAnalysis' (FGRAPH fg, ns))
+           liveAnalysis' (FGRAPH fg, ns)
       end
-
-
-    (*val interferenceGraph : tigerflow.flowgraph -> igraph * (tigergraph.node -> tigertemp.temp list)*)
-    (*fun interferenceGraph (fg as FGRAPH {control, def, use, ismove}) =
-      let
-        
-      in
-        
-      end*)
-
 
 end
 

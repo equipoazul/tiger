@@ -14,33 +14,28 @@ struct
                    def: tempTable ref,
                    use: tempTable ref,
                    ismove: boolTable ref}
-
-
-    val iTable = ref (tabNueva())
-    val defTable = ref (tabNueva())
-    
-
-    fun   createNodes [] fg labelList = labelList
-        | createNodes (x::xs) (FGRAPH fg) labelList = let
-                                                        val n = newNode (#control fg)
-                                                        val _ = tabInserta(n, x, !iTable)
-                                                       
-                                                      in
-                                                         case x of
-                                                            LABEL {lab=l, ...} => createNodes xs (FGRAPH fg) ((l, n)::labelList)
-                                                          | _ => createNodes xs (FGRAPH fg) labelList
-                                                      end  
-    
+                   
+    fun newFlowGraph() =
+            let
+                val g = tigergraph.newGraph()
+                val bTable = ref (tabNueva())
+                val useTable = ref (tabNueva())
+                val defTable = ref (tabNueva())
+                val fg = FGRAPH {control = g,
+                                 def = defTable, 
+                                 use = useTable,
+                                 ismove = bTable}
+            in
+                fg
+            end
+               
+    (*
     fun getNode i = case tabBusca(i, !iTable) of
                              SOME n => (print "Holaaaa\n"; n)
                            | _ => raise Fail "Error al buscar instrucciones en la tabla 1"
                            
-                          
-    fun getLabelNode [] l' = raise Fail ("Error al buscar el label " ^ l' ^ " en la lista de labels.")
-        | getLabelNode ((l, n)::xs) l' = if l = l' then n
-                                         else getLabelNode xs l'
+    *)                      
     
-
     fun printGraphFlow ((FGRAPH f): flowgraph) =
         let
             val g = #control(f)
@@ -55,19 +50,30 @@ struct
                                   
     fun instrs2graph l = 
       let 
-        val bTable = ref (tabNueva())
-        val useTable = ref (tabNueva())
-        val (FGRAPH fg) = FGRAPH {control = gr,
-                                  def = defTable, 
-                                  use = useTable,
-                                  ismove = bTable}
-                                  
-        val labelList = createNodes l (FGRAPH fg) []
+        val iTable:instrTable = tabNueva()
+        val (FGRAPH fg) = newFlowGraph()                                  
+        
+        fun createNodes [] labelList = labelList
+          | createNodes (x::xs) labelList = 
+                let
+                    val n = newNode (#control fg)
+                    val _ = tabInserta(n, x, iTable)        
+                  in
+                     case x of
+                        LABEL {lab=l, ...} => createNodes xs ((l, n)::labelList)
+                      | _ => createNodes xs labelList
+                  end  
+
+        val labelList = createNodes l []
         
         fun admittedRegs r = (tigerutils.inList r ["RV", "EAX"]) orelse String.isPrefix "T" r
+                      
+        fun getLabelNode [] l' = raise Fail ("Error al buscar el label " ^ l' ^ " en la lista de labels.")
+          | getLabelNode ((l, n)::xs) l' = if l = l' then n
+                                         else getLabelNode xs l'             
                                                                
-        fun instrs2graph' [] n fg labelList = fg
-           | instrs2graph' (x::xs) n fg labelList = 
+        fun instrs2graph' [] n (FGRAPH fg) labelList = fg
+           | instrs2graph' (x::xs) n (FGRAPH fg) labelList = 
              let
                  
                 val (n2, lastNode) = if xs <> [] then (n + 1, false)
@@ -85,10 +91,10 @@ struct
                                                     val _ = (#ismove fg) := tabInserta(n, false, !(#ismove fg))
                                                     val _ = case jmp of
                                                                NONE => if lastNode then ()
-                                                                       else mk_edge {from=n, to=n2}
+                                                                       else mk_edge (#control fg) {from=n, to=n2}
                                                              | SOME l => let 
                                                                             val labnode_l = map (getLabelNode labelList) l 
-                                                                            val _ = map (fn nl => mk_edge {from=n, to=nl}) labnode_l
+                                                                            val _ = map (fn nl => mk_edge (#control fg) {from=n, to=nl}) labnode_l
                                                                          in 
                                                                            ()
                                                                          end
@@ -101,22 +107,22 @@ struct
                                                                             else ()
                                                                     val _ = (#ismove fg) := tabInserta(n, true, !(#ismove fg))
                                                                     val _ = if lastNode then ()
-                                                                            else mk_edge {from=n, to=n2}
+                                                                            else mk_edge (#control fg) {from=n, to=n2}
                                                                 in 
                                                                     ()
                                                                 end
                           | _ => let val _ = tabInserta(n, false, !(#ismove fg))
                                      val _ = if lastNode then ()
-                                             else mk_edge {from=n, to=n2}
+                                             else mk_edge (#control fg) {from=n, to=n2}
                                  in
                                     ()
                                  end
                         
              in 
-                instrs2graph' xs (n + 1) fg labelList
+                instrs2graph' xs (n + 1) (FGRAPH fg) labelList
              end
      
-        val flow = instrs2graph' l 0 fg labelList
+        val flow = instrs2graph' l 0 (FGRAPH fg) labelList
     in
         ((FGRAPH flow), nodes (#control flow))
     end

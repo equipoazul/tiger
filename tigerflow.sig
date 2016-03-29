@@ -11,12 +11,10 @@ sig
                    use: tempTable ref,
                    ismove: boolTable ref}
 
+    val newFlowGraph: unit -> flowgraph
     val instrs2graph: tigerassem.instr list -> flowgraph * tigergraph.node list
-    val getNode: tigergraph.node -> tigerassem.instr 
-    val getLabelNode: (tigertemp.label * tigergraph.node) list -> tigertemp.label -> tigergraph.node
-    val printGraphFlow: flowgraph -> unit 
-    
-    val iTable : instrTable ref
-    val defTable : tempTable ref
-end
+    (*val getNode: tigergraph.node -> tigerassem.instr *)
+    (*val getLabelNode: (tigertemp.label * tigergraph.node) list -> tigertemp.label -> tigergraph.node*)
+    val printGraphFlow: flowgraph -> unit
 
+end
