@@ -74,10 +74,10 @@ struct
                 val out = ref (Splayset.empty String.compare)  
                 val use = case tabBusca(n, !(#use fg)) of
                                       NONE => Splayset.empty String.compare
-                                    | SOME tList => tigerutils.listToSet tList
+                                    | SOME tList => tigerutils.listToSet String.compare tList
                 val def = case tabBusca(n, !(#def fg)) of
                                       NONE => Splayset.empty String.compare 
-                                    | SOME tList => tigerutils.listToSet tList
+                                    | SOME tList => tigerutils.listToSet String.compare tList
 
                 val _ = inn := Splayset.union (use, (Splayset.difference (!out, def)));
                 val _ = out := List.foldr Splayset.union (Splayset.empty String.compare) (getSuccIn n)

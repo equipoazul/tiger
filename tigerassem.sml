@@ -12,6 +12,40 @@
 				jump: label list option}
 			| LABEL of {assem: string, lab: tigertemp.label}
 			| MOVE of {assem: string, dst: temp, src: temp}
+			
+	    (*val compare: instr -> instr -> instr*)
+	    fun instrCompare (OPER {assem=a, dst=d, src=s, jump=j}, OPER {assem=a', dst=d', src=s', jump=j'}) =
+	        let 
+	            val assemEq = a = a'
+	            val dstEq = d = d'
+	            val srcEq = s = s'
+	            val jumpEq = j = j'
+                val eq = assemEq andalso dstEq andalso srcEq andalso jumpEq
+            in
+                if eq then EQUAL
+                else LESS
+            end
+          | instrCompare (LABEL {assem=a, lab=l}, LABEL {assem=a', lab=l'}) = 
+            let 
+	            val assemEq = a = a'
+	            val labEq = l = l'
+	            val eq = assemEq andalso labEq
+            in
+                if eq then EQUAL
+                else LESS
+            end
+          | instrCompare (MOVE {assem=a, dst=d, src=s}, MOVE {assem=a', dst=d', src=s'}) =
+	        let 
+	            val assemEq = a = a'
+	            val dstEq = d = d'
+	            val srcEq = s = s'
+                val eq = assemEq andalso dstEq andalso srcEq
+            in
+                if eq then EQUAL
+                else LESS
+            end
+          | instrCompare (_ , _) = LESS
+           
 
 		val format =
 			let	fun speak(assem,dst,src,jump) =

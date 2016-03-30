@@ -69,6 +69,13 @@ fun main(args) =
         val instrlist = let
                           fun aplanar (x, frame) = List.map (fn y => (frame, y)) x
                           val stm_tpl = List.map aplanar canon_frags
+                          val _ = List.map (fn (x, y) => let val _ = print "--------------- BLOQUE --------------\n"
+                                                             val assem = tigercodegen.codegen x y
+                                                         in
+                                                             (map tigerassem.printAssem assem;
+                                                              print "---------------END BLOQUE --------------\n")
+                                                         end) (List.concat stm_tpl)
+                          
                           val assems = List.concat (List.map (fn (x, y) => tigercodegen.codegen x y) (List.concat stm_tpl))
                           val _ = map tigerassem.printAssem assems
                           val graph = instrs2graph assems

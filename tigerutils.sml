@@ -58,13 +58,13 @@ fun inList elem list = List.exists (fn x => x = elem) list
 fun unionList l1 l2 = l1 @ (List.filter (fn x => not (inList x l1)) l2)
 
 (* Pasa una lista de string a un set *)
-fun listToSet l = 
+fun listToSet f l = 
   let
-    val emptySet = Splayset.empty String.compare
+    val emptySet = Splayset.empty f
   in
     Splayset.addList (emptySet, l)
   end
 
-fun tabToSet t = listToSet (map (fn (x,y) => y) (tigertab.tabAList t))
+fun tabToSet f t = listToSet f (map (fn (x,y) => y) (tigertab.tabAList t))
 
 end
