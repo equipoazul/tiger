@@ -13,7 +13,7 @@ sig
                    moves: (tigergraph.node * tigergraph.node) list ref}
                    
     val newInterGraph: unit -> igraph
-    val liveAnalysis: tigerflow.flowgraph * tigergraph.node list -> liveSet * liveSet 
+    val liveAnalysis: tigerflow.flowgraph -> liveSet * liveSet 
 
 end
 

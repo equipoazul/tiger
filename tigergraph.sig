@@ -6,6 +6,9 @@ sig
         
     val nodes: graph -> node list
     val edges: graph -> edge list
+    
+    val edgeCompare: edge * edge -> order
+    
     val succ: graph -> node -> node list
     val pred: graph -> node -> node list
     val adj: graph ->  node -> node list

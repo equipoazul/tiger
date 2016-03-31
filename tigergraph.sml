@@ -12,6 +12,10 @@ struct
     fun nodes g = (!(#nodes (g:graph)))
     fun edges g = (!(#edges (g:graph)))
     
+    fun edgeCompare ({from=f, to=t}, {from=f', to=t'}) =
+        if f = f' andalso t = t' then EQUAL
+        else LESS
+    
     fun succ (g as {edges, nodes}) n = let
                                          val eds = List.filter (fn x => (#from x) = n) (!edges)
                                          val nods = List.map (fn {from=inode, to=onode} => onode) eds
