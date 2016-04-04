@@ -130,20 +130,20 @@ struct
 			in
 				(update(degrees, n, d - 1);
 				 if d = k then
-					(enableMoves (Splayset.add((adjacent n), n));
+					(enableMoves (Splayset.listItems Splayset.add(adjacent n, n));
 					 spillWorklist := Splayset.delete(!spillWorklist, n);
 					 if moveRelated n then
-						freezeWorklist := Splayset.add(!freezeWorklist, n)
+						freezeWorklist := Splayset.union(!freezeWorklist, m)
 					 else
-						simplifyWorklist := Splayset.add(!simplifyWorklist, n))
+						simplifyWorklist := Splayset.union(!simplifyWorklist, m))
 				 else
 				 	 ())
 			end
 		  
 		fun simplify n =
-			(simplifyWorklist := Splayset.delete(!simplifyWorklist, n);
+			(simpliflyWorklist := Splayset.delete(!simplifyWorkList, n);
 			 selectStack := Splayset.add(!selectStack, n);
-			 Splayset.app (fn x => decrementDegree x) (adjacent n))
+			 List.map (fn x => decrementDegree x) (adjacent n))
 	  in
 		()
 	  end
