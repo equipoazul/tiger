@@ -67,4 +67,25 @@ fun listToSet f l =
 
 fun tabToSet f t = listToSet f (map (fn (x,y) => y) (tigertab.tabAList t))
 
+type 'a stack = 'a list
+
+val emptyStack = []
+
+fun pop (ref []) = raise Fail "Pop a stack vacio"
+  | pop (s as ref (x :: xs)) = (s := xs; x)
+  
+fun push x (s as ref xs) = s := (x::xs)
+
+fun stackToSet f l = 
+  let
+    val emptySet = Splayset.empty f
+  in
+    Splayset.addList (emptySet, l)
+  end
+
+
+fun tupleCompare ((n, m), (n', m')) =
+  if n = n' andalso m = m' then EQUAL
+  else LESS
+
 end

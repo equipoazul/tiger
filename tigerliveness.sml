@@ -13,7 +13,7 @@ struct
     
     datatype igraph =
        IGRAPH of {graph: tigergraph.graph,
-                  tnode: (tigertemp.temp,tigergraph.node) tigertab.Tabla ref,
+                  tnode: (tigertemp.temp, tigergraph.node) tigertab.Tabla ref,
                   gtemp: (tigergraph.node, tigertemp.temp) tigertab.Tabla ref,
                   moves: (tigergraph.node * tigergraph.node) list ref}   
     

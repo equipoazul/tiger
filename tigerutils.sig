@@ -14,6 +14,14 @@ val inList : ''a -> ''a list -> bool
 val unionList: ''a list -> ''a list -> ''a list
 val listToSet: (('a * 'a) -> order) -> 'a list -> 'a Splayset.set
 val tabToSet: (('a * 'a) -> order) -> ('b, 'a) tigertab.Tabla -> 'a Splayset.set
+val tupleCompare: (''a * ''b) * (''a * ''b) -> order
 
-(* val printTigerTip : Tipo -> string*)
+(* Stack *)
+type 'a stack
+
+val emptyStack : 'a stack 
+val pop: 'a stack ref -> 'a 
+val push: 'a -> 'a stack ref -> unit
+val stackToSet: (('a * 'a) -> order) -> 'a stack -> 'a Splayset.set 
+
 end

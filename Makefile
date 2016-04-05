@@ -103,7 +103,7 @@ tigerflow.uo : tigergraph.uo
 tigerliveness.ui : tigerflow.ui
 tigerliveness.uo : tigerflow.uo
 tigercoloring.ui: tigerutils.ui tigergraph.ui tigerflow.ui tigerliveness.ui tigertab.ui
-tigercoloring.uo: tigercoloring.ui tigerutils.uo tigergraph.uo tigerflow.uo tigerliveness.uo tigertab.uo tigerassem.uo
+tigercoloring.uo: tigercoloring.ui tigerutils.uo tigergraph.uo tigerflow.uo tigerliveness.uo tigertab.uo tigerassem.uo tigerutils.uo
 tigermain.uo: tigerseman.ui tigerescap.ui tigerinterp.ui tigergrm.ui tigerlex.uo \
     tigerpp.uo tigercanon.ui tigercanon.uo tigerinterp.uo tigerinterp.ui tigercodegen.ui tigerflow.ui \
 	tigerliveness.ui tigerliveness.uo

@@ -8,36 +8,36 @@ struct
     open tigertab
     open tigerassem
     
-	type listMoves   = (tigergraph.node, tigerassem.instr list) tigertab.Tabla
     type adjListT    = (tigergraph.node Splayset.set) array
-	type wListMoves  = tigergraph.node Splayset.set ref
-	type instrSet    = tigerassem.instr Splayset.set
-	type adjSetT     = tigergraph.edge Splayset.set ref
-	
+    type wListMoves  = tigergraph.node Splayset.set ref
+    type adjSetT     = tigergraph.edge Splayset.set ref
+    
     val precolored = listToSet String.compare ["eax","ebx"]
-	
+    
     fun  color (FGRAPH fg) [] = ()
-	   | color (FGRAPH fg) (b::bs) =
-	  let
-		val (liveIn, liveOut) = liveAnalysis (FGRAPH fg) 
-		val (IGRAPH ig) = newInterGraph()
-		val interNodes = nodes (#graph ig)
-		val flowNodes = nodes (#control fg)
-		val lenNodes = List.length(interNodes)
-		val moveList:instrSet array = array(lenNodes, Splayset.empty tigerassem.instrCompare)
-		val spillWorklist = ref (Splayset.empty Int.compare)
-		val freezeWorklist = ref (Splayset.empty Int.compare)
-		val simplifyWorklist = ref (Splayset.empty Int.compare)
-		val worklistMoves = ref (Splayset.empty tigerassem.instrCompare)
-		val activeMoves = ref (Splayset.empty tigerassem.instrCompare)
-		val coalescedNodes = ref (Splayset.empty Int.compare)
-		val selectStack = ref (Splayset.empty Int.compare)
-		(*val adjSet:adjSetT = ref (Splayset.empty edgeCompare)*)
-		val adjSet:adjSetT = ref (listToSet edgeCompare (edges (#graph ig)))
-		val adjList:adjListT = array(lenNodes, Splayset.empty Int.compare)
-		val degrees:int array = array(lenNodes, 0)
-		val k = 6
-					
+       | color (FGRAPH fg) (b::bs) =
+      let
+        val (liveIn, liveOut) = liveAnalysis (FGRAPH fg) 
+        val (IGRAPH ig) = newInterGraph()
+        val interNodes = nodes (#graph ig)
+        val flowNodes = nodes (#control fg)
+        val lenNodes = List.length(interNodes)
+        val moveList = array(lenNodes, Splayset.empty tupleCompare)
+        val alias = array(lenNodes, ~1)
+        val spillWorklist = ref (Splayset.empty Int.compare)
+        val freezeWorklist = ref (Splayset.empty Int.compare)
+        val simplifyWorklist = ref (Splayset.empty Int.compare)
+        val worklistMoves = ref (Splayset.empty tupleCompare)
+        val activeMoves = ref (Splayset.empty tupleCompare)
+        val constrainedMoves = ref (Splayset.empty tupleCompare)
+        val coalescedNodes = ref (Splayset.empty Int.compare)
+        val selectStack: node stack ref = ref tigerutils.emptyStack 
+        (*val adjSet:adjSetT = ref (Splayset.empty edgeCompare)*)
+        val adjSet:adjSetT = ref (listToSet edgeCompare (edges (#graph ig)))
+        val adjList:adjListT = array(lenNodes, Splayset.empty Int.compare)
+        val degrees:int array = array(lenNodes, 0)
+        val k = 6
+                    
         fun addEdge (e as {from=u, to=v}) =
             if Splayset.member (!adjSet, e) andalso (u <> v) then
                 (adjSet := Splayset.add ((!adjSet), {from=u, to=v});
@@ -59,94 +59,211 @@ struct
              else
                 ()
              
-        fun build () =	
-			let 
-				val l = List.length(b)
-				val live = ref (List.foldr (fn (s, ss) => (case tabBusca(s, liveOut) of
-										NONE => raise Fail "La instruccion no esta en la tabla liveOut"
-									  | SOME s' => Splayset.union (s', ss)) ) (Splayset.empty String.compare) interNodes)
-												 
-				fun updateLive ((i:tigerassem.instr), n) =
-					let
+        fun build () =  
+            let 
+                val l = List.length(b)
+                val live = ref (List.foldr (fn (s, ss) => (case tabBusca(s, liveOut) of
+                                        NONE => raise Fail "La instruccion no esta en la tabla liveOut"
+                                      | SOME s' => Splayset.union (s', ss)) ) (Splayset.empty String.compare) interNodes)
+                                                 
+                fun updateLive ((i:tigerassem.instr), n) =
+                    let
                         val use = case tabBusca(n, (!(#use fg))) of
-						  NONE => raise Fail "El nodo no existe en la tabla use"
-						| SOME u => listToSet String.compare u
+                                      NONE => raise Fail "El nodo no existe en la tabla use"
+                                    | SOME u => listToSet String.compare u
                         val def = case tabBusca(n, (!(#def fg))) of
-						  NONE => raise Fail "El nodo no existe en la tabla def"
-						| SOME d => listToSet String.compare d
-					val _ = case i of
-							MOVE _ => live := Splayset.difference (!live, use)
-							| _ => ()
-                        val union = Splayset.listItems (Splayset.union(use, def))
-				val _ = List.map (fn x => case tabBusca(x, !(#tnode ig)) of
-								NONE => raise Fail "El temp no esta en la tabla tnode"
-							  | SOME xi => update(moveList, xi, Splayset.add(sub(moveList, xi), i))) union
-				val _ = Splayset.add(!worklistMoves, i)
-				val _ = List.map (fn d => case tabBusca(d, !(#tnode ig)) of
-							NONE => raise Fail "El temp no esta en la tabla tnode (2)"
-							  | SOME di => List.map (fn l => case tabBusca(l, !(#tnode ig)) of
-											NONE => raise Fail "El temp no esta en la tabla tnode (3)"
-										  | SOME li => addEdge({from=li, to=di})) (Splayset.listItems (!live))) (Splayset.listItems def) 
-				val _ = Splayset.union(use , Splayset.difference(!live, def))
+                                      NONE => raise Fail "El nodo no existe en la tabla def"
+                                    | SOME d => listToSet String.compare d
+                        val _ = case i of
+                                     MOVE {assem=a, src=u, dst=v} => 
+                                               let
+                                                 val _ = live := Splayset.difference (!live, use)
+                                                 val union = Splayset.listItems (Splayset.union(use, def))
+                                                 val _ = List.map (fn x => case tabBusca(x, !(#tnode ig)) of
+                                                                               NONE => raise Fail "El temp no esta en la tabla tnode"
+                                                                             | SOME xi => update(moveList, xi,  Splayset.add(sub(moveList, xi), (u, v) ))) union
+
+                                                 val _ = Splayset.add(!worklistMoves, (u,v))
+                                               in
+                                                 ()
+                                               end 
+                                    | _ => ()
+
+                        val _ = List.map (fn d => case tabBusca(d, !(#tnode ig)) of
+                                        NONE => raise Fail "El temp no esta en la tabla tnode (2)"
+                                      | SOME di => List.map (fn l => case tabBusca(l, !(#tnode ig)) of
+                                                    NONE => raise Fail "El temp no esta en la tabla tnode (3)"
+                                                  | SOME li => addEdge({from=li, to=di})) (Splayset.listItems (!live))) (Splayset.listItems def) 
+                        val _ = Splayset.union(use , Splayset.difference(!live, def))
                     in
                         ()
                     end
-		  
-			 in 
-			 List.map updateLive (List.rev (ListPair.zip (b, flowNodes)))
-			 end
+          
+             in 
+             List.map updateLive (List.rev (ListPair.zip (b, flowNodes)))
+             end
 
-		fun nodeMoves n = Splayset.intersection(sub(moveList, n), (Splayset.union(!activeMoves, !worklistMoves)))
-		fun moveRelated n = not (Splayset.isEmpty (nodeMoves n))
-		
-		(* 6 es el K, y hay que pasarle una lista de todos los temporales (el initial) *)
-		fun   makeWorklist [] = ()
-			| makeWorklist (n::ns) =
-				(if sub(degrees, n) >= k then
-					spillWorklist := Splayset.add(!spillWorklist, n)
-				 else if moveRelated(n) then
-					freezeWorklist := Splayset.add(!freezeWorklist, n)
-				 else
-					simplifyWorklist := Splayset.add(!simplifyWorklist, n);
-				 makeWorklist ns)
+        fun nodeMoves n = Splayset.intersection(sub(moveList, n), (Splayset.union(!activeMoves, !worklistMoves)))
+        fun moveRelated n = not (Splayset.isEmpty (nodeMoves n))
+        
+        (* 6 es el K, y hay que pasarle una lista de todos los temporales (el initial) *)
+        fun   makeWorklist [] = ()
+            | makeWorklist (n::ns) =
+                (if sub(degrees, n) >= k then
+                    spillWorklist := Splayset.add(!spillWorklist, n)
+                 else if moveRelated(n) then
+                    freezeWorklist := Splayset.add(!freezeWorklist, n)
+                 else
+                    simplifyWorklist := Splayset.add(!simplifyWorklist, n);
+                 makeWorklist ns)
 
-		fun adjacent n = Splayset.difference(sub(adjList, n), Splayset.union(!selectStack, !coalescedNodes))
+        fun adjacent n = Splayset.difference(sub(adjList, n), Splayset.union(stackToSet Int.compare (!(selectStack)), !coalescedNodes))
 
-		fun enableMoves nodes = 
-			let
-				fun f x = (List.map (fn m => if Splayset.member(!activeMoves, m) then
-												(activeMoves := Splayset.delete(!activeMoves, m);
-												 worklistMoves := Splayset.add(!worklistMoves, m))
-										  else
-												()) (Splayset.listItems (nodeMoves x)); ())
-			in
-				Splayset.app f nodes
-			end
-									 
+        fun enableMoves nodes = 
+            let
+                fun f x = (List.map (fn m => if Splayset.member(!activeMoves, m) then
+                                                (activeMoves := Splayset.delete(!activeMoves, m);
+                                                 worklistMoves := Splayset.add(!worklistMoves, m))
+                                          else
+                                                ()) (Splayset.listItems (nodeMoves x)); ())
+            in
+                Splayset.app f nodes
+            end
+                                     
 
-		fun decrementDegree n =
-			let 
-				val d = sub(degrees, n)
-			in
-				(update(degrees, n, d - 1);
-				 if d = k then
-					(enableMoves (Splayset.add((adjacent n), n));
-					 spillWorklist := Splayset.delete(!spillWorklist, n);
-					 if moveRelated n then
-						freezeWorklist := Splayset.add(!freezeWorklist, n)
-					 else
-						simplifyWorklist := Splayset.add(!simplifyWorklist, n))
-				 else
-				 	 ())
-			end
-		  
-		fun simplify n =
-			(simplifyWorklist := Splayset.delete(!simplifyWorklist, n);
-			 selectStack := Splayset.add(!selectStack, n);
-			 Splayset.app (fn x => decrementDegree x) (adjacent n))
-	  in
-		()
-	  end
+        fun decrementDegree n =
+            let 
+                val d = sub(degrees, n)
+            in
+                (update(degrees, n, d - 1);
+                 if d = k then
+                    (enableMoves (Splayset.add((adjacent n), n));
+                     spillWorklist := Splayset.delete(!spillWorklist, n);
+                     if moveRelated n then
+                        freezeWorklist := Splayset.add(!freezeWorklist, n)
+                     else
+                        simplifyWorklist := Splayset.add(!simplifyWorklist, n))
+                 else
+                     ())
+            end
+          
+        fun simplify () =
+            let 
+                fun simplify' n =
+                    (simplifyWorklist := Splayset.delete(!simplifyWorklist, n);
+                     tigerutils.push n (selectStack);
+                     Splayset.app (fn x => decrementDegree x) (adjacent n))
+            in
+                Splayset.app simplify' (!simplifyWorklist)
+            end
+                     
+
+        (* Coalesced *)
+
+        fun getAlias n =
+            if Splayset.member(!coalescedNodes, n) then
+               getAlias (sub(alias, n))
+            else
+               n
+
+        fun combine u v =
+           (if Splayset.member(!freezeWorklist, v) then
+              freezeWorklist := Splayset.delete(!freezeWorklist, v)
+            else
+              spillWorklist := Splayset.delete(!spillWorklist, v);
+            coalescedNodes := Splayset.add(!coalescedNodes, v);
+            update(alias, v, u);
+            update(moveList, u, Splayset.union(sub(moveList, u), sub(moveList, v)));
+            enableMoves(Splayset.singleton Int.compare v);
+            Splayset.app (fn t => (addEdge({from=t, to=u}); decrementDegree t)) (adjacent v);
+            if sub(degrees, u) >= k andalso Splayset.member(!freezeWorklist, u) then
+               (freezeWorklist := Splayset.delete(!freezeWorklist, u);
+                spillWorklist := Splayset.add(!spillWorklist, u))
+            else
+                ())
+            
+        fun addWorkList u =
+           let 
+               val unode = case tabBusca(u, !(#tnode ig)) of
+                               NONE => raise Fail "No se encontro el nodo (addWorkList)"
+                             | SOME s => s
+           in
+               if Splayset.member(precolored, u) andalso not (moveRelated unode) andalso sub(degrees, unode) < k then
+                   (freezeWorklist := Splayset.delete(!freezeWorklist, unode);
+                    simplifyWorklist := Splayset.add(!simplifyWorklist, unode))
+               else
+                  ()
+           end
+           
+        fun ok (t, r) =
+          let
+             val tnod = case tabBusca(t, !(#tnode ig)) of
+                           NONE => raise Fail "No se encontro el nodo (ok - t)"
+                         | SOME n => n
+                         
+             val rnod = case tabBusca(t, !(#tnode ig)) of
+                           NONE => raise Fail "No se encontro el nodo (ok - r)"
+                         | SOME n => n
+          in
+             sub(degrees, tnod) < k orelse Splayset.member(precolored, t) orelse Splayset.member(!adjSet, {from=tnod, to=rnod})
+          end
+          
+        fun conservative cn =
+            let 
+                val k' = ref 0
+                val _ = Splayset.app (fn n => if sub(degrees, n) > k then k' := !k' + 1 else ()) cn
+             in
+                !k' < k
+             end
+             
+        (* En todos los lugares donde decia m en el libro puse (x,y) pero podria ser (x', y') revisar *)
+        fun coalesced () =
+            let
+               fun coalesced' (x, y) =
+                   let
+                      val x' = getAlias(x)
+                      val y' = getAlias(y)
+                      val ynod = case tabBusca(y', !(#gtemp ig)) of
+                                           NONE => raise Fail "No se encontro el nodo (coalesced - y)"
+                                         | SOME n => n
+                                         
+                      val (u, v) = if Splayset.member(precolored, ynod) then
+                                      (y', x')
+                                   else
+                                      (x', y')
+                                      (* QUEDAMOS ACA*)
+                      val checkForall = Splayset.foldr (fn (t, xs) => (ok (t, u)) andalso xs) true (adjacent v)
+
+                         
+                   in
+                     (worklistMoves := Splayset.delete(!worklistMoves, (x, y));
+                      if u = v then
+                        (coalescedMoves := Splayset.add(!coalescedMoves, (x, y));
+                         (addWorkList u))
+                      else if Splayset.member(precolored, v) orelse Splayset.member(!adjSet, {from=u, to=v}) then
+                         (constrainedMoves := Splayset.add(!constrainedMoves, (u, v))
+                          (addWorkList u);
+                          (addWorkList v))
+                      else if (Splayset.member(precolored, u) andalso checkForall) orelse 
+                              ((not Splayset.member(precolored, u)) andalso conservative(Splayset.union(adjacent u, adjacent v))) then
+                               (coalescedMoves := Splayset.add(!coalescedMoves, (x, y));
+                                (combine u v);
+                                (addWorkList u))
+                      else
+                        activeMoves := Splayset.add(!activeMoves, (x, y)))                                         
+                   end 
+            in
+                Splayset.app coalesced' (!worklistMoves)
+            end
+
+            
+            
+            
+
+
+      in
+        ()
+      end
 
 
 
