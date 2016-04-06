@@ -29,6 +29,8 @@ struct
         val simplifyWorklist = ref (Splayset.empty Int.compare)
         val worklistMoves = ref (Splayset.empty tupleCompare)
         val activeMoves = ref (Splayset.empty tupleCompare)
+        val coalescedMoves = ref (Splayset.empty tupleCompare)
+        val frozenMoves = ref (Splayset.empty tupleCompare)
         val constrainedMoves = ref (Splayset.empty tupleCompare)
         val coalescedNodes = ref (Splayset.empty Int.compare)
         val selectStack: node stack ref = ref tigerutils.emptyStack 
@@ -217,12 +219,18 @@ struct
              end
              
         (* En todos los lugares donde decia m en el libro puse (x,y) pero podria ser (x', y') revisar *)
-        fun coalesced () =
+(*        fun coalesced () =
             let
                fun coalesced' (x, y) =
                    let
                       val x' = getAlias(x)
                       val y' = getAlias(y)
+                      val m = case tabBusca(x, !(#gtemp ig)) of
+                                       NONE => raise Fail "No se encontro el nodo (coalesced - y)"
+                                     | SOME xtmp => case tabBusca(y, !(#gtemp ig)) of
+                                                            NONE => raise Fail "No se encontro el nodo (coalesced - y)"
+                                                          | SOME ytmp => (xtmp, ytmp)
+
                       val ynod = case tabBusca(y', !(#gtemp ig)) of
                                            NONE => raise Fail "No se encontro el nodo (coalesced - y)"
                                          | SOME n => n
@@ -231,35 +239,92 @@ struct
                                       (y', x')
                                    else
                                       (x', y')
-                                      (* QUEDAMOS ACA*)
-                      val checkForall = Splayset.foldr (fn (t, xs) => (ok (t, u)) andalso xs) true (adjacent v)
 
-                         
+                      val utmp = case tabBusca(u, !(#gtemp ig)) of
+                                           NONE => raise Fail "No se encontro el nodo (coalesced - unod)"
+                                         | SOME n => n
+ 
+                      val vtmp = case tabBusca(v, !(#gtemp ig)) of
+                                           NONE => raise Fail "No se encontro el nodo (coalesced - vnod)"
+                                         | SOME n => n
+
+                      (* Esta funcion me pasa un conjunto de nodos como int a un conjunto de nodos como temp *)
+                      fun nodToTemp s = Splayset.foldr (fn (x,xs) => let 
+                                                                       val temp = case tabBusca(x, !(#gtemp ig)) of
+                                                                                     NONE => raise Fail "No se encontro el nodo (coalesced - nodToTemp)"
+                                                                                   | SOME n => n
+                                                                     in
+                                                                       Splayset.add(xs, temp)
+                                                                     end) (Splayset.empty String.compare) s
+
+                      val checkForall = Splayset.foldr (fn (t, xs) => (ok (t, u)) andalso xs) true (nodToTemp (adjacent v))
                    in
-                     (worklistMoves := Splayset.delete(!worklistMoves, (x, y));
+                     (worklistMoves := Splayset.delete(!worklistMoves, m);
                       if u = v then
-                        (coalescedMoves := Splayset.add(!coalescedMoves, (x, y));
-                         (addWorkList u))
-                      else if Splayset.member(precolored, v) orelse Splayset.member(!adjSet, {from=u, to=v}) then
-                         (constrainedMoves := Splayset.add(!constrainedMoves, (u, v))
-                          (addWorkList u);
-                          (addWorkList v))
-                      else if (Splayset.member(precolored, u) andalso checkForall) orelse 
-                              ((not Splayset.member(precolored, u)) andalso conservative(Splayset.union(adjacent u, adjacent v))) then
-                               (coalescedMoves := Splayset.add(!coalescedMoves, (x, y));
+                        (coalescedMoves := Splayset.add(!coalescedMoves, m);
+                         (addWorkList utmp))
+                      else if Splayset.member(precolored, vtmp) orelse Splayset.member(!adjSet, {from=u, to=v}) then
+                         (constrainedMoves := Splayset.add(!constrainedMoves, (u, v));
+                          (addWorkList utmp);
+                          (addWorkList vtmp))
+                      else if (Splayset.member(precolored, utmp) andalso checkForall) orelse 
+                              (not(Splayset.member(precolored, utmp)) andalso conservative(Splayset.union(adjacent u, adjacent v))) then
+                               (coalescedMoves := Splayset.add(!coalescedMoves, m);
                                 (combine u v);
-                                (addWorkList u))
+                                (addWorkList utmp))
                       else
-                        activeMoves := Splayset.add(!activeMoves, (x, y)))                                         
+                        activeMoves := Splayset.add(!activeMoves, m))                                         
                    end 
             in
                 Splayset.app coalesced' (!worklistMoves)
-            end
+            end*)
 
-            
-            
-            
+        fun freezeMoves u =
+          let
+            fun processNodeMove m =
+              let
+                val (x, y) = m
+                val yAlias = case tabBusca(y, !(#tnode ig)) of
+                                  NONE => raise Fail "No se encontro el nodo (freezeMoves)"
+                                | SOME s => (getAlias s)
+                val xAlias = case tabBusca(x, !(#tnode ig)) of
+                                  NONE => raise Fail "No se encontro el nodo (freezeMoves)"
+                                | SOME s => (getAlias s)
+                val uAlias = getAlias u
+                val v = if yAlias = uAlias then xAlias
+                        else yAlias
+              in
+                (activeMoves := Splayset.delete(!activeMoves, m);
+                 frozenMoves := Splayset.add(!frozenMoves, m);
+                 if (Splayset.isEmpty (nodeMoves v)) andalso sub(degrees, v) < k then
+                   (freezeWorklist := Splayset.delete(!freezeWorklist, v);
+                    simplifyWorklist := Splayset.add(!simplifyWorklist, v))
+                 else
+                   ())
+              end
+          in
+            Splayset.app processNodeMove (nodeMoves u)
+          end
 
+        fun freeze () =
+          let
+            fun freeze' u = (freezeWorklist := Splayset.delete(!freezeWorklist, u);
+                             simplifyWorklist := Splayset.add(!simplifyWorklist, u);
+                             freezeMoves u)
+                    
+          in
+            Splayset.app freeze' (!freezeWorklist)
+          end
+
+
+        fun selectSpill () =
+          let 
+            val m = 5 (* Aca hay que usar una heuristica *)
+          in
+            (spillWorklist := Splayset.delete(!spillWorklist, m);
+             simplifyWorklist := Splayset.add(!simplifyWorklist, m);
+             freezeMoves m)
+          end
 
       in
         ()
