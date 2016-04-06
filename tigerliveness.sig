@@ -15,5 +15,8 @@ sig
     val newInterGraph: unit -> igraph
     val liveAnalysis: tigerflow.flowgraph -> liveSet * liveSet 
 
+    val nodeToTemp: igraph -> int -> string
+    val tempToNode: igraph -> string -> int
+
 end
 

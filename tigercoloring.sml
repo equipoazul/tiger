@@ -24,17 +24,24 @@ struct
         val lenNodes = List.length(interNodes)
         val moveList = array(lenNodes, Splayset.empty tupleCompare)
         val alias = array(lenNodes, ~1)
+        val color = array(lenNodes, ~1)
         val spillWorklist = ref (Splayset.empty Int.compare)
         val freezeWorklist = ref (Splayset.empty Int.compare)
         val simplifyWorklist = ref (Splayset.empty Int.compare)
+
         val worklistMoves = ref (Splayset.empty tupleCompare)
         val activeMoves = ref (Splayset.empty tupleCompare)
         val coalescedMoves = ref (Splayset.empty tupleCompare)
         val frozenMoves = ref (Splayset.empty tupleCompare)
         val constrainedMoves = ref (Splayset.empty tupleCompare)
+
         val coalescedNodes = ref (Splayset.empty Int.compare)
+        val coloredNodes = ref (Splayset.empty Int.compare)
+        val spilledNodes = ref (Splayset.empty Int.compare)
+
+        val initial = ref (Splayset.empty String.compare)
+
         val selectStack: node stack ref = ref tigerutils.emptyStack 
-        (*val adjSet:adjSetT = ref (Splayset.empty edgeCompare)*)
         val adjSet:adjSetT = ref (listToSet edgeCompare (edges (#graph ig)))
         val adjList:adjListT = array(lenNodes, Splayset.empty Int.compare)
         val degrees:int array = array(lenNodes, 0)
@@ -109,15 +116,24 @@ struct
         fun moveRelated n = not (Splayset.isEmpty (nodeMoves n))
         
         (* 6 es el K, y hay que pasarle una lista de todos los temporales (el initial) *)
-        fun   makeWorklist [] = ()
-            | makeWorklist (n::ns) =
-                (if sub(degrees, n) >= k then
-                    spillWorklist := Splayset.add(!spillWorklist, n)
-                 else if moveRelated(n) then
-                    freezeWorklist := Splayset.add(!freezeWorklist, n)
-                 else
-                    simplifyWorklist := Splayset.add(!simplifyWorklist, n);
-                 makeWorklist ns)
+        fun   makeWorklist () = 
+          let
+            fun makeWorklist' m =
+                let 
+                   val n = tempToNode (IGRAPH ig) m
+                in
+                   if sub(degrees, n) >= k then
+                      spillWorklist := Splayset.add(!spillWorklist, n)
+                   else if moveRelated(n) then
+                      freezeWorklist := Splayset.add(!freezeWorklist, n)
+                   else
+                      simplifyWorklist := Splayset.add(!simplifyWorklist, n)
+                end
+          in
+             Splayset.app makeWorklist' (!initial)
+          end
+
+
 
         fun adjacent n = Splayset.difference(sub(adjList, n), Splayset.union(stackToSet Int.compare (!(selectStack)), !coalescedNodes))
 
@@ -150,15 +166,13 @@ struct
             end
           
         fun simplify () =
-            let 
-                fun simplify' n =
-                    (simplifyWorklist := Splayset.delete(!simplifyWorklist, n);
-                     tigerutils.push n (selectStack);
-                     Splayset.app (fn x => decrementDegree x) (adjacent n))
+            let
+              val n = List.hd (Splayset.listItems (!simplifyWorklist))
             in
-                Splayset.app simplify' (!simplifyWorklist)
+             (simplifyWorklist := Splayset.delete(!simplifyWorklist, n);
+              tigerutils.push n (selectStack);
+              Splayset.app (fn x => decrementDegree x) (adjacent n))
             end
-                     
 
         (* Coalesced *)
 
@@ -219,65 +233,44 @@ struct
              end
              
         (* En todos los lugares donde decia m en el libro puse (x,y) pero podria ser (x', y') revisar *)
-(*        fun coalesced () =
+        fun coalesce () =
             let
-               fun coalesced' (x, y) =
+               fun coalesce' (x, y) =
                    let
-                      val x' = getAlias(x)
-                      val y' = getAlias(y)
-                      val m = case tabBusca(x, !(#gtemp ig)) of
-                                       NONE => raise Fail "No se encontro el nodo (coalesced - y)"
-                                     | SOME xtmp => case tabBusca(y, !(#gtemp ig)) of
-                                                            NONE => raise Fail "No se encontro el nodo (coalesced - y)"
-                                                          | SOME ytmp => (xtmp, ytmp)
+                      val x' = nodeToTemp (IGRAPH ig) (getAlias(tempToNode (IGRAPH ig) x))
+                      val y' = nodeToTemp (IGRAPH ig) (getAlias(tempToNode (IGRAPH ig) y))
 
-                      val ynod = case tabBusca(y', !(#gtemp ig)) of
-                                           NONE => raise Fail "No se encontro el nodo (coalesced - y)"
-                                         | SOME n => n
-                                         
-                      val (u, v) = if Splayset.member(precolored, ynod) then
+                      val (u, v) = if Splayset.member(precolored, y) then
                                       (y', x')
                                    else
                                       (x', y')
 
-                      val utmp = case tabBusca(u, !(#gtemp ig)) of
-                                           NONE => raise Fail "No se encontro el nodo (coalesced - unod)"
-                                         | SOME n => n
- 
-                      val vtmp = case tabBusca(v, !(#gtemp ig)) of
-                                           NONE => raise Fail "No se encontro el nodo (coalesced - vnod)"
-                                         | SOME n => n
+                      val m = (x', y')
 
-                      (* Esta funcion me pasa un conjunto de nodos como int a un conjunto de nodos como temp *)
-                      fun nodToTemp s = Splayset.foldr (fn (x,xs) => let 
-                                                                       val temp = case tabBusca(x, !(#gtemp ig)) of
-                                                                                     NONE => raise Fail "No se encontro el nodo (coalesced - nodToTemp)"
-                                                                                   | SOME n => n
-                                                                     in
-                                                                       Splayset.add(xs, temp)
-                                                                     end) (Splayset.empty String.compare) s
+                      val (uNode, vNode) = (tempToNode (IGRAPH ig) u, tempToNode (IGRAPH ig) u)
 
-                      val checkForall = Splayset.foldr (fn (t, xs) => (ok (t, u)) andalso xs) true (nodToTemp (adjacent v))
+                      val adjacentTmp = Splayset.foldr (fn (x, xs) => Splayset.add(xs, nodeToTemp (IGRAPH ig) x)) (Splayset.empty String.compare) (adjacent vNode)
+                      val checkForall = Splayset.foldr (fn (t, xs) => (ok (t, u)) andalso xs) true adjacentTmp
                    in
                      (worklistMoves := Splayset.delete(!worklistMoves, m);
                       if u = v then
                         (coalescedMoves := Splayset.add(!coalescedMoves, m);
-                         (addWorkList utmp))
-                      else if Splayset.member(precolored, vtmp) orelse Splayset.member(!adjSet, {from=u, to=v}) then
+                         (addWorkList u))
+                      else if Splayset.member(precolored, v) orelse Splayset.member(!adjSet, {from=uNode, to=vNode}) then
                          (constrainedMoves := Splayset.add(!constrainedMoves, (u, v));
-                          (addWorkList utmp);
-                          (addWorkList vtmp))
-                      else if (Splayset.member(precolored, utmp) andalso checkForall) orelse 
-                              (not(Splayset.member(precolored, utmp)) andalso conservative(Splayset.union(adjacent u, adjacent v))) then
+                          (addWorkList u);
+                          (addWorkList v))
+                      else if (Splayset.member(precolored, u) andalso checkForall) orelse 
+                              (not(Splayset.member(precolored, u)) andalso conservative(Splayset.union(adjacent uNode, adjacent vNode))) then
                                (coalescedMoves := Splayset.add(!coalescedMoves, m);
-                                (combine u v);
-                                (addWorkList utmp))
+                                (combine uNode vNode);
+                                (addWorkList u))
                       else
                         activeMoves := Splayset.add(!activeMoves, m))                                         
                    end 
             in
-                Splayset.app coalesced' (!worklistMoves)
-            end*)
+                Splayset.app coalesce' (!worklistMoves)
+            end
 
         fun freezeMoves u =
           let
@@ -314,20 +307,76 @@ struct
                     
           in
             Splayset.app freeze' (!freezeWorklist)
-          end
-
+          end 
 
         fun selectSpill () =
           let 
-            val m = 5 (* Aca hay que usar una heuristica *)
+       	  	fun spillPriority (n) =
+       	  		let
+       	  			val nDef = List.foldr (fn ((x, y), xs) => if tigerutils.inList (nodeToTemp (IGRAPH ig) n)  y then 1.0 + xs else xs) 0.0 (tigertab.tabAList (!(#def fg)))
+       	  			val nUse = List.foldr (fn ((x, y), xs) => if tigerutils.inList (nodeToTemp (IGRAPH ig) n) y then 1.0 + xs else xs) 0.0 (tigertab.tabAList (!(#use fg)))
+       	  			val nAdj = Splayset.numItems(sub(adjList, n))
+       	  		in
+       	  			(nDef + nUse) / real(nAdj)
+       	  		end
+   	  		
+   	  		fun minElem [] min node = node
+   	  		  | minElem ((x, y)::xs) min node =
+  					if x < min then minElem xs x y 
+	   	  			else minElem xs min node
+       	  	
+       	  	val priorities = List.map (fn x => (spillPriority(x), x)) (Splayset.listItems (!spillWorklist))
+            val m = minElem priorities 9999.0 ~1
           in
             (spillWorklist := Splayset.delete(!spillWorklist, m);
              simplifyWorklist := Splayset.add(!simplifyWorklist, m);
              freezeMoves m)
           end
 
+
+        fun assignColors () =
+          let 
+            val okColors = ref ([0,1,2,3,4,5]) (* Si, habria que hacerlo con compresiones de listas *)
+            val n = ref ~1 (* Valor dummy para usar en el pop *)
+            fun processAdjList n = Splayset.app (fn w => let
+                                                            val wAlias = getAlias w
+                                                            val wtmp = nodeToTemp (IGRAPH ig) wAlias 
+                                                            val coloredNodesTmp = Splayset.foldr (fn (x, xs) => Splayset.add(xs, nodeToTemp (IGRAPH ig) x)) (Splayset.empty String.compare) (!coloredNodes)
+                                                          in
+                                                            if Splayset.member(Splayset.union(coloredNodesTmp, precolored), wtmp) then
+                                                                okColors := List.filter (fn x => x <> sub(color, wAlias)) (!okColors)
+                                                            else 
+                                                               ()
+                                                          end) (sub(adjList, n))
+          in
+            (while (not(isEmptyStack selectStack)) do
+                (n := pop selectStack;
+                 processAdjList (!n);
+                 if List.null(!okColors) then
+                    spilledNodes := Splayset.add(!spilledNodes, (!n))
+                 else
+                    (coloredNodes := Splayset.add(!coloredNodes, (!n));
+                     update(color, (!n), List.hd (!okColors));
+                     okColors := List.tl (!okColors) ));
+             Splayset.app (fn m => update(color, m, sub(color, getAlias m))) (!coalescedNodes))
+                 
+          end      
+
       in
-        ()
+        (build ();
+         initial := List.foldr (fn (x, xs) => Splayset.add(xs, nodeToTemp (IGRAPH ig) x)) (Splayset.empty String.compare) (nodes (#graph ig));
+         makeWorklist();
+         while not(Splayset.isEmpty(!simplifyWorklist) andalso Splayset.isEmpty(!worklistMoves) andalso
+                   Splayset.isEmpty(!freezeWorklist) andalso Splayset.isEmpty(!spillWorklist)) do
+               if not(Splayset.isEmpty(!simplifyWorklist)) then simplify()
+               else if not(Splayset.isEmpty(!worklistMoves)) then coalesce()
+               else if not(Splayset.isEmpty(!freezeWorklist )) then freeze()
+               else if not(Splayset.isEmpty(!spillWorklist )) then selectSpill() 
+               else ();
+         assignColors())
+
+         
+
       end
 
 

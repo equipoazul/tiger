@@ -1,7 +1,7 @@
 structure tigerutils :> tigerutils = struct
 
 open tigertree
-
+open tigertab
 (* ============================================================
          Funcion para la impresion de codigo intermedio 
    ============================================================ *)
@@ -75,6 +75,9 @@ fun pop (ref []) = raise Fail "Pop a stack vacio"
   | pop (s as ref (x :: xs)) = (s := xs; x)
   
 fun push x (s as ref xs) = s := (x::xs)
+
+fun isEmptyStack (ref []) = true
+  | isEmptyStack _ = false
 
 fun stackToSet f l = 
   let

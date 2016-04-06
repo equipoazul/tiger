@@ -75,12 +75,12 @@ fun main(args) =
                                                              (map tigerassem.printAssem assem;
                                                               print "---------------END BLOQUE --------------\n")
                                                          end) (List.concat stm_tpl)
-                          
+                          val assemsBlocks = List.map (fn (x, y) => tigercodegen.codegen x y) (List.concat stm_tpl)
                           val assems = List.concat (List.map (fn (x, y) => tigercodegen.codegen x y) (List.concat stm_tpl))
                           val _ = map tigerassem.printAssem assems
                           val graph = instrs2graph assems
-                          val _ = tigerflow.printGraphFlow (#1 graph)
-                          val _ = tigerliveness.liveAnalysis (#1 graph)
+                          (*val _ = tigerflow.printGraphFlow (#1 graph)*)
+                          val _ = tigercoloring.color (#1 graph) assemsBlocks
                           (*tigergraph.nodes (#control graph)*)
                         in
                           (*List.map (fn (x, y) => tigercodegen.codegen x y) (List.concat stm_tpl) *)

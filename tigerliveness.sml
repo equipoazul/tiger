@@ -35,7 +35,15 @@ struct
     
     fun printSet s = List.foldr (fn (x, xs) => x ^ "," ^ xs) "" (Splayset.listItems s)
     fun printLiveT t = map (fn (x,y) => print ( (Int.toString x) ^ " -> " ^ (printSet y) ^ "\n") ) (tigertab.tabAList t)
-    
+
+    fun nodeToTemp (IGRAPH ig) x = case tabBusca(x, !(#gtemp ig)) of
+                                                     NONE => raise Fail "No se encontro el nodo (nodToTemp)"
+                                                   | SOME n => n
+                             
+    fun tempToNode (IGRAPH ig) x = case tabBusca(x, !(#tnode ig)) of
+                                                     NONE => raise Fail "No se encontro el nodo (tempToNode)"
+                                                   | SOME n => n
+
     fun liveAnalysis (FGRAPH fg) = 
       let
         fun initList ns = let
