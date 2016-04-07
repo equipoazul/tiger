@@ -33,6 +33,16 @@ struct
             end
                 
     
+    fun insertNodesLiv _ [] = ()
+      | insertNodesLiv (IGRAPH ig) (n::ns) =
+      let
+         val m = newNode (#graph ig)
+         val _ = (#tnode ig) := tabInserta(n, m, !(#tnode ig))
+         val _ = (#gtemp ig) := tabInserta(m, n, !(#gtemp ig))
+      in
+         insertNodesLiv (IGRAPH ig) ns
+      end
+    
     fun printSet s = List.foldr (fn (x, xs) => x ^ "," ^ xs) "" (Splayset.listItems s)
     fun printLiveT t = map (fn (x,y) => print ( (Int.toString x) ^ " -> " ^ (printSet y) ^ "\n") ) (tigertab.tabAList t)
 

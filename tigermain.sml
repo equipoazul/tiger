@@ -69,55 +69,38 @@ fun main(args) =
         val instrlist = let
                           fun aplanar (x, frame) = List.map (fn y => (frame, y)) x
                           val stm_tpl = List.map aplanar canon_frags
-                          val _ = List.map (fn (x, y) => let val _ = print "--------------- BLOQUE --------------\n"
+                          
+                          (*val _ = List.map (fn (x, y) => let val _ = print "--------------- BLOQUE --------------\n"
                                                              val assem = tigercodegen.codegen x y
                                                          in
                                                              (map tigerassem.printAssem assem;
                                                               print "---------------END BLOQUE --------------\n")
-                                                         end) (List.concat stm_tpl)
-                          val assemsBlocks = List.map (fn (x, y) => tigercodegen.codegen x y) (List.concat stm_tpl)
+                                                         end) (List.concat stm_tpl)*)
                           val assems = List.concat (List.map (fn (x, y) => tigercodegen.codegen x y) (List.concat stm_tpl))
                           val _ = map tigerassem.printAssem assems
-                          val graph = instrs2graph assems
-                          (*val _ = tigerflow.printGraphFlow (#1 graph)*)
-                          val _ = tigercoloring.color (#1 graph) assemsBlocks
-                          (*tigergraph.nodes (#control graph)*)
+                          (*val graph = instrs2graph assems
+                          val _ = tigerflow.printGraphFlow (#1 graph)
+                          val _ = tigercoloring.color grAndBlocks 
+                          *)
+                          
+                          fun applyCodeGen stmList frame = List.map (fn x => tigercodegen.codegen frame x) stmList
+                          val assemsBlocks = List.map (fn (x, y) => (applyCodeGen x y , y)) canon_frags
+                          val plainAssemsBlocks = List.map (fn (x, y) => (List.concat x, y)) assemsBlocks
+                          val grAndBlocks = map (fn (x, y) => (instrs2graph x, x)) plainAssemsBlocks
+
+                         
+                                                    
                         in
                           (*List.map (fn (x, y) => tigercodegen.codegen x y) (List.concat stm_tpl) *)
                           (* map (fn ins => case ins of
                                         OPER {assem=x, ...} =>  print("OPER ->  " ^ x ^ "\n")
                                       | LABEL {assem=x, ...} =>  print("LABEL -> " ^ x ^ "\n")
                                       | MOVE {assem=x, ...} =>  print("MOVE ->  " ^ x ^ "\n")) (List.concat assems) *)
-                          tigerflow.printGraphFlow (#1 graph)
+                            tigercoloring.color grAndBlocks
                         end
         
 	in
 		print "yes!!\n"
 	end	handle Fail s => print("Fail: "^s^"\n")
-
-(*fun main(args) =
-	let	fun arg(l, s) =
-			(List.exists (fn x => x=s) l, List.filter (fn x => x<>s) l)
-		val (arbol, l1)		= arg(args, "-arbol")
-		val (escapes, l2)	= arg(l1, "-escapes") 
-		val (ir, l3)		= arg(l2, "-ir") 
-		val (canon, l4)		= arg(l3, "-canon") 
-		val (code, l5)		= arg(l4, "-code") 
-		val (flow, l6)		= arg(l5, "-flow") 
-		val (inter, l7)		= arg(l6, "-inter") 
-		val entrada =
-			case l7 of
-			[n] => ((open_in n)
-					handle _ => raise Fail (n^" no existe!"))
-			| [] => std_in
-			| _ => raise Fail "opcio'n dsconocida!"
-		val lexbuf = lexstream entrada
-		val expr = prog Tok lexbuf handle _ => errParsing lexbuf
-		val _ = findEscape(expr)
-		val _ = if arbol then tigerpp.exprAst expr else ()
-	in
-		transProg(expr);
-		print "yes!!\n"
-	end	handle Fail s => print("Fail: "^s^"\n") *)
 
 val _ = main(CommandLine.arguments())

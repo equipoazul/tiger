@@ -54,4 +54,5 @@ fun tabFiltra(f, t) =
 	end
 fun tabPrimer(f, t) = hd(List.filter (fn(a, b) => f b) (listItems t))
 fun tabClaves t = List.map (fn(x, y) => x) (listItems t)
+fun tabValores t = List.map (fn(x, y) => y) (listItems t)
 end

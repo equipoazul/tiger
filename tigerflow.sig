@@ -12,7 +12,8 @@ sig
                    ismove: boolTable ref}
 
     val newFlowGraph: unit -> flowgraph
-    val instrs2graph: tigerassem.instr list -> flowgraph * tigergraph.node list
+    val instrs2graph: tigerassem.instr list -> flowgraph 
+    (*val instrs2graph: tigerassem.instr list -> flowgraph * tigergraph.node list*)
     (*val getNode: tigergraph.node -> tigerassem.instr *)
     (*val getLabelNode: (tigertemp.label * tigergraph.node) list -> tigertemp.label -> tigergraph.node*)
     val printGraphFlow: flowgraph -> unit

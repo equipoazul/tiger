@@ -17,6 +17,8 @@ sig
 
     val nodeToTemp: igraph -> int -> string
     val tempToNode: igraph -> string -> int
+    
+    val insertNodesLiv: igraph -> tigertemp.temp list -> unit
 
 end
 

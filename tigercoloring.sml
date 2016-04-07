@@ -12,14 +12,20 @@ struct
     type wListMoves  = tigergraph.node Splayset.set ref
     type adjSetT     = tigergraph.edge Splayset.set ref
     
-    val precolored = listToSet String.compare ["eax","ebx"]
+    val precolored = listToSet String.compare ["RV","FP"]
     
-    fun  color (FGRAPH fg) [] = ()
-       | color (FGRAPH fg) (b::bs) =
+    fun  color [] = ()
+       | color (((FGRAPH fg), b)::fgbs) =
       let
         val (liveIn, liveOut) = liveAnalysis (FGRAPH fg) 
+        val uses = List.concat (tabValores (!(#use fg)))
+        val defs = List.concat (tabValores (!(#def fg)))
+        val totalRegs = unionList uses defs
+
         val (IGRAPH ig) = newInterGraph()
+        val _ = insertNodesLiv (IGRAPH ig) totalRegs
         val interNodes = nodes (#graph ig)
+        
         val flowNodes = nodes (#control fg)
         val lenNodes = List.length(interNodes)
         val moveList = array(lenNodes, Splayset.empty tupleCompare)
@@ -78,10 +84,10 @@ struct
                 fun updateLive ((i:tigerassem.instr), n) =
                     let
                         val use = case tabBusca(n, (!(#use fg))) of
-                                      NONE => raise Fail "El nodo no existe en la tabla use"
+                                      NONE => (Splayset.empty String.compare) (*raise Fail ("El nodo " ^ Int.toString(n) ^ " no existe en la tabla use")*)
                                     | SOME u => listToSet String.compare u
                         val def = case tabBusca(n, (!(#def fg))) of
-                                      NONE => raise Fail "El nodo no existe en la tabla def"
+                                      NONE => (Splayset.empty String.compare) (*raise Fail ("El nodo " ^ Int.toString(n) ^ " no existe en la tabla def")*)
                                     | SOME d => listToSet String.compare d
                         val _ = case i of
                                      MOVE {assem=a, src=u, dst=v} => 
@@ -89,7 +95,7 @@ struct
                                                  val _ = live := Splayset.difference (!live, use)
                                                  val union = Splayset.listItems (Splayset.union(use, def))
                                                  val _ = List.map (fn x => case tabBusca(x, !(#tnode ig)) of
-                                                                               NONE => raise Fail "El temp no esta en la tabla tnode"
+                                                                               NONE => raise Fail ("El temp " ^ x ^ " no esta en la tabla tnode")
                                                                              | SOME xi => update(moveList, xi,  Splayset.add(sub(moveList, xi), (u, v) ))) union
 
                                                  val _ = Splayset.add(!worklistMoves, (u,v))
@@ -109,7 +115,8 @@ struct
                     end
           
              in 
-             List.map updateLive (List.rev (ListPair.zip (b, flowNodes)))
+             (tigerflow.printGraphFlow(FGRAPH fg);
+             List.map updateLive (List.rev (ListPair.zip (b, flowNodes))))
              end
 
         fun nodeMoves n = Splayset.intersection(sub(moveList, n), (Splayset.union(!activeMoves, !worklistMoves)))
