@@ -23,10 +23,15 @@ open tigertree
 
 type level = int
 
-val fp = "FP"				(* frame pointer *)
+(*val fp = "FP"               (* frame pointer *) 
 val sp = "SP"				(* stack pointer *)
-val rv = "RV"				(* return value  *)
-val ov = "OV"				(* overflow value (edx en el 386) *)
+val rv = "RV"			    (* return value  *)
+val ov = "OV"				(* overflow value (edx en el 386) *) *)
+val fp = "ebp"				    
+val sp = "esp"
+val rv = "eax"
+
+val ov = "edx"
 val wSz = 4					(* word size in bytes *)
 val log2WSz = 2				(* base two logarithm of word size in bytes *)
 val fpPrev = 0				(* offset (bytes) *)
@@ -40,8 +45,8 @@ val localsGap = ~4 			(* bytes *)
 val calldefs = [rv]
 val specialregs = [rv, fp, sp]
 val argregs = []
-val callersaves = []
-val calleesaves = []
+val callersaves = [rv, "ecx", "edx"]
+val calleesaves = [fp, sp, "ebx"]
 type register = string
 datatype access = InFrame of int | InReg of tigertemp.label
 

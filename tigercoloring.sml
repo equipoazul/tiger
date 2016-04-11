@@ -7,12 +7,13 @@ struct
     open tigergraph
     open tigertab
     open tigerassem
+    open tigerframe
     
     type adjListT    = (tigergraph.node Splayset.set) array
     type wListMoves  = tigergraph.node Splayset.set ref
     type adjSetT     = tigergraph.edge Splayset.set ref
     
-    val precolored = listToSet String.compare ["RV","FP"]
+    val precolored = listToSet String.compare [fp, sp, rv, ov, "ebx", "ecx"]
     
     fun  color [] = ()
        | color (((FGRAPH fg), b)::fgbs) =
