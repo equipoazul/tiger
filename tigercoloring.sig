@@ -5,6 +5,6 @@ sig
 	type adjSetT     = tigergraph.edge Splayset.set ref
 
 	
-    val color : (tigerflow.flowgraph * (tigerassem.instr list)) list -> unit
+    val coloring : ((tigerassem.instr list) * tigerframe.frame) -> unit
    
 end

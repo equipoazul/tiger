@@ -52,10 +52,10 @@
 					let	val saylab = tigertab.name
 					    fun saytemp t = t
 						fun f(#"`":: #"s":: i::rest) = 
-							(explode(saytemp(List.nth(src,ord i - ord #"0")))
+							(explode("%"^saytemp(List.nth(src,ord i - ord #"0")))
 								@ f rest)
 						| f(#"`":: #"d":: i:: rest) = 
-							(explode(saytemp(List.nth(dst,ord i - ord #"0")))
+							(explode("%"^saytemp(List.nth(dst,ord i - ord #"0")))
 								@ f rest)
 						| f(#"`":: #"j":: i:: rest) = 
 							(explode(saylab(List.nth(jump,ord i - ord #"0")))

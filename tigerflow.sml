@@ -124,7 +124,7 @@ struct
      
         val flow = instrs2graph' l 0 (FGRAPH fg) labelList
     in
-        (FGRAPH flow)
+        (FGRAPH flow, iTable)
     end
                                   
 end

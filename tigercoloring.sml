@@ -15,9 +15,9 @@ struct
     
     val precolored = listToSet String.compare [fp, sp, rv, ov, "ebx", "ecx"]
     
-    fun  color [] = ()
-       | color (((FGRAPH fg), b)::fgbs) =
+    fun coloring (b, f) =
       let
+		val (FGRAPH fg, iTable) = instrs2graph b
         val (liveIn, liveOut) = liveAnalysis (FGRAPH fg) 
         val uses = List.concat (tabValores (!(#use fg)))
         val defs = List.concat (tabValores (!(#def fg)))
@@ -356,6 +356,8 @@ struct
                                                             else 
                                                                ()
                                                           end) (sub(adjList, n))
+          
+          
           in
             (while (not(isEmptyStack selectStack)) do
                 (n := pop selectStack;
@@ -370,6 +372,61 @@ struct
                  
           end      
 
+		        
+		fun rewriteProgram() =   
+			let 
+				fun rewriteProgram' (temp, blocks) =
+					let 
+
+						fun getUseDefs l = List.foldr (fn ((x, y), xs) => let
+																			val instr = case tabBusca(x, iTable) of
+																							      NONE => raise Fail "No se encontro el nodo en la iTable"
+																							    | SOME i => case i of
+ 																							    			  MOVE {assem=ass,dst=d,src=s} => {dst=d, src=s}
+																							    		    | _ => raise Fail "No es un move (getUseDefs)"
+																		  in
+	  																	    if inList temp y then ((x, instr)::xs) else xs
+																		  end) [] l
+																		  
+						val defs = getUseDefs (tigertab.tabAList(!(#def fg)))
+						(*val uses = getUseDefs (tigertab.tabAList(!(#use fg)))*)
+						 
+						fun rewriteDef (nodo, instr) bls =
+							let 
+								val m = case (allocLocal f true) of
+									InFrame m' => Int.toString(m')
+									| _ => raise Fail "En true esto no deberia pasar...."
+
+								val t = tigertemp.newtemp()				
+								val store = [MOVE {assem="movl "^t^","^(#src instr), dst=t, src=(#src instr)},
+											 MOVE {assem="movl (%ebp-"^m^"),"^t, dst=m, src=t}]
+							in
+							 	(List.take(bls, nodo - 1) @ store @ List.drop(bls, nodo), m)
+							end
+							
+						fun rewriteUse ((nodo, instr), bls, m) =
+							let 
+								val t = tigertemp.newtemp()				
+								val fetch = [MOVE {assem="movl "^t^",("^m^")", dst=m, src=t},
+											 MOVE {assem="movl "^(#dst instr)^", (%ebp-"^m^")", dst=(#dst instr), src=m}]
+							in
+							 	List.take(bls, nodo - 1) @ fetch @ List.drop(bls, nodo)
+							end
+							
+						fun rewriteAll (nodo, instr) bls =
+							let 
+								val (bs, m) = rewriteDef (nodo, instr) blocks
+							in
+								rewriteUse ((nodo, instr), bs, m)
+							end
+						
+					in
+						List.foldr (fn (x, xs) => rewriteAll x xs) blocks defs		
+					end	 
+			in
+				Splayset.foldr (fn (x, xs) => rewriteProgram' (nodeToTemp (IGRAPH ig) x, xs)) b (!spilledNodes)
+			end
+		
       in
         (build ();
          initial := List.foldr (fn (x, xs) => Splayset.add(xs, nodeToTemp (IGRAPH ig) x)) (Splayset.empty String.compare) (nodes (#graph ig));
@@ -381,7 +438,12 @@ struct
                else if not(Splayset.isEmpty(!freezeWorklist )) then freeze()
                else if not(Splayset.isEmpty(!spillWorklist )) then selectSpill() 
                else ();
-         assignColors())
+         assignColors();
+         if not(Splayset.isEmpty(!spillWorklist)) then
+         	(print "Me llamo de nuevo pue\n";
+         	coloring(rewriteProgram(), f))
+         else
+         	())
 
          
 

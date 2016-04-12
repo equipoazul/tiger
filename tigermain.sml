@@ -86,7 +86,7 @@ fun main(args) =
                           fun applyCodeGen stmList frame = List.map (fn x => tigercodegen.codegen frame x) stmList
                           val assemsBlocks = List.map (fn (x, y) => (applyCodeGen x y , y)) canon_frags
                           val plainAssemsBlocks = List.map (fn (x, y) => (List.concat x, y)) assemsBlocks
-                          val grAndBlocks = map (fn (x, y) => (instrs2graph x, x)) plainAssemsBlocks
+                          (*val grAndBlocks = map (fn (x, y) => (instrs2graph x, x)) plainAssemsBlocks*)
 
                          
                                                     
@@ -96,7 +96,7 @@ fun main(args) =
                                         OPER {assem=x, ...} =>  print("OPER ->  " ^ x ^ "\n")
                                       | LABEL {assem=x, ...} =>  print("LABEL -> " ^ x ^ "\n")
                                       | MOVE {assem=x, ...} =>  print("MOVE ->  " ^ x ^ "\n")) (List.concat assems) *)
-                            tigercoloring.color grAndBlocks
+                           List.map tigercoloring.coloring plainAssemsBlocks
                         end
         
 	in
