@@ -90,6 +90,8 @@ fun codegen frame stm =
 			| T.MOVE(MEM e1, CONST i) =>
 				emit(OPER{assem="movl (`s0), $"^st(i)^"\n",
 					src=[munchExp e1], dst=[], jump=NONE})
+					
+			(*TODO ACA PONE LABELS EN LOS MOVES - probablemente el problema este en trans *)
 			| T.MOVE(MEM e1, e2) =>
 				emit(OPER{assem="movl (`s0),`s1\n",
 					src=[munchExp e1, munchExp e2], dst=[], jump=NONE})
@@ -180,7 +182,7 @@ fun codegen frame stm =
 							case h of
 							CONST i => (OPER{assem="pushl $"^st(i)^"\n",
 										src=[], dst=[], jump=NONE}, "")
-							| NAME n => (OPER{assem="pushl $"^n^"\n",
+							| NAME n => (OPER{assem="pushl "^n^"\n",
 										src=[], dst=[], jump=NONE}, "")
 							| TEMP n =>
 									if n=tigerframe.fp then

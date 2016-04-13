@@ -66,7 +66,7 @@ struct
 
         val labelList = createNodes l []
         
-        fun admittedRegs r = (tigerutils.inList r ["RV", "EAX"]) orelse String.isPrefix "T" r
+        fun admittedRegs r = (tigerutils.inList r ["RV", "EAX"]) orelse (String.isPrefix "T" r)
                       
         fun getLabelNode [] l' = raise Fail ("Error al buscar el label " ^ l' ^ " en la lista de labels.")
           | getLabelNode ((l, n)::xs) l' = if l = l' then n
@@ -84,9 +84,9 @@ struct
                                 src = src,
                                 jump = jmp} => let  val validDst = List.filter admittedRegs dst
                                                     val validSrc = List.filter admittedRegs src
-                                                    val _ = if validDst <> [] then (#def fg) := tabInserta(n, dst, !(#def fg)) 
+                                                    val _ = if not (List.null validDst) then (#def fg) := tabInserta(n, validDst, !(#def fg)) 
                                                             else ()
-                                                    val _ = if validSrc <> [] then (#use fg) := tabInserta(n, src, !(#use fg))
+                                                    val _ = if not (List.null validSrc) then (#use fg) := tabInserta(n, validSrc, !(#use fg))
                                                             else ()
                                                     val _ = (#ismove fg) := tabInserta(n, false, !(#ismove fg))
                                                     val _ = case jmp of

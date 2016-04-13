@@ -101,11 +101,17 @@ end
 
 val datosGlobs = ref ([]: frag list)
 
-fun procEntryExit{level: level, body} =
+(*fun procEntryExit{level: level, body} =
 	let	val label = STRING(name(#frame level), "")
 		val body' = PROC{frame= #frame level, body=unNx body}
 		val final = STRING(";;-------", "")
 	in	datosGlobs:=(!datosGlobs@[label, body', final]) end
+fun getResult() = !datosGlobs*)
+
+fun procEntryExit{level: level, body} =
+	let	val label = STRING(name(#frame level), "")
+		val body' = PROC{frame= #frame level, body=unNx body}
+	in	datosGlobs:=(!datosGlobs@[label, body']) end
 fun getResult() = !datosGlobs
 
 fun stringLen s =
@@ -114,12 +120,19 @@ fun stringLen s =
 		| aux(_::t) = 1+aux(t)
 	in	aux(explode s) end
 
-fun stringExp(s: string) =
+(*fun stringExp(s: string) =
 	let	val l = newlabel()
 		val len = ".long "^makestring(stringLen s)
 		val str = ".string \""^s^"\""
 		val _ = datosGlobs:=(!datosGlobs @ [STRING(l, len), STRING("", str)])
+	in	Ex(NAME l) end*)
+	
+fun stringExp(s: string) =
+	let	val l = newlabel()
+		val str = "\""^s^"\""
+		val _ = datosGlobs:=(!datosGlobs @ [STRING(l, str)])
 	in	Ex(NAME l) end
+
 
 fun preFunctionDec() =
 	(pushSalida(NONE);

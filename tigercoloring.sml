@@ -385,36 +385,37 @@ struct
 				val _ = print ("Initial antes rewrite\n\n")
 				val _ = Splayset.app (fn x => print (x ^ "\n")) (!initial)
 				val newTemps = ref (Splayset.empty String.compare)
+
 				fun rewriteProgram' (temp, blocks) =
 					let 
+						val m = case (allocLocal f true) of
+				          	        InFrame m' => Int.toString(m')
+				                	| _ => raise Fail "En true esto no deberia pasar...."
+
 						fun getUseDefs l = List.foldr (fn ((x, y), xs) => let
+						                                                    val _ = print ("--------------->" ^ Int.toString(x) ^ "\n")
 																			val instr = case tabBusca(x, iTable) of
-																							      NONE => raise Fail "No se encontro el nodo en la iTable"
+																							      NONE => raise Fail "No se encontro el nodo en la iTable (rewriteProgram)"
 																							    | SOME i => case i of
  																							    			  MOVE {assem=ass,dst=d,src=s} => {dst=d, src=s}
 																							    		    | _ => raise Fail "No es un move (getUseDefs)"
 																		  in
 	  																	    if inList temp y then ((x, instr)::xs) else xs
 																		  end) [] l
-																		  
-						val defs = getUseDefs (tigertab.tabAList(!(#def fg)))
-						(*val uses = getUseDefs (tigertab.tabAList(!(#use fg)))*)
-						 
+				        val defs = getUseDefs (tigertab.tabAList(!(#def fg)))
+                        val uses = getUseDefs (tigertab.tabAList(!(#use fg))) 
+                        						 
 						fun rewriteDef (nodo, instr) bls =
 							let 
-								val m = case (allocLocal f true) of
-									InFrame m' => Int.toString(m')
-									| _ => raise Fail "En true esto no deberia pasar...."
-
 								val t = tigertemp.newtemp()
 								val _ = newTemps := Splayset.add(!newTemps, t)
 								val store = [MOVE {assem="movl "^t^","^(#src instr), dst=t, src=(#src instr)},
 											 MOVE {assem="movl (%ebp-"^m^"),"^t, dst=m, src=t}]
 							in
-							 	(List.take(bls, nodo - 1) @ store @ List.drop(bls, nodo), m)
+							 	List.take(bls, nodo - 1) @ store @ List.drop(bls, nodo)
 							end
 							
-						fun rewriteUse ((nodo, instr), bls, m) =
+						fun rewriteUse (nodo, instr) bls =
 							let 
 								val t = tigertemp.newtemp()
 								val _ = newTemps := Splayset.add(!newTemps, t)
@@ -424,15 +425,11 @@ struct
 							 	List.take(bls, nodo - 1) @ fetch @ List.drop(bls, nodo)
 							end
 							
-						fun rewriteAll (nodo, instr) bls =
-							let 
-								val (bs, m) = rewriteDef (nodo, instr) blocks
-							in
-								rewriteUse ((nodo, instr), bs, m)
-							end
+                        val defBlocks = List.foldr (fn (x, xs) => rewriteDef x xs) blocks defs
+                        val defUses = List.foldr (fn (x, xs) => rewriteUse x xs) defBlocks defs	
 						
 					in
-						List.foldr (fn (x, xs) => rewriteAll x xs) blocks defs		
+	                    defUses
 					end	 
 				val _ = "Leus puto\n"
 				val rewritedProgram = Splayset.foldr (fn (x, xs) => rewriteProgram' (nodeToTemp (IGRAPH ig) x, xs)) b (!spilledNodes)
@@ -447,8 +444,8 @@ struct
 				 rewritedProgram)
 			end
 			
-		fun printColorArray a 0 = print (Int.toString(0) ^ " (" ^ (nodeToTemp (IGRAPH ig) 0) ^ ")" ^ " -> " ^ Array.sub(a, 0) ^ "\n")
-		  | printColorArray a n = (print (Int.toString(n) ^ " (" ^ (nodeToTemp (IGRAPH ig) n) ^ ")" ^ " -> " ^ Array.sub(a, n) ^ "\n"); printColorArray a (n - 1))
+		fun printColorArray [] = print "No hay mas nodos :)\n"
+		  | printColorArray (n::ns) = (print (Int.toString(n) ^ " (" ^ (nodeToTemp (IGRAPH ig) n) ^ ")" ^ " -> " ^ Array.sub(color, n) ^ "\n"); printColorArray ns)
 		
       in
         (build ();
@@ -465,7 +462,7 @@ struct
                else if not(Splayset.isEmpty(!spillWorklist )) then selectSpill() 
                else ();
          assignColors();
-         printColorArray color (lenNodes - 1);
+         printColorArray (nodes (#graph ig));
          if not(Splayset.isEmpty(!spilledNodes)) then
          	(print "Me llamo de nuevo pue\n";
          	coloring(rewriteProgram(), f, false))

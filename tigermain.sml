@@ -58,8 +58,8 @@ fun main(args) =
 		                in
 		                   List.map strip (List.filter isStr frags)
 		                end
-		(*val _ = println("Fragmentos de string: " ^ Int.toString (List.length(str_frags)) ^ ": " ^ concatWith ", " (List.map (fn (l, s) => "(" ^ l ^ ", " ^ s ^ ")") str_frags))            
-		val _ = println(tigertrans.Ir frags)    *)
+		val _ = println("Fragmentos de string: " ^ Int.toString (List.length(str_frags)) ^ ": " ^ concatWith ", " (List.map (fn (l, s) => "(" ^ l ^ ", " ^ s ^ ")") str_frags))
+		val _ = println(tigertrans.Ir frags)    
 		
 		val canonizar = tigercanon.traceSchedule o tigercanon.basicBlocks o tigercanon.linearize
 		fun canon_frag (tigerframe.PROC {body, frame}) = (canonizar body, frame) 
@@ -93,7 +93,11 @@ fun main(args) =
                           
                           val _ = print "\n\nCodigo despues del coloreo:\n"
                           val colprint = (List.map (fn (x,y) => x) coloredCode)
-						  val _ = map tigerassem.printAssem (List.concat colprint)
+                          val stringSection = map tigerframe.string str_frags
+						              val codeSection = map (tigerassem.strAssem) (List.concat colprint)
+						              
+						              val allProgram = stringSection @ codeSection
+						              val _ = map print allProgram
                          
                                                     
                         in

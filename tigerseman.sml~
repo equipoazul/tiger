@@ -356,7 +356,7 @@ fun transExp(venv, tenv) =
         (* SIEMPRE va en false el extern. No se discute. Lo dijo Guille. *)
         val venv' = foldr (fn (x, venvv) => let 
                                                 val f_name = (#name (#1 x))
-                                                val f_label = if f_name <> "_tigermain" then f_name ^ tigertemp.newlabel()
+                                                val f_label = if f_name <> "_tigermain" then tigertemp.newlabel() (*f_name ^ tigertemp.newlabel()*)
                                                                                         else "_tigermain"
                                                 val f_formals = map #typ (getFormals (#2 x) (#params (#1 x)))                           
                                                 val f_result = getResult (#2 x) (#result (#1 x))

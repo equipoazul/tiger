@@ -63,7 +63,7 @@ type frame = {
 	actualReg: int ref
 }
 datatype frag = PROC of {body: tigertree.stm, frame: frame}
-	| STRING of tigertemp.label * string
+	            | STRING of tigertemp.label * string
 fun newFrame{name} = {
 	name=name,
 	formals=ref [InFrame(fpPrevLev)],
@@ -75,7 +75,7 @@ fun newFrame{name} = {
 }
 fun addAccFrame access (frame:frame) = ((#formals frame) := !(#formals frame) @ [access] ; ())
 fun name(f: frame) = #name f
-fun string(l, s) = l^tigertemp.makeString(s)^"\n"
+fun string(l, s) = l^": .ascii "^tigertemp.makeString(s)^"\n"
 fun formals({formals=f, ...}: frame) = !f
 	(*let	fun aux(n, []) = []
 		| aux(n, h::t) = InFrame(n)::aux(n+argsGap, t)
