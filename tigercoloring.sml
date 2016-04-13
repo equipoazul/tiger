@@ -116,8 +116,9 @@ struct
                     end
           
              in 
-             (tigerflow.printGraphFlow(FGRAPH fg);
-             List.map updateLive (List.rev (ListPair.zip (b, flowNodes))))
+             (*tigerflow.printGraphFlow(FGRAPH fg);
+             List.map updateLive (List.rev (ListPair.zip (b, flowNodes)))*)
+             List.map updateLive (List.rev (ListPair.zip (b, flowNodes)))
              end
 
         fun nodeMoves n = Splayset.intersection(sub(moveList, n), (Splayset.union(!activeMoves, !worklistMoves)))
@@ -443,7 +444,7 @@ struct
          	(print "Me llamo de nuevo pue\n";
          	coloring(rewriteProgram(), f))
          else
-         	())
+         	(b, f))
 
          
 

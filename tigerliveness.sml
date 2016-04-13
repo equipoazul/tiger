@@ -76,10 +76,11 @@ struct
                       
         fun liveAnalysis' ((FGRAPH fg), []) = 
              let
-               val _ = print "Live In\n"
+               (*val _ = print "Live In\n"
                val _ = printLiveT (!liveIn)
                val _ = print "Live Out\n"
-               val _ = printLiveT (!liveOut)
+               val _ = printLiveT (!liveOut)*)
+               val _ = ()
              in
                (!liveIn, !liveOut)
              end

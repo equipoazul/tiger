@@ -44,13 +44,13 @@ fun main(args) =
 		  | name _ = raise Fail "error interno (name): no es PROC"
 		(* BORRAR *)
 		val frags = tigertrans.getResult() (* lista de fragmentos *)
-		val _ = println("Fragmentos: " ^ Int.toString (List.length(frags)))
+		(*val _ = println("Fragmentos: " ^ Int.toString (List.length(frags)))*)
 		val func_frags = let fun isFunc (tigerframe.PROC _) = true 
 		                       | isFunc _ = false
 		                 in
 		                   List.filter isFunc frags
 		                 end
-		val _ = println("Fragmentos de funcion: " ^ Int.toString (List.length(func_frags)) ^ ": " ^ concatWith ", " (List.map name func_frags))                 
+		(*val _ = println("Fragmentos de funcion: " ^ Int.toString (List.length(func_frags)) ^ ": " ^ concatWith ", " (List.map name func_frags))                 *)
 		val str_frags = let fun isStr (tigerframe.STRING _) = true
 		                      | isStr _ = false
 		                    fun strip (tigerframe.STRING f) = f
@@ -58,8 +58,9 @@ fun main(args) =
 		                in
 		                   List.map strip (List.filter isStr frags)
 		                end
-		val _ = println("Fragmentos de string: " ^ Int.toString (List.length(str_frags)) ^ ": " ^ concatWith ", " (List.map (fn (l, s) => "(" ^ l ^ ", " ^ s ^ ")") str_frags))            
-		val _ = println(tigertrans.Ir frags)    
+		(*val _ = println("Fragmentos de string: " ^ Int.toString (List.length(str_frags)) ^ ": " ^ concatWith ", " (List.map (fn (l, s) => "(" ^ l ^ ", " ^ s ^ ")") str_frags))            
+		val _ = println(tigertrans.Ir frags)    *)
+		
 		val canonizar = tigercanon.traceSchedule o tigercanon.basicBlocks o tigercanon.linearize
 		fun canon_frag (tigerframe.PROC {body, frame}) = (canonizar body, frame) 
 		(* fun canon_frag (tigerframe.PROC {body, frame}) = (tigercanon.linearize body, frame) *)
@@ -76,6 +77,7 @@ fun main(args) =
                                                              (map tigerassem.printAssem assem;
                                                               print "---------------END BLOQUE --------------\n")
                                                          end) (List.concat stm_tpl)*)
+                          val _ = print "\n\nCodigo ANTES del coloreo:\n"                                                         
                           val assems = List.concat (List.map (fn (x, y) => tigercodegen.codegen x y) (List.concat stm_tpl))
                           val _ = map tigerassem.printAssem assems
                           (*val graph = instrs2graph assems
@@ -87,7 +89,11 @@ fun main(args) =
                           val assemsBlocks = List.map (fn (x, y) => (applyCodeGen x y , y)) canon_frags
                           val plainAssemsBlocks = List.map (fn (x, y) => (List.concat x, y)) assemsBlocks
                           (*val grAndBlocks = map (fn (x, y) => (instrs2graph x, x)) plainAssemsBlocks*)
-
+                          val coloredCode = List.map tigercoloring.coloring plainAssemsBlocks
+                          
+                          val _ = print "\n\nCodigo despues del coloreo:\n"
+                          val colprint = (List.map (fn (x,y) => x) coloredCode)
+						  val _ = map tigerassem.printAssem (List.concat colprint)
                          
                                                     
                         in

@@ -20,15 +20,10 @@ fun getActualLev() = !actualLevel
 val outermost: level = {parent=NONE,
     frame=newFrame{name="_tigermain"}, level=getActualLev()}
 fun newLevel{parent={parent, frame, level}, name} =
-    (*let 
-       val _ = print("CREANDO NUEVO NIVEL PARA "^name^"\n")
-       val _ = print("Nivel: " ^ makestring level ^"\n")
-    in*)
 	{
 	parent=SOME frame,
 	frame=newFrame{name=name},
 	level=level+1}
-	(*end*)
 fun allocArg{parent, frame, level} b = tigerframe.allocArg frame b
 fun allocLocal{parent, frame, level} b = tigerframe.allocLocal frame b
 fun formals{parent, frame, level} = tigerframe.formals frame
@@ -156,9 +151,8 @@ fun simpleVar(acc, nivel) =
         |InFrame k => 
             let 
                 fun aux 0 = TEMP fp
-                    |aux n = (print("EN SIMPLEVAR\n"); 
-                             if n < 0 then raise Fail "(simpleVar) Error de memoria!\n"
-                             else MEM (BINOP (PLUS, aux(n - 1), CONST fpPrevLev)))
+                    |aux n = if n < 0 then raise Fail "(simpleVar) Error de memoria!\n"
+                             else MEM (BINOP (PLUS, aux(n - 1), CONST fpPrevLev))
                              (*else MEM (BINOP (PLUS, aux(!actualLevel - 1), aux(n-1)))*)
              in
                 if (!actualLevel = nivel) then Ex (MEM (BINOP (PLUS, TEMP fp, CONST k))) 
@@ -168,7 +162,6 @@ fun simpleVar(acc, nivel) =
 
 fun varDec(acc) = simpleVar(acc, getActualLev())
 
-(*fun fieldVar(var, field) = *)
 fun fieldVar(var, field) = 
 let
 	val a = unEx var
@@ -214,7 +207,6 @@ end
 
 fun callExp (name, external, isproc, lev:level, ls) = 
 	let 
-	    val _ = (print("Nombre ====> "); print(name); print(" Nivel ====> "); print(Int.toString(#level lev)); print("\n"))
 	    fun memArray 0 = TEMP fp
 		   |memArray n = if n < 0 then raise Fail "Error de memoria"
 		                 else MEM (BINOP (PLUS, memArray (n-1), CONST fpPrevLev))
@@ -284,7 +276,6 @@ fun letExp ([], body) = Ex (unEx body)
                            
 fun preWhileForExp() = let
                           val l = newlabel()
-                          val _ = print("Meto "^l^" en la pila\n")
                        in
                           pushSalida(SOME(l))
                        end
