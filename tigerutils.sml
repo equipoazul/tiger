@@ -91,7 +91,6 @@ fun tupleCompare ((n, m), (n', m')) =
   if n = n' andalso m = m' then EQUAL
   else LESS
 
-
 									
 
 end

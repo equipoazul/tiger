@@ -84,10 +84,10 @@ fun main(args) =
                           val _ = tigerflow.printGraphFlow (#1 graph)
                           val _ = tigercoloring.color grAndBlocks 
                           *)
-                          
+                          val _ = print "\n\n-------------------------------------\n"   
                           fun applyCodeGen stmList frame = List.map (fn x => tigercodegen.codegen frame x) stmList
                           val assemsBlocks = List.map (fn (x, y) => (applyCodeGen x y , y)) canon_frags
-                          val plainAssemsBlocks = List.map (fn (x, y) => (List.concat x, y)) assemsBlocks
+                          val plainAssemsBlocks = List.map (fn (x, y) => (List.concat x, y, true)) assemsBlocks
                           (*val grAndBlocks = map (fn (x, y) => (instrs2graph x, x)) plainAssemsBlocks*)
                           val coloredCode = List.map tigercoloring.coloring plainAssemsBlocks
                           

@@ -229,12 +229,12 @@ fun codegen frame stm =
 						src=[], dst=[r], jump=NONE})))
 			| MEM(BINOP(PLUS, e1, CONST i)) =>
 				result(fn r =>
-					emit(OPER{assem="MOV `d0,(s0+"^st(i)^")\n",
+					emit(OPER{assem="movl `d0,(s0+"^st(i)^")\n",
 						src=[munchExp e1], dst=[r], jump=NONE}))
 			| MEM(BINOP(PLUS, TEMP t0, BINOP(LSHIFT, TEMP t1, CONST i))) =>
 				if scaleFact i then
 					result(fn r =>
-						emit(OPER{assem="MOV `d0,(`s0+"^st(sF i)^"*`s1)\n",
+						emit(OPER{assem="movl `d0,(`s0+"^st(sF i)^"*`s1)\n",
 							src=[t0,t1], dst=[r], jump=NONE}))
 				else
 					result(fn r =>
@@ -254,7 +254,7 @@ fun codegen frame stm =
 						src=[munchExp e], dst=[r], jump=NONE}))
 			| MEM e =>
 				result(fn r =>
-					emit(OPER{assem="MOV `d0,(`s0+0)\n",
+					emit(OPER{assem="movl `d0,(`s0+0)\n",
 						src=[munchExp e], dst=[r], jump=NONE}))
 			| BINOP(PLUS, e, CONST i) =>
 				result(fn r =>

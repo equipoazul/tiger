@@ -14,8 +14,9 @@ struct
     type adjSetT     = tigergraph.edge Splayset.set ref
     
     val precolored = listToSet String.compare [fp, sp, rv, ov, "ebx", "ecx"]
+    val initial = ref (Splayset.empty String.compare)
     
-    fun coloring (b, f) =
+    fun coloring (b, f, firstRun) =
       let
 		val (FGRAPH fg, iTable) = instrs2graph b
         val (liveIn, liveOut) = liveAnalysis (FGRAPH fg) 
@@ -31,7 +32,7 @@ struct
         val lenNodes = List.length(interNodes)
         val moveList = array(lenNodes, Splayset.empty tupleCompare)
         val alias = array(lenNodes, ~1)
-        val color = array(lenNodes, ~1)
+        val color = array(lenNodes, "noColor")
         val spillWorklist = ref (Splayset.empty Int.compare)
         val freezeWorklist = ref (Splayset.empty Int.compare)
         val simplifyWorklist = ref (Splayset.empty Int.compare)
@@ -46,13 +47,14 @@ struct
         val coloredNodes = ref (Splayset.empty Int.compare)
         val spilledNodes = ref (Splayset.empty Int.compare)
 
-        val initial = ref (Splayset.empty String.compare)
+
 
         val selectStack: node stack ref = ref tigerutils.emptyStack 
         val adjSet:adjSetT = ref (listToSet edgeCompare (edges (#graph ig)))
         val adjList:adjListT = array(lenNodes, Splayset.empty Int.compare)
         val degrees:int array = array(lenNodes, 0)
         val k = 6
+        
                     
         fun addEdge (e as {from=u, to=v}) =
             if Splayset.member (!adjSet, e) andalso (u <> v) then
@@ -74,6 +76,8 @@ struct
                                       ()))
              else
                 ()
+             
+        
              
         fun build () =  
             let 
@@ -345,7 +349,8 @@ struct
 
         fun assignColors () =
           let 
-            val okColors = ref ([0,1,2,3,4,5]) (* Si, habria que hacerlo con compresiones de listas *)
+            (*val okColors = ref ([0,1,2,3,4,5]) (* Si, habria que hacerlo con compresiones de listas *)*)
+            val okColors = ref (["eax","ebx","ecx","edx","edi","esi"])
             val n = ref ~1 (* Valor dummy para usar en el pop *)
             fun processAdjList n = Splayset.app (fn w => let
                                                             val wAlias = getAlias w
@@ -364,7 +369,8 @@ struct
                 (n := pop selectStack;
                  processAdjList (!n);
                  if List.null(!okColors) then
-                    spilledNodes := Splayset.add(!spilledNodes, (!n))
+                    (spilledNodes := Splayset.add(!spilledNodes, (!n));
+                     print ("Spillie " ^ Int.toString(!n) ^ "\n"))
                  else
                     (coloredNodes := Splayset.add(!coloredNodes, (!n));
                      update(color, (!n), List.hd (!okColors));
@@ -376,9 +382,11 @@ struct
 		        
 		fun rewriteProgram() =   
 			let 
+				val _ = print ("Initial antes rewrite\n\n")
+				val _ = Splayset.app (fn x => print (x ^ "\n")) (!initial)
+				val newTemps = ref (Splayset.empty String.compare)
 				fun rewriteProgram' (temp, blocks) =
 					let 
-
 						fun getUseDefs l = List.foldr (fn ((x, y), xs) => let
 																			val instr = case tabBusca(x, iTable) of
 																							      NONE => raise Fail "No se encontro el nodo en la iTable"
@@ -398,7 +406,8 @@ struct
 									InFrame m' => Int.toString(m')
 									| _ => raise Fail "En true esto no deberia pasar...."
 
-								val t = tigertemp.newtemp()				
+								val t = tigertemp.newtemp()
+								val _ = newTemps := Splayset.add(!newTemps, t)
 								val store = [MOVE {assem="movl "^t^","^(#src instr), dst=t, src=(#src instr)},
 											 MOVE {assem="movl (%ebp-"^m^"),"^t, dst=m, src=t}]
 							in
@@ -407,7 +416,8 @@ struct
 							
 						fun rewriteUse ((nodo, instr), bls, m) =
 							let 
-								val t = tigertemp.newtemp()				
+								val t = tigertemp.newtemp()
+								val _ = newTemps := Splayset.add(!newTemps, t)
 								val fetch = [MOVE {assem="movl "^t^",("^m^")", dst=m, src=t},
 											 MOVE {assem="movl "^(#dst instr)^", (%ebp-"^m^")", dst=(#dst instr), src=m}]
 							in
@@ -424,13 +434,28 @@ struct
 					in
 						List.foldr (fn (x, xs) => rewriteAll x xs) blocks defs		
 					end	 
+				val _ = "Leus puto\n"
+				val rewritedProgram = Splayset.foldr (fn (x, xs) => rewriteProgram' (nodeToTemp (IGRAPH ig) x, xs)) b (!spilledNodes)
+
+				(* Pasamos los nodos de numero a temps *)
+				val coloredNodesTmp = ref (Splayset.foldr (fn (x, xs) => Splayset.add(xs, nodeToTemp (IGRAPH ig) x)) (Splayset.empty String.compare) (!coloredNodes))
+				val coalescedNodesTmp = ref (Splayset.foldr (fn (x, xs) => Splayset.add(xs, nodeToTemp (IGRAPH ig) x)) (Splayset.empty String.compare) (!coalescedNodes))
 			in
-				Splayset.foldr (fn (x, xs) => rewriteProgram' (nodeToTemp (IGRAPH ig) x, xs)) b (!spilledNodes)
+				(initial := Splayset.union(!coloredNodesTmp, Splayset.union(!coalescedNodesTmp, !newTemps));
+				 print ("DESPUES antes rewrite\n\n");
+				 Splayset.app (fn x => print (x ^ "\n")) (!initial);
+				 rewritedProgram)
 			end
+			
+		fun printColorArray a 0 = print (Int.toString(0) ^ " (" ^ (nodeToTemp (IGRAPH ig) 0) ^ ")" ^ " -> " ^ Array.sub(a, 0) ^ "\n")
+		  | printColorArray a n = (print (Int.toString(n) ^ " (" ^ (nodeToTemp (IGRAPH ig) n) ^ ")" ^ " -> " ^ Array.sub(a, n) ^ "\n"); printColorArray a (n - 1))
 		
       in
         (build ();
-         initial := List.foldr (fn (x, xs) => Splayset.add(xs, nodeToTemp (IGRAPH ig) x)) (Splayset.empty String.compare) (nodes (#graph ig));
+         if firstRun then
+	         initial := List.foldr (fn (x, xs) => Splayset.add(xs, nodeToTemp (IGRAPH ig) x)) (Splayset.empty String.compare) (nodes (#graph ig))
+	     else
+	     	();
          makeWorklist();
          while not(Splayset.isEmpty(!simplifyWorklist) andalso Splayset.isEmpty(!worklistMoves) andalso
                    Splayset.isEmpty(!freezeWorklist) andalso Splayset.isEmpty(!spillWorklist)) do
@@ -440,9 +465,10 @@ struct
                else if not(Splayset.isEmpty(!spillWorklist )) then selectSpill() 
                else ();
          assignColors();
-         if not(Splayset.isEmpty(!spillWorklist)) then
+         printColorArray color (lenNodes - 1);
+         if not(Splayset.isEmpty(!spilledNodes)) then
          	(print "Me llamo de nuevo pue\n";
-         	coloring(rewriteProgram(), f))
+         	coloring(rewriteProgram(), f, false))
          else
          	(b, f))
 
