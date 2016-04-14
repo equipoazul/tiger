@@ -5,7 +5,7 @@ struct
     open tigertab
     open tigerassem
   
-    type instrTable = (tigergraph.node, tigerassem.instr) tigertab.Tabla
+    type instrTable = ((tigergraph.node, tigerassem.instr) tigertab.Tabla) ref
     type tempTable  = (tigergraph.node, tigertemp.temp list) tigertab.Tabla
     type boolTable  = (tigergraph.node, bool) tigertab.Tabla
 
@@ -50,14 +50,14 @@ struct
                                   
     fun instrs2graph l = 
       let 
-        val iTable:instrTable = tabNueva()
+        val iTable:instrTable = ref (tabNueva())
         val (FGRAPH fg) = newFlowGraph()                                  
         
         fun createNodes [] labelList = labelList
           | createNodes (x::xs) labelList = 
                 let
                     val n = newNode (#control fg)
-                    val _ = tabInserta(n, x, iTable)        
+                    val _ = iTable := tabInserta(n, x, !iTable)        
                   in
                      case x of
                         LABEL {lab=l, ...} => createNodes xs ((l, n)::labelList)
@@ -66,7 +66,7 @@ struct
 
         val labelList = createNodes l []
         
-        fun admittedRegs r = (tigerutils.inList r ["RV", "EAX"]) orelse (String.isPrefix "T" r)
+        fun admittedRegs r = (tigerutils.inList r ["eax", "ebx", "ecx", "edx", "esi", "edi"]) orelse (String.isPrefix "T" r)
                       
         fun getLabelNode [] l' = raise Fail ("Error al buscar el label " ^ l' ^ " en la lista de labels.")
           | getLabelNode ((l, n)::xs) l' = if l = l' then n

@@ -1,7 +1,7 @@
 signature tigerflow =
 sig
 
-    type instrTable = (tigergraph.node, tigerassem.instr) tigertab.Tabla
+    type instrTable = ((tigergraph.node, tigerassem.instr) tigertab.Tabla) ref
     type tempTable = (tigergraph.node, tigertemp.temp list) tigertab.Tabla
     type boolTable = (tigergraph.node, bool) tigertab.Tabla
 
