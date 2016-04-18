@@ -16,6 +16,9 @@
 		fun printInstr (OPER {assem=a, dst=d, src=s, jump=_}) = "OPER {assem = "^a^" dst = _ src = _ jump = _}\n"
 		  | printInstr (LABEL {assem=a, lab=l}) = "LABEL {assem = "^a^" lab = "^l^"}\n"
 		  | printInstr (MOVE {assem=a, dst=d, src=s}) = "MOVE {assem = "^a^" dst = _ src = _}\n"
+		  
+		fun printInstrList n [] = ""
+		  | printInstrList n (x::xs) = (print (Int.toString(n) ^ "\t" ^ printInstr x); printInstrList (n + 1) (xs))
 			
 	    (*val compare: instr -> instr -> instr*)
 	    fun instrCompare (OPER {assem=a, dst=d, src=s, jump=j}, OPER {assem=a', dst=d', src=s', jump=j'}) =

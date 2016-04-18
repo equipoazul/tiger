@@ -1,8 +1,8 @@
 # Unix makefile for tigermain example
 
 HOME=/usr
-#MOSMLHOME=${HOME}
-MOSMLHOME=/usr/local/
+MOSMLHOME=${HOME}
+#MOSMLHOME=/usr/local/
 MOSMLTOOLS=camlrunm $(MOSMLHOME)/tools
 MOSMLLEX=mosmllex
 MOSMLYACC=mosmlyac -v
@@ -111,5 +111,6 @@ tigercanon.uo: tigercanon.ui tigertree.uo tigertab.ui tigerframe.ui \
     tigertemp.ui 
 tigerlex.uo: tigergrm.ui tigernlin.uo 
 tigercanon.ui: tigertree.uo tigerframe.ui tigertemp.ui
-
+tigersimpleregalloc.uo: tigersimpleregalloc.ui
+tigersimpleregalloc.ui: tigerframe.ui tigerassem.uo
 
