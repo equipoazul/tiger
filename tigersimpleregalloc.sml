@@ -69,13 +69,13 @@ struct
 				end
 
 				val (prevMovs, posMovs) =
-				let
-					fun mkgetMov T = movaTemp(getFramePos T, getTempCol T)
-					fun mksetMov T = movaMem(getTempCol T, getFramePos T)
-					fun filterPC T = not(Splayset.member(precoloredSet, T))
-				in
-					(map mkgetMov (List.filter filterPC src), map mksetMov (List.filter filterPC dst))
-				end
+				  let
+					  fun mkgetMov T = movaTemp(getFramePos T, getTempCol T)
+					  fun mksetMov T = movaMem(getTempCol T, getFramePos T)
+					  fun filterPC T = not(Splayset.member(precoloredSet, T))
+				  in
+					  (map mkgetMov (List.filter filterPC src), map mksetMov (List.filter filterPC dst))
+				  end
 				val newdst = map getTempCol dst
 				val newsrc = map getTempCol src
 				val newinstr = OPER {assem=assem, dst=newdst, src=newsrc, jump=jump}

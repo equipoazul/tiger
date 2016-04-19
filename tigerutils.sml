@@ -96,8 +96,8 @@ fun singletonList l = foldr (fn (x, xs) => [x]::xs) [] l
 fun setNthList n xs i =
   let
     fun setNthList' n j [] i = []
-      | setNthList' n n (x::xs) i = (i::xs)
-      | setNthList' n j (x::xs) i = (x::(setNthList' n (j + 1) xs i))
+      | setNthList' n j (x::xs) i = if j = n then (i::xs)
+                                    else (x::(setNthList' n (j + 1) xs i))
   in
     setNthList' n 0 xs i
   end

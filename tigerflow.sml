@@ -82,17 +82,11 @@ struct
                           OPER {assem = s,
                                 dst = dst,
                                 src = src,
-                                jump = jmp} => let  val _ = print "######################################\n"
-                                                    val _ = print s
-                                                    val _ = map (fn x => print (x ^ "  ")) src
-                                                    val _ = print "\n"
-                                                    val _ = map (fn x => print (x ^ "  ")) dst
-                                                    val _ = print "\n"
-                                                    val validDst = List.filter admittedRegs dst
+                                jump = jmp} => let  val validDst = List.filter admittedRegs dst
                                                     val validSrc = List.filter admittedRegs src
-                                                    val _ = if not (List.null validDst) then (#def fg) := (print "Inserte en dst\n"; tabInserta(n, validDst, !(#def fg))) 
+                                                    val _ = if not (List.null validDst) then (#def fg) := tabInserta(n, validDst, !(#def fg))
                                                             else ()
-                                                    val _ = if not (List.null validSrc) then (#use fg) := (print "Inserte en dst\n"; tabInserta(n, validSrc, !(#use fg)))
+                                                    val _ = if not (List.null validSrc) then (#use fg) := tabInserta(n, validSrc, !(#use fg))
                                                             else ()
                                                     val _ = (#ismove fg) := tabInserta(n, false, !(#ismove fg))
                                                     val _ = case jmp of

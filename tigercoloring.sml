@@ -13,13 +13,13 @@ struct
     type wListMoves  = tigergraph.node Splayset.set ref
     type adjSetT     = tigergraph.edge Splayset.set ref
     
-    val precolored = listToSet String.compare [rv, ov, "ecx", "ebx", "esi", "edi"]
+    val precolored = listToSet String.compare [rv, ov, "ecx", "ebx", "esi", "edi", "esp", "ebp"]
     val initial = ref (Splayset.empty String.compare)
     
     fun coloring (b, f, firstRun) =
       let
         val (FGRAPH fg, iTable) = instrs2graph b
-        val _ = tigerflow.printGraphFlow (FGRAPH fg)
+        (*val _ = tigerflow.printGraphFlow (FGRAPH fg)*)
         val (liveIn, liveOut) = liveAnalysis (FGRAPH fg) 
         val uses = List.concat (tabValores (!(#use fg)))
         val defs = List.concat (tabValores (!(#def fg)))
@@ -58,7 +58,7 @@ struct
         val degrees:int array = array(lenNodes, 0)
         val k = 6
         
-                    
+        (* TODO ARREGLARRRR ESTOOOO FIXME *)
         fun addEdge (e as {from=u, to=v}) =
             if Splayset.member (!adjSet, e) andalso (u <> v) then
                 (adjSet := Splayset.add ((!adjSet), {from=u, to=v});
@@ -132,14 +132,18 @@ struct
         fun moveRelated n = not (Splayset.isEmpty (nodeMoves n))
         
         (* 6 es el K, y hay que pasarle una lista de todos los temporales (el initial) *)
-        fun   makeWorklist () = 
+        fun makeWorklist () = 
           let
+            val _ = "Nodos en el makeWorkList!\n"
+            val _ = map (fn x => print (x ^ "\n")) (map (nodeToTemp (IGRAPH ig)) (nodes (#graph ig)))
             fun makeWorklist' m =
                 let 
                    val n = tempToNode (IGRAPH ig) m
+                   val _ = print ("=============================================> " ^ Int.toString(sub(degrees, n)) ^ "\n")
                 in
                    if sub(degrees, n) >= k then
-                      spillWorklist := Splayset.add(!spillWorklist, n)
+                        (print "HOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOLA\n";
+                      spillWorklist := Splayset.add(!spillWorklist, n))
                    else if moveRelated(n) then
                       freezeWorklist := Splayset.add(!freezeWorklist, n)
                    else
@@ -343,6 +347,7 @@ struct
             
             val priorities = List.map (fn x => (spillPriority(x), x)) (Splayset.listItems (!spillWorklist))
             val m = minElem priorities 9999.0 ~1
+            val _ = print ("===============SPILLED SELECTION==========>" ^ (nodeToTemp (IGRAPH ig) m) ^ "\n")
           in
             (spillWorklist := Splayset.delete(!spillWorklist, m);
              simplifyWorklist := Splayset.add(!simplifyWorklist, m);
@@ -350,7 +355,7 @@ struct
           end
 
 
-        (*fun assignColors () =
+        fun assignColors () =
           let 
             (*val okColors = ref ([0,1,2,3,4,5]) (* Si, habria que hacerlo con compresiones de listas *)*)
 
@@ -380,8 +385,8 @@ struct
                      okColors := List.tl (!okColors) ));
              Splayset.app (fn m => update(color, m, sub(color, getAlias m))) (!coalescedNodes))
                  
-          end    *)
-          
+          end    
+      (*    
       fun assignColors () =
           let
             val n = ref ~1 (* Valor dummy para usar en el pop *)
@@ -414,20 +419,22 @@ struct
                          okColors := List.tl (!okColors) ));
              Splayset.app (fn m => update(color, m, sub(color, getAlias m))) (!coalescedNodes))
                  
-          end        
+          end        *)
         
-        (*        
+               
         fun rewriteProgram() =   
             let 
                 val _ = print ("Initial antes rewrite\n\n")
                 val _ = Splayset.app (fn x => print (x ^ "\n")) (!initial)
+                val _ = printInstrList 0 b
                 val newTemps = ref (Splayset.empty String.compare)
-                val _ = print "Leus puto1\n"
+                val _ = map (tigerassem.printAssem) b
+
                 fun rewriteProgram' (temp, blocks) =
                     let 
-                        val _ = print "Leus puto 2\n"
                         val m = case (allocLocal f true) of
-                                    InFrame m' => Int.toString(m')
+                                    InFrame m' => if m' < 0 then Int.toString(~m' * 4)
+                                                  else Int.toString(m' * 4)
                                     | _ => raise Fail "En true esto no deberia pasar...."
 
                         fun getUseDefs l = List.foldr (fn ((x, y), xs) => let
@@ -435,48 +442,58 @@ struct
                                                                                                   NONE => raise Fail "No se encontro el nodo en la iTable (rewriteProgram)"
                                                                                                 | SOME i => i
                                                                           in
-                                                                            if inList temp y then ((x, instr)::xs) else xs
+                                                                            if inList temp y then (print ("NODO: " ^ Int.toString(x) ^ " DEFS: " ^ (List.foldr (fn (x, xs) => x ^ " " ^ xs) "" y) ^ "\n"); ((x, instr)::xs))
+                                                                            else xs
                                                                           end) [] l
                                                                           
                         val defs = getUseDefs (tigertab.tabAList(!(#def fg)))
                         val uses = getUseDefs (tigertab.tabAList(!(#use fg))) 
-                        val _ = print "Leus puto 3\n"                                                 
-                        fun rewriteDef (nodo, instr) bls =
+                                               
+                        fun rewriteDef (nodo, OPER {assem=assem, dst=d, src=s, jump=j}) bls =
                             let 
-                                val _ = tigerassem.printInstrList 1 (List.concat bls)
-                                val srcOrig = case instr of
-                                            MOVE {assem=_, dst=_, src=s} => s
-                                          | OPER {assem=asm, dst=_, src=s, jump=_} => (print (Int.toString(nodo) ^ " " ^ asm ^ "\n"); List.hd(s))
-                                          | LABEL _ => raise Fail "no deberia pasar"
                                 val t = tigertemp.newtemp()
-                                val _ = print ("==============>" ^ t)
+                                val _ = print ("NEW TEMP: " ^ t ^ " INSTR DEF: " ^ assem ^ " SPILLED TEMP: " ^ temp ^ "\n")
                                 val _ = newTemps := Splayset.add(!newTemps, t)
-                                val store = [MOVE {assem="movl "^t^","^srcOrig, dst=t, src=srcOrig},
-                                             MOVE {assem="movl (%ebp-"^m^"),"^t, dst=m, src=t}]
+                                val store = [OPER {assem=assem, dst=[t], src=s, jump=j},
+                                             OPER {assem="movl (%ebp-"^m^"), `s0", dst=[], src=[t], jump=NONE}]
                             in
                                 tigerutils.setNthList nodo bls store
                             end
-                        val _ = print "Leus puto 4\n"
-                        fun rewriteUse (nodo, instr) bls =
+                           | rewriteDef (nodo, LABEL l) bls = bls 
+                           | rewriteDef (nodo, MOVE {assem=assem, dst=d, src=s}) bls =
+                                let 
+                                    val t = tigertemp.newtemp()
+                                    val _ = print ("NEW TEMP: " ^ t ^ " INSTR DEF: " ^ assem ^ " SPILLED TEMP: " ^ temp ^ "\n")
+                                    val _ = newTemps := Splayset.add(!newTemps, t)
+                                    val store = [MOVE {assem=assem, dst=d, src=s},
+                                                 OPER {assem="movl (%ebp-"^m^"), `s0", dst=[], src=[t], jump=NONE}]
+                                in
+                                    tigerutils.setNthList nodo bls store
+                                end
+                        fun rewriteUse (nodo, OPER {assem=assem, dst=d, src=s, jump=j}) bls =
                             let 
-                                val dstOrig = case instr of
-                                            MOVE {assem=_, dst=d, src=_} => d
-                                          | OPER {assem=_, dst=d, src=_, jump=_} => List.hd(d) 
-                                          | LABEL _ => raise Fail "no deberia pasar"
                                 val t = tigertemp.newtemp()
-                                val _ = print ("==============>" ^ t)
+                                val _ = print ("NEW TEMP: " ^ t ^ " INSTR USE: " ^ assem ^ " SPILLED TEMP: " ^ temp ^ "\n")
                                 val _ = newTemps := Splayset.add(!newTemps, t)
-                                val fetch = [MOVE {assem="movl "^t^",("^m^")", dst=m, src=t},
-                                             MOVE {assem="movl "^dstOrig^", (%ebp-"^m^")", dst=dstOrig, src=m}]
+                                val fetch = [OPER {assem="movl `d0, (%ebp-"^m^")", dst=[t], src=[], jump=NONE},
+                                             OPER {assem=assem, dst=d, src=[t], jump=j}]
                             in
-                                (*List.take(bls, nodo - 1) @ fetch @ List.drop(bls, nodo)*)
                                 tigerutils.setNthList nodo bls fetch
                             end
-                        val _ = print "Leus puto 5\n"
+                          | rewriteUse (nodo, LABEL l) bls = bls 
+                          | rewriteUse (nodo, MOVE {assem=assem, dst=d, src=s}) bls =
+                                let 
+                                    val t = tigertemp.newtemp()
+                                    val _ = print ("NEW TEMP: " ^ t ^ " INSTR USE: " ^ assem ^ " SPILLED TEMP: " ^ temp ^ "\n")
+                                    val _ = newTemps := Splayset.add(!newTemps, t)
+                                    val fetch = [OPER {assem="movl `d0, (%ebp-"^m^")", dst=[t], src=[], jump=NONE},
+                                                 MOVE {assem=assem, dst=d, src=t}]
+                                in
+                                    tigerutils.setNthList nodo bls fetch
+                                end
+                          
                         val defBlocks = List.foldr (fn (x, xs) => rewriteDef x xs) blocks defs
-                        val _ = print "Leus puto 5.5\n"
-                        val defUses = List.foldr (fn (x, xs) => rewriteUse x xs) defBlocks defs 
-                        val _ = print "Leus puto 6\n"
+                        val defUses = List.foldr (fn (x, xs) => rewriteUse x xs) defBlocks uses 
                     in
                         defUses
                     end  
@@ -487,33 +504,40 @@ struct
                 val coalescedNodesTmp = ref (Splayset.foldr (fn (x, xs) => Splayset.add(xs, nodeToTemp (IGRAPH ig) x)) (Splayset.empty String.compare) (!coalescedNodes))
             in
                 (initial := Splayset.union(!coloredNodesTmp, Splayset.union(!coalescedNodesTmp, !newTemps));
-                 print ("DESPUES antes rewrite\n\n");
+                 print ("DESPUES rewrite\n\n");
                  Splayset.app (fn x => print (x ^ "\n")) (!initial);
+                 map (tigerassem.printAssem) (List.concat rewritedProgram);
                  (List.concat rewritedProgram))
             end
-        *)    
+            
         fun printColorArray [] = print "No hay mas nodos :)\n"
           | printColorArray (n::ns) = (print (Int.toString(n) ^ " (" ^ (nodeToTemp (IGRAPH ig) n) ^ ")" ^ " -> " ^ Array.sub(color, n) ^ "\n"); printColorArray ns)
         
       in
         (build ();
+         print "JAMON COCIDO 1\n";
          if firstRun then
              initial := List.foldr (fn (x, xs) => Splayset.add(xs, nodeToTemp (IGRAPH ig) x)) (Splayset.empty String.compare) (nodes (#graph ig))
          else
             ();
+         print "JAMON COCIDO 2\n";            
          makeWorklist();
+         print "JAMON COCIDO 3\n";         
          while not(Splayset.isEmpty(!simplifyWorklist) andalso Splayset.isEmpty(!worklistMoves) andalso
                    Splayset.isEmpty(!freezeWorklist) andalso Splayset.isEmpty(!spillWorklist)) do
                if not(Splayset.isEmpty(!simplifyWorklist)) then simplify()
                else if not(Splayset.isEmpty(!worklistMoves)) then coalesce()
-               else if not(Splayset.isEmpty(!freezeWorklist )) then freeze()
-               else if not(Splayset.isEmpty(!spillWorklist )) then selectSpill() 
+               else if not(Splayset.isEmpty(!freezeWorklist)) then freeze()
+               else if not(Splayset.isEmpty(!spillWorklist)) then selectSpill() 
                else ();
+         print "JAMON COCIDO 4\n";               
          assignColors();
+         print "JAMON COCIDO 5\n";         
          printColorArray (nodes (#graph ig));
+         print "JAMON COCIDO 6\n";         
          if not(Splayset.isEmpty(!spilledNodes)) then
-            (Splayset.app (fn x => print ("8====D " ^ x ^ "\n")) (Splayset.foldr (fn (x, xs) => Splayset.add(xs, nodeToTemp (IGRAPH ig) x)) (Splayset.empty String.compare) (!spilledNodes));
-            coloring(tigersimpleregalloc.simpleregalloc f b, f, false))
+            (*Splayset.app (fn x => print ("====> " ^ x ^ "\n")) (Splayset.foldr (fn (x, xs) => Splayset.add(xs, nodeToTemp (IGRAPH ig) x)) (Splayset.empty String.compare) (!spilledNodes));*)
+            coloring(rewriteProgram(), f, false)
          else
             (b, f))
 
