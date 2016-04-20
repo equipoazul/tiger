@@ -14,7 +14,7 @@ val inList : ''a -> ''a list -> bool
 val unionList: ''a list -> ''a list -> ''a list
 val listToSet: (('a * 'a) -> order) -> 'a list -> 'a Splayset.set
 val tabToSet: (('a * 'a) -> order) -> ('b, 'a) tigertab.Tabla -> 'a Splayset.set
-val tupleCompare: (''a * ''b) * (''a * ''b) -> order
+val tupleCompare: ((''a * ''a) -> order) -> (''a * ''a) * (''a * ''a) -> order
 val singletonList : 'a list -> 'a list list
 val setNthList: int -> ('a list) -> 'a -> ('a list)
 (*val printColorArray: string array -> int -> tigerliveness.igraph -> unit*)

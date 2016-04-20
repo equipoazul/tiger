@@ -5,8 +5,7 @@ open tigerutils
 (*val gr = newGraph ()*)
 
 
-fun main(args) = let val _ = print "Jamon crudo\n"
-                     val n0 = newNode gr
+fun main(args) = let val n0 = newNode gr
                      val n1 = newNode gr
                      val n2 = newNode gr
                      val n3 = newNode gr
@@ -19,9 +18,7 @@ fun main(args) = let val _ = print "Jamon crudo\n"
 
                      val _ = printNodes (nodes gr)
                      val _ = printEdges (edges gr)
-                     val _ = print "Prueba sucesor\n"
                      val _ = printNodes (succ n3)
-                     val _ = print "Prueba predecesor\n"
                      val _ = printNodes (pred n3)
                      val _ = printNodes (adj n3)
                     

@@ -87,9 +87,13 @@ fun stackToSet f l =
   end
 
 
-fun tupleCompare ((n, m), (n', m')) =
-  if n = n' andalso m = m' then EQUAL
-  else LESS
+fun tupleCompare f ((n, m), (n', m')) =
+  if f (n, n') = LESS then LESS
+  else if f(n, n') = GREATER then GREATER
+  else
+     if f(m, m') = LESS then LESS
+     else if f(m, m') = GREATER then GREATER
+     else EQUAL
   
 fun singletonList l = foldr (fn (x, xs) => [x]::xs) [] l
 
