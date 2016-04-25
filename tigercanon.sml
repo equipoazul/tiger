@@ -93,7 +93,7 @@ type block = stm list
        3 and 4 above, in addition to the extra condition that 
       every block ends with a JUMP or CJUMP *)
 
-fun basicBlocks stms = 
+fun basicBlocks f_name stms = 
 	let	val done = tigertemp.newlabel()
 		fun blocks((head as LABEL _) :: tail, blist) =
 			let	fun next((s as (JUMP _))::rest, thisblock) =
@@ -113,7 +113,7 @@ fun basicBlocks stms =
 			in next(tail, [head]) end
 		| blocks(nil, blist) = rev blist
 		| blocks(stms, blist) =
-			blocks(LABEL(tigertemp.newlabel())::stms, blist)
+			blocks(LABEL(f_name)::stms, blist)
 	in (blocks(stms,nil), done) end
 
 fun enterblock(b as (LABEL s :: _), table) = tabRInserta(s, b, table)

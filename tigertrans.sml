@@ -143,7 +143,7 @@ fun functionDec(e, l, proc) =
 				if proc then unNx e
 				else MOVE(TEMP rv, unEx e)
 		val body' = procEntryExit1(#frame l, body)
-		val () = procEntryExit{body=Nx body', level=l}
+		val _ = procEntryExit{body=Nx body', level=l}
 	in	
 	   Ex (TEMP rv)
 	end

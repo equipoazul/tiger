@@ -20,6 +20,7 @@ SEGUN COMO SE USEN EN LA FUNCION INCLUIDO EL STATIC LINK (ARGUMENTO 0)
 structure tigerframe :> tigerframe = struct
 
 open tigertree
+open tigerassem
 
 type level = int
 
@@ -98,6 +99,16 @@ fun exp(InFrame k) = MEM(BINOP(PLUS, TEMP(fp), CONST k))
 | exp(InReg l) = TEMP l
 fun externalCall(s, l) = CALL(NAME s, l)
 fun procEntryExit1 (frame,body) = body
+
+fun procEntryExit3 (instrs) = 
+  let
+    val label = List.hd(instrs)
+    val prologo = [tigerassem.OPER {assem="enter $666,$0x0\n", src=[], dst=[], jump=NONE}]
+    val epilogo = [tigerassem.OPER {assem="leave\n", src=[], dst=[], jump=NONE},
+                   tigerassem.OPER {assem="ret\n", src=[], dst=[], jump=NONE}]
+  in
+    [label] @ prologo @ (List.tl(instrs)) @ epilogo
+  end
 
 
 end

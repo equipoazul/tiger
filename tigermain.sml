@@ -5,6 +5,7 @@ open tigerseman
 (*open tigerassem*)
 open tigercodegen
 open tigerflow
+open tigerframe
 open BasicIO Nonstdio
 
 fun lexstream(is: instream) =
@@ -39,10 +40,9 @@ fun main(args) =
 		val _ = if arbol then tigerpp.exprAst expr else ()
 		val _ = transProg(expr)
 		
-		(* BORRAR *)
+
 		fun name (tigerframe.PROC{body, frame}) = tigerframe.name(frame)
 		  | name _ = raise Fail "error interno (name): no es PROC"
-		(* BORRAR *)
 		val frags = tigertrans.getResult() (* lista de fragmentos *)
 		(*val _ = println("Fragmentos: " ^ Int.toString (List.length(frags)))*)
 		val func_frags = let fun isFunc (tigerframe.PROC _) = true 
@@ -58,11 +58,12 @@ fun main(args) =
 		                in
 		                   List.map strip (List.filter isStr frags)
 		                end
-		(*val _ = println("Fragmentos de string: " ^ Int.toString (List.length(str_frags)) ^ ": " ^ concatWith ", " (List.map (fn (l, s) => "(" ^ l ^ ", " ^ s ^ ")") str_frags))
-		val _ = println(tigertrans.Ir frags)   *) 
+		val _ = println("Fragmentos de string: " ^ Int.toString (List.length(str_frags)) ^ ": " ^ concatWith ", " (List.map (fn (l, s) => "(" ^ l ^ ", " ^ s ^ ")") str_frags))
+		val _ = println(tigertrans.Ir frags)   
+
 		
-		val canonizar = tigercanon.traceSchedule o tigercanon.basicBlocks o tigercanon.linearize
-		fun canon_frag (tigerframe.PROC {body, frame}) = (canonizar body, frame) 
+		fun canonizar n = tigercanon.traceSchedule o (tigercanon.basicBlocks n) o tigercanon.linearize
+		fun canon_frag (p as tigerframe.PROC {body, frame}) = (canonizar (name p) body, frame) 
 		(* fun canon_frag (tigerframe.PROC {body, frame}) = (tigercanon.linearize body, frame) *)
 		  | canon_frag _ = raise Fail "error interno (canon_frag): no es proc"
 		val canon_frags = List.map canon_frag func_frags
@@ -90,9 +91,10 @@ fun main(args) =
                           val plainAssemsBlocks = List.map (fn (x, y) => (List.concat x, y, true)) assemsBlocks
                           (*val grAndBlocks = map (fn (x, y) => (instrs2graph x, x)) plainAssemsBlocks*)
                           val coloredCode = List.map tigercoloring.coloring plainAssemsBlocks
+                          val procExitedCode = List.map (fn (x, y) => (tigerframe.procEntryExit3 x, y)) coloredCode
                           
                           val _ = print "\n\nCodigo despues del coloreo:\n"
-                          val colprint = (List.map (fn (x,y) => x) coloredCode)
+                          val colprint = (List.map (fn (x,y) => x) procExitedCode)
                           val stringSection = map tigerframe.string str_frags
 						              val codeSection = map (tigerassem.strAssem) (List.concat colprint)
 						              

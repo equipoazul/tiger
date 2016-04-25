@@ -142,6 +142,7 @@ struct
                         val _ = case tabBusca(n, !iTable) of
                                     SOME (MOVE {assem=a, src=u, dst=v}) => 
                                                let
+                                                 val _ = print ("WLM ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~> " ^ u ^ " " ^ v ^ "\n")
                                                  val _ = live := Splayset.difference (!live, use)
                                                  val union = Splayset.listItems (Splayset.union(use, def))
                                                  val _ = List.map (fn x => case tabBusca(x, !(#tnode ig)) of
@@ -149,6 +150,7 @@ struct
                                                                              | SOME xi => update(moveList, xi,  Splayset.add(sub(moveList, xi), (u, v) ))) union
 
                                                  val _ = worklistMoves := Splayset.add(!worklistMoves, (u,v))
+
                                                in
                                                  ()
                                                end 
@@ -181,7 +183,6 @@ struct
             fun makeWorklist' m =
                 let 
                    val n = tempToNode (IGRAPH ig) m
-                   val _ = print ("=============================================> " ^ Int.toString(sub(degrees, n)) ^ "\n")
                 in
                    if sub(degrees, n) >= k then
                         (print ("meto en spillWorkList " ^ Int.toString(n) ^ "\n");
@@ -255,17 +256,11 @@ struct
             else
               (*spillWorklist := Splayset.delete(!spillWorklist, v);*)
               spillWorklist := Splayset.difference(!spillWorklist, Splayset.singleton Int.compare v);
-            print "Combine 1\n";
             coalescedNodes := Splayset.add(!coalescedNodes, v);
-            print "Combine 2\n";            
             update(alias, v, u);
-            print "Combine 3\n";          
             update(moveList, u, Splayset.union(sub(moveList, u), sub(moveList, v)));
-            print "Combine 4\n";            
             enableMoves(Splayset.singleton Int.compare v);
-            print "Combine 5\n";            
             Splayset.app (fn t => (addEdge((t, u)); decrementDegree t)) (adjacent v);
-            print "Combine 6\n";            
             if sub(degrees, u) >= k andalso Splayset.member(!freezeWorklist, u) then
                (freezeWorklist := Splayset.delete(!freezeWorklist, u);
                 spillWorklist := Splayset.add(!spillWorklist, u))
@@ -309,10 +304,9 @@ struct
              
         fun coalesce () =
             let
-               fun coalesce' (x, y) =
+               fun coalesce' (m as (x, y)) =
                    let
-                   
-                      val _ = print "Coalesce 0\n"
+                      val _ = print ("Coalesce 0 " ^ x ^ "\n") 
                       val x' = nodeToTemp (IGRAPH ig) (getAlias(tempToNode (IGRAPH ig) x))
                       val _ = print "Coalesce 0.3\n"
                       val y' = nodeToTemp (IGRAPH ig) (getAlias(tempToNode (IGRAPH ig) y))
@@ -322,7 +316,7 @@ struct
                                    else
                                       (x', y')
 
-                      val m = (x', y')
+                      (*val m = (x', y')*)
                       val _ = print "Coalesce 1\n"
 
                       val (uNode, vNode) = (tempToNode (IGRAPH ig) u, tempToNode (IGRAPH ig) v)
@@ -333,8 +327,7 @@ struct
                       val _ = print "Coalesce 3\n"
                       
                    in
-                     (*(worklistMoves := Splayset.delete(!worklistMoves, m);*)
-                      (worklistMoves := Splayset.difference(!worklistMoves, Splayset.singleton (tupleCompare String.compare) m);
+                     (worklistMoves := Splayset.difference(!worklistMoves, Splayset.singleton (tupleCompare String.compare) m);
                       if u = v then
                         (coalescedMoves := Splayset.add(!coalescedMoves, m);
                          (addWorkList u))

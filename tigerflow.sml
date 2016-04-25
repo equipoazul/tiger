@@ -101,7 +101,8 @@ struct
                                                 in 
                                                     ()
                                                 end
-                          | MOVE {dst = dst, src = src, ...} => let val _ = if admittedRegs dst then (#def fg) := tabInserta(n, [dst], !(#def fg))
+                          | MOVE {dst = dst, src = src, ...} => let val _ = print ("MOVEMOVEMOVE ====== MOVE MOVE " ^ src ^ "\n")
+                                                                    val _ = if admittedRegs dst then (#def fg) := tabInserta(n, [dst], !(#def fg))
                                                                             else ()
                                                                     val _ = if admittedRegs src then (#use fg) := tabInserta(n, [src], !(#use fg))
                                                                             else ()

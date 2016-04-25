@@ -91,7 +91,6 @@ fun codegen frame stm =
 				emit(OPER{assem="movl (`s0), $"^st(i)^"\n",
 					src=[munchExp e1], dst=[], jump=NONE})
 					
-			(*TODO ACA PONE LABELS EN LOS MOVES - probablemente el problema este en trans *)
 			| T.MOVE(MEM e1, e2) =>
 				emit(OPER{assem="movl (`s0),`s1\n",
 					src=[munchExp e1, munchExp e2], dst=[], jump=NONE})
@@ -145,11 +144,14 @@ fun codegen frame stm =
 				let	val e' = munchExp e
 				in	emit(OPER{assem="jmp `s0\n",
 						src=[e'], dst=[], jump=SOME l}) end
+						(* TODO ACAAA PROBLEMA DEL 10 en test08 FIXME *)
 			| CJUMP(relop, CONST c1, CONST c2, l1, l2) =>
 				let	
 				    val tmp = tigertemp.newtemp()
-				    val _ = emit(MOVE{assem="movl `d0,`s0\n",
-	    			                  src=st c1, dst=tmp})
+				    (*val _ = emit(MOVE{assem="movl `d0,`s0\n",
+	    			                  src=st c1, dst=tmp})*)
+				    val _ = emit(OPER{assem="movl `d0,`s0\n",
+	    			                  src=[], dst=[tmp], jump=NONE})	    			                  
 	    	    in
 				    emit(OPER{assem="cmpl `s0, $"^st(c2)^"\n",
     						  src=[tmp], dst=[], jump=NONE})
