@@ -58,8 +58,8 @@ fun main(args) =
 		                in
 		                   List.map strip (List.filter isStr frags)
 		                end
-		val _ = println("Fragmentos de string: " ^ Int.toString (List.length(str_frags)) ^ ": " ^ concatWith ", " (List.map (fn (l, s) => "(" ^ l ^ ", " ^ s ^ ")") str_frags))
-		val _ = println(tigertrans.Ir frags)   
+		(*val _ = println("Fragmentos de string: " ^ Int.toString (List.length(str_frags)) ^ ": " ^ concatWith ", " (List.map (fn (l, s) => "(" ^ l ^ ", " ^ s ^ ")") str_frags))
+		val _ = println(tigertrans.Ir frags)   *) 
 
 		
 		fun canonizar n = tigercanon.traceSchedule o (tigercanon.basicBlocks n) o tigercanon.linearize

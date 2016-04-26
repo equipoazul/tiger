@@ -30,7 +30,7 @@ struct
                                          nods
                                        end
 
-    fun adj g n = tigerutils.unionList (pred g n) (succ g n)
+    fun adj g n = tigerutils.unionList (Int.compare) (pred g n) (succ g n)
 
     fun eq (n,m) = n = m
              

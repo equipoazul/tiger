@@ -55,8 +55,14 @@ and   printRelOp (EQ) = "EQ"
     
 fun inList elem list = List.exists (fn x => x = elem) list
 
-fun unionList l1 l2 = l1 @ (List.filter (fn x => not (inList x l1)) l2)
-
+(*fun unionList l1 l2 = l1 @ (List.filter (fn x => not (inList x l1)) l2)*)
+fun unionList f l1 l2 = 
+  let
+    val c = Splayset.empty f
+  in
+    Splayset.listItems (Splayset.addList (Splayset.addList (c, l1), l2))
+  end
+  
 (* Pasa una lista de string a un set *)
 fun listToSet f l = 
   let

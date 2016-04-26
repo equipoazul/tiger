@@ -1,0 +1,488 @@
+bien!
+
+
+-------------------------------------
+CODIGO: 
+0	LABEL {assem = isdigit_L2:
+ lab = isdigit_L2}
+1	OPER {assem = pushl `s0
+ dst = , src = ecx , _ jump = _}
+2	OPER {assem = pushl `s0
+ dst = , src = edx , _ jump = _}
+3	OPER {assem = pushl L4
+ dst = , src = , _ jump = _}
+4	OPER {assem = call ord
+ dst = eax , src = , _ jump = _}
+5	OPER {assem = addl %esp,$4
+ dst = eax ecx edx , src = , _ jump = _}
+6	OPER {assem = popl `d0
+ dst = edx , src = , _ jump = _}
+7	OPER {assem = popl `d0
+ dst = ecx , src = , _ jump = _}
+8	MOVE {assem = movl `d0,`s0
+ dst = _ src = _}
+9	MOVE {assem = movl `d0,`s0
+ dst = _ src = _}
+10	OPER {assem = pushl `s0
+ dst = , src = ecx , _ jump = _}
+11	OPER {assem = pushl `s0
+ dst = , src = edx , _ jump = _}
+12	OPER {assem = pushl `s0
+ dst = , src = T3 , _ jump = _}
+13	OPER {assem = call ord
+ dst = eax , src = , _ jump = _}
+14	OPER {assem = addl %esp,$4
+ dst = eax ecx edx , src = , _ jump = _}
+15	OPER {assem = popl `d0
+ dst = edx , src = , _ jump = _}
+16	OPER {assem = popl `d0
+ dst = ecx , src = , _ jump = _}
+17	MOVE {assem = movl `d0,`s0
+ dst = _ src = _}
+18	OPER {assem = cmpl `s0,`s1
+ dst = , src = T130 T5 , _ jump = _}
+19	OPER {assem = jle L13
+ dst = , src = , _ jump = _}
+20	LABEL {assem = L14:
+ lab = L14}
+21	OPER {assem = movl `d0,$0
+ dst = T11 , src = , _ jump = _}
+22	LABEL {assem = L15:
+ lab = L15}
+23	MOVE {assem = movl `d0,`s0
+ dst = _ src = _}
+24	OPER {assem = jmp L99
+ dst = , src = , _ jump = _}
+25	LABEL {assem = L13:
+ lab = L13}
+26	OPER {assem = movl `d0,$1
+ dst = T12 , src = , _ jump = _}
+27	OPER {assem = pushl `s0
+ dst = , src = ecx , _ jump = _}
+28	OPER {assem = pushl `s0
+ dst = , src = edx , _ jump = _}
+29	OPER {assem = pushl `s0
+ dst = , src = T3 , _ jump = _}
+30	OPER {assem = call ord
+ dst = eax , src = , _ jump = _}
+31	OPER {assem = addl %esp,$4
+ dst = eax ecx edx , src = , _ jump = _}
+32	OPER {assem = popl `d0
+ dst = edx , src = , _ jump = _}
+33	OPER {assem = popl `d0
+ dst = ecx , src = , _ jump = _}
+34	MOVE {assem = movl `d0,`s0
+ dst = _ src = _}
+35	MOVE {assem = movl `d0,`s0
+ dst = _ src = _}
+36	OPER {assem = pushl `s0
+ dst = , src = ecx , _ jump = _}
+37	OPER {assem = pushl `s0
+ dst = , src = edx , _ jump = _}
+38	OPER {assem = pushl L8
+ dst = , src = , _ jump = _}
+39	OPER {assem = call ord
+ dst = eax , src = , _ jump = _}
+40	OPER {assem = addl %esp,$4
+ dst = eax ecx edx , src = , _ jump = _}
+41	OPER {assem = popl `d0
+ dst = edx , src = , _ jump = _}
+42	OPER {assem = popl `d0
+ dst = ecx , src = , _ jump = _}
+43	MOVE {assem = movl `d0,`s0
+ dst = _ src = _}
+44	OPER {assem = cmpl `s0,`s1
+ dst = , src = T131 T8 , _ jump = _}
+45	OPER {assem = jle L16
+ dst = , src = , _ jump = _}
+46	LABEL {assem = L17:
+ lab = L17}
+47	OPER {assem = movl `d0,$0
+ dst = T12 , src = , _ jump = _}
+48	LABEL {assem = L16:
+ lab = L16}
+49	MOVE {assem = movl `d0,`s0
+ dst = _ src = _}
+50	OPER {assem = jmp L15
+ dst = , src = , _ jump = _}
+51	LABEL {assem = L99:
+ lab = L99}
+
+Nodos en el makeWorkList!
+edx - 11
+ecx - 10
+eax - 9
+T8 - 8
+T7 - 7
+T5 - 6
+T4 - 5
+T3 - 4
+T131 - 3
+T130 - 2
+T12 - 1
+T11 - 0
+J4J4J4J4J4J4J4J4J4J4J4J4J4J4J4J4
+J4J4J4J4J4J4J4J4J4J4J4J4J4J4J4J4 2
+J4J4J4J4J4J4J4J4J4J4J4J4J4J4J4J4
+J4J4J4J4J4J4J4J4J4J4J4J4J4J4J4J4 2
+J4J4J4J4J4J4J4J4J4J4J4J4J4J4J4J4
+J4J4J4J4J4J4J4J4J4J4J4J4J4J4J4J4 2
+J4J4J4J4J4J4J4J4J4J4J4J4J4J4J4J4
+J4J4J4J4J4J4J4J4J4J4J4J4J4J4J4J4 2
+J4J4J4J4J4J4J4J4J4J4J4J4J4J4J4J4
+J4J4J4J4J4J4J4J4J4J4J4J4J4J4J4J4 2
+J4J4J4J4J4J4J4J4J4J4J4J4J4J4J4J4
+J4J4J4J4J4J4J4J4J4J4J4J4J4J4J4J4 2
+J4J4J4J4J4J4J4J4J4J4J4J4J4J4J4J4
+J4J4J4J4J4J4J4J4J4J4J4J4J4J4J4J4 2
+J4J4J4J4J4J4J4J4J4J4J4J4J4J4J4J4
+J4J4J4J4J4J4J4J4J4J4J4J4J4J4J4J4 2
+J4J4J4J4J4J4J4J4J4J4J4J4J4J4J4J4
+J4J4J4J4J4J4J4J4J4J4J4J4J4J4J4J4 2
+J4J4J4J4J4J4J4J4J4J4J4J4J4J4J4J4
+J4J4J4J4J4J4J4J4J4J4J4J4J4J4J4J4 2
+J4J4J4J4J4J4J4J4J4J4J4J4J4J4J4J4
+J4J4J4J4J4J4J4J4J4J4J4J4J4J4J4J4 2
+J4J4J4J4J4J4J4J4J4J4J4J4J4J4J4J4
+J4J4J4J4J4J4J4J4J4J4J4J4J4J4J4J4 2
+JAMON EN simplify
+JAMON EN simplify
+JAMON EN coalesce
+JAMON EN coalesce
+JAMON EN freeze
+JAMON EN simplify
+JAMON EN simplify
+JAMON EN simplify
+JAMON EN simplify
+JAMON EN simplify
+JAMON EN simplify
+JAMON EN simplify
+JAMON EN simplify
+Spillie 1
+Spillie 11
+Spillie 10
+T11
+T12
+T130
+T131
+T3
+T4
+T5
+T7
+T8
+eax
+ecx
+edx
+isdigit_L2:
+
+	pushl %ecx
+
+	pushl %edx
+
+	pushl L4
+
+	call ord
+
+	addl %esp,$4
+
+	popl %edx
+
+	popl %ecx
+
+	movl %T4,%eax
+
+	movl %T130,%T4
+
+	pushl %ecx
+
+	pushl %edx
+
+	pushl %T3
+
+	call ord
+
+	addl %esp,$4
+
+	popl %edx
+
+	popl %ecx
+
+	movl %T5,%eax
+
+	cmpl %T130,%T5
+
+	jle L13
+
+L14:
+
+	movl %T11,$0
+
+L15:
+
+	movl %eax,%T11
+
+	jmp L99
+
+L13:
+
+	movl %T12,$1
+
+	pushl %ecx
+
+	pushl %edx
+
+	pushl %T3
+
+	call ord
+
+	addl %esp,$4
+
+	popl %edx
+
+	popl %ecx
+
+	movl %T7,%eax
+
+	movl %T131,%T7
+
+	pushl %ecx
+
+	pushl %edx
+
+	pushl L8
+
+	call ord
+
+	addl %esp,$4
+
+	popl %edx
+
+	popl %ecx
+
+	movl %T8,%eax
+
+	cmpl %T131,%T8
+
+	jle L16
+
+L17:
+
+	movl %T12,$0
+
+L16:
+
+	movl %T11,%T12
+
+	jmp L15
+
+L99:
+
+T11
+T130
+T131
+T207
+T208
+T209
+T210
+T211
+T212
+T213
+T214
+T215
+T216
+T217
+T218
+T219
+T220
+T221
+T222
+T223
+T224
+T225
+T226
+T227
+T228
+T229
+T230
+T231
+T232
+T233
+T3
+T4
+T5
+T7
+T8
+eax
+CODIGO: 
+0	LABEL {assem = isdigit_L2:
+ lab = isdigit_L2}
+1	OPER {assem = movl `d0, (%ebp-20) dst = T230 , src = , _ jump = _}
+2	OPER {assem = pushl `s0
+ dst = , src = T230 , _ jump = _}
+3	OPER {assem = movl `d0, (%ebp-16) dst = T218 , src = , _ jump = _}
+4	OPER {assem = pushl `s0
+ dst = , src = T218 , _ jump = _}
+5	OPER {assem = pushl L4
+ dst = , src = , _ jump = _}
+6	OPER {assem = call ord
+ dst = eax , src = , _ jump = _}
+7	OPER {assem = addl %esp,$4
+ dst = eax T226 edx , src = , _ jump = _}
+8	OPER {assem = movl (%ebp-20), `s0 dst = , src = T226 , _ jump = _}
+9	OPER {assem = popl `d0
+ dst = T213 , src = , _ jump = _}
+10	OPER {assem = movl (%ebp-16), `s0 dst = , src = T213 , _ jump = _}
+11	OPER {assem = popl `d0
+ dst = T225 , src = , _ jump = _}
+12	OPER {assem = movl (%ebp-20), `s0 dst = , src = T225 , _ jump = _}
+13	MOVE {assem = movl `d0,`s0
+ dst = _ src = _}
+14	MOVE {assem = movl `d0,`s0
+ dst = _ src = _}
+15	OPER {assem = movl `d0, (%ebp-20) dst = T229 , src = , _ jump = _}
+16	OPER {assem = pushl `s0
+ dst = , src = T229 , _ jump = _}
+17	OPER {assem = movl `d0, (%ebp-16) dst = T217 , src = , _ jump = _}
+18	OPER {assem = pushl `s0
+ dst = , src = T217 , _ jump = _}
+19	OPER {assem = pushl `s0
+ dst = , src = T3 , _ jump = _}
+20	OPER {assem = call ord
+ dst = eax , src = , _ jump = _}
+21	OPER {assem = addl %esp,$4
+ dst = eax T224 edx , src = , _ jump = _}
+22	OPER {assem = movl (%ebp-20), `s0 dst = , src = T224 , _ jump = _}
+23	OPER {assem = popl `d0
+ dst = T211 , src = , _ jump = _}
+24	OPER {assem = movl (%ebp-16), `s0 dst = , src = T211 , _ jump = _}
+25	OPER {assem = popl `d0
+ dst = T223 , src = , _ jump = _}
+26	OPER {assem = movl (%ebp-20), `s0 dst = , src = T223 , _ jump = _}
+27	MOVE {assem = movl `d0,`s0
+ dst = _ src = _}
+28	OPER {assem = cmpl `s0,`s1
+ dst = , src = T130 T5 , _ jump = _}
+29	OPER {assem = jle L13
+ dst = , src = , _ jump = _}
+30	LABEL {assem = L14:
+ lab = L14}
+31	OPER {assem = movl `d0,$0
+ dst = T11 , src = , _ jump = _}
+32	LABEL {assem = L15:
+ lab = L15}
+33	MOVE {assem = movl `d0,`s0
+ dst = _ src = _}
+34	OPER {assem = jmp L99
+ dst = , src = , _ jump = _}
+35	LABEL {assem = L13:
+ lab = L13}
+36	OPER {assem = movl `d0,$1
+ dst = T232 , src = , _ jump = _}
+37	OPER {assem = movl (%ebp-24), `s0 dst = , src = T232 , _ jump = _}
+38	OPER {assem = movl `d0, (%ebp-20) dst = T228 , src = , _ jump = _}
+39	OPER {assem = pushl `s0
+ dst = , src = T228 , _ jump = _}
+40	OPER {assem = movl `d0, (%ebp-16) dst = T216 , src = , _ jump = _}
+41	OPER {assem = pushl `s0
+ dst = , src = T216 , _ jump = _}
+42	OPER {assem = pushl `s0
+ dst = , src = T3 , _ jump = _}
+43	OPER {assem = call ord
+ dst = eax , src = , _ jump = _}
+44	OPER {assem = addl %esp,$4
+ dst = eax T222 edx , src = , _ jump = _}
+45	OPER {assem = movl (%ebp-20), `s0 dst = , src = T222 , _ jump = _}
+46	OPER {assem = popl `d0
+ dst = T209 , src = , _ jump = _}
+47	OPER {assem = movl (%ebp-16), `s0 dst = , src = T209 , _ jump = _}
+48	OPER {assem = popl `d0
+ dst = T221 , src = , _ jump = _}
+49	OPER {assem = movl (%ebp-20), `s0 dst = , src = T221 , _ jump = _}
+50	MOVE {assem = movl `d0,`s0
+ dst = _ src = _}
+51	MOVE {assem = movl `d0,`s0
+ dst = _ src = _}
+52	OPER {assem = movl `d0, (%ebp-20) dst = T227 , src = , _ jump = _}
+53	OPER {assem = pushl `s0
+ dst = , src = T227 , _ jump = _}
+54	OPER {assem = movl `d0, (%ebp-16) dst = T215 , src = , _ jump = _}
+55	OPER {assem = pushl `s0
+ dst = , src = T215 , _ jump = _}
+56	OPER {assem = pushl L8
+ dst = , src = , _ jump = _}
+57	OPER {assem = call ord
+ dst = eax , src = , _ jump = _}
+58	OPER {assem = addl %esp,$4
+ dst = eax T220 edx , src = , _ jump = _}
+59	OPER {assem = movl (%ebp-20), `s0 dst = , src = T220 , _ jump = _}
+60	OPER {assem = popl `d0
+ dst = T207 , src = , _ jump = _}
+61	OPER {assem = movl (%ebp-16), `s0 dst = , src = T207 , _ jump = _}
+62	OPER {assem = popl `d0
+ dst = T219 , src = , _ jump = _}
+63	OPER {assem = movl (%ebp-20), `s0 dst = , src = T219 , _ jump = _}
+64	MOVE {assem = movl `d0,`s0
+ dst = _ src = _}
+65	OPER {assem = cmpl `s0,`s1
+ dst = , src = T131 T8 , _ jump = _}
+66	OPER {assem = jle L16
+ dst = , src = , _ jump = _}
+67	LABEL {assem = L17:
+ lab = L17}
+68	OPER {assem = movl `d0,$0
+ dst = T231 , src = , _ jump = _}
+69	OPER {assem = movl (%ebp-24), `s0 dst = , src = T231 , _ jump = _}
+70	LABEL {assem = L16:
+ lab = L16}
+71	OPER {assem = movl `d0, (%ebp-24) dst = T233 , src = , _ jump = _}
+72	MOVE {assem = movl `d0,`s0
+ dst = _ src = _}
+73	OPER {assem = jmp L15
+ dst = , src = , _ jump = _}
+74	LABEL {assem = L99:
+ lab = L99}
+
+Nodos en el makeWorkList!
+edx - 32
+eax - 31
+T8 - 30
+T7 - 29
+T5 - 28
+T4 - 27
+T3 - 26
+T233 - 25
+T232 - 24
+T231 - 23
+T230 - 22
+T229 - 21
+T228 - 20
+T227 - 19
+T226 - 18
+T225 - 17
+T224 - 16
+T223 - 15
+T222 - 14
+T221 - 13
+T220 - 12
+T219 - 11
+T218 - 10
+T217 - 9
+T216 - 8
+T215 - 7
+T213 - 6
+T211 - 5
+T209 - 4
+T207 - 3
+T131 - 2
+T130 - 1
+T11 - 0
+J4J4J4J4J4J4J4J4J4J4J4J4J4J4J4J4
+J4J4J4J4J4J4J4J4J4J4J4J4J4J4J4J4 2
+J4J4J4J4J4J4J4J4J4J4J4J4J4J4J4J4
+J4J4J4J4J4J4J4J4J4J4J4J4J4J4J4J4 2
+J4J4J4J4J4J4J4J4J4J4J4J4J4J4J4J4
+J4J4J4J4J4J4J4J4J4J4J4J4J4J4J4J4 2
+J4J4J4J4J4J4J4J4J4J4J4J4J4J4J4J4
+J4J4J4J4J4J4J4J4J4J4J4J4J4J4J4J4 2
+J4J4J4J4J4J4J4J4J4J4J4J4J4J4J4J4
+Fail: No se encontro el nodo T208 (tempToNode)

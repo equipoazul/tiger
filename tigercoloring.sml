@@ -18,13 +18,14 @@ struct
     
     fun coloring (b, f, firstRun) =
       let
+        val _ = (print ("CODIGO: \n"); tigerassem.printInstrList 0 b; print ("\n"))
         val (FGRAPH fg, iTable) = instrs2graph b
         (*val _ = tigerflow.printGraphFlow (FGRAPH fg)*)
         val (liveIn, liveOut) = liveAnalysis (FGRAPH fg) 
+
         val uses = List.concat (tabValores (!(#use fg)))
         val defs = List.concat (tabValores (!(#def fg)))
-        val totalRegs = unionList uses defs
-
+        val totalRegs = unionList (String.compare) uses defs
         val (IGRAPH ig) = newInterGraph()
         val _ = insertNodesLiv (IGRAPH ig) totalRegs
         val interNodes = nodes (#graph ig)
@@ -93,14 +94,15 @@ struct
             
             val _ = printIntArray degrees interNodes
             val _ = print "\n"
-            val _ = print "=========================================\n"
+            val _ = print "CODIGO: \n"
+            val _ = printInstrList 0 b
+            val _ = print "\n=========================================\n"
 
           in
             ()
           end  
         (* Fin funciones para imprimir *)
-        
-        (* TODO ARREGLARRRR ESTOOOO FIXME *)
+
         fun addEdge (e as (u, v)) =
             if not(Splayset.member (!adjSet, e)) andalso (u <> v) then
                 (adjSet := Splayset.add ((!adjSet), e);
@@ -121,7 +123,6 @@ struct
                                       ()))
              else
                 ()
-             
         
              
         fun build () =  
@@ -142,7 +143,6 @@ struct
                         val _ = case tabBusca(n, !iTable) of
                                     SOME (MOVE {assem=a, src=u, dst=v}) => 
                                                let
-                                                 val _ = print ("WLM ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~> " ^ u ^ " " ^ v ^ "\n")
                                                  val _ = live := Splayset.difference (!live, use)
                                                  val union = Splayset.listItems (Splayset.union(use, def))
                                                  val _ = List.map (fn x => case tabBusca(x, !(#tnode ig)) of
@@ -178,15 +178,16 @@ struct
         (* 6 es el K, y hay que pasarle una lista de todos los temporales (el initial) *)
         fun makeWorklist () = 
           let
-            val _ = "Nodos en el makeWorkList!\n"
-            val _ = map (fn x => print (x ^ "\n")) (map (nodeToTemp (IGRAPH ig)) (nodes (#graph ig)))
+            val _ = print "Nodos en el makeWorkList!\n"
+            val _ = map (fn x => print ( (nodeToTemp (IGRAPH ig) x) ^ " - " ^ Int.toString(x) ^ "\n")) (nodes (#graph ig))
             fun makeWorklist' m =
                 let 
+                   val _ = print "J4J4J4J4J4J4J4J4J4J4J4J4J4J4J4J4\n"
                    val n = tempToNode (IGRAPH ig) m
+                   val _ = print "J4J4J4J4J4J4J4J4J4J4J4J4J4J4J4J4 2\n"
                 in
                    if sub(degrees, n) >= k then
-                        (print ("meto en spillWorkList " ^ Int.toString(n) ^ "\n");
-                      spillWorklist := Splayset.add(!spillWorklist, n))
+                      spillWorklist := Splayset.add(!spillWorklist, n)
                    else if moveRelated(n) then
                       freezeWorklist := Splayset.add(!freezeWorklist, n)
                    else
@@ -220,11 +221,9 @@ struct
                  
                  if d = k then
                     (enableMoves (Splayset.add((adjacent n), n));
-                     print ("decrement 1 --> " ^ Int.toString(n) ^ "\n");
                      (*TODO Preguntar que onda lo de hacer diferencia de conjuntos o hacer delete posta*)
                      (* spillWorklist := Splayset.delete(!spillWorklist, n);*)
                      spillWorklist := Splayset.difference(!spillWorklist, Splayset.singleton Int.compare n);
-                     print "decrement 2\n";                     
                      if moveRelated n then
                         freezeWorklist := Splayset.add(!freezeWorklist, n)
                      else
@@ -306,25 +305,18 @@ struct
             let
                fun coalesce' (m as (x, y)) =
                    let
-                      val _ = print ("Coalesce 0 " ^ x ^ "\n") 
                       val x' = nodeToTemp (IGRAPH ig) (getAlias(tempToNode (IGRAPH ig) x))
-                      val _ = print "Coalesce 0.3\n"
                       val y' = nodeToTemp (IGRAPH ig) (getAlias(tempToNode (IGRAPH ig) y))
-                      val _ = print "Coalesce 0.6\n"
                       val (u, v) = if Splayset.member(precolored, y) then
                                       (y', x')
                                    else
                                       (x', y')
 
-                      (*val m = (x', y')*)
-                      val _ = print "Coalesce 1\n"
 
                       val (uNode, vNode) = (tempToNode (IGRAPH ig) u, tempToNode (IGRAPH ig) v)
 
                       val adjacentTmp = Splayset.foldr (fn (x, xs) => Splayset.add(xs, nodeToTemp (IGRAPH ig) x)) (Splayset.empty String.compare) (adjacent vNode)
-                      val _ = print "Coalesce 2\n"
                       val checkForall = Splayset.foldr (fn (t, xs) => (ok (t, u)) andalso xs) true adjacentTmp
-                      val _ = print "Coalesce 3\n"
                       
                    in
                      (worklistMoves := Splayset.difference(!worklistMoves, Splayset.singleton (tupleCompare String.compare) m);
@@ -395,7 +387,7 @@ struct
                     val nUse = List.foldr (fn ((x, y), xs) => if tigerutils.inList (nodeToTemp (IGRAPH ig) n) y then 1.0 + xs else xs) 0.0 (tigertab.tabAList (!(#use fg)))
                     val nAdj = Splayset.numItems(sub(adjList, n))
                 in
-                    if tigerutils.inList (nodeToTemp (IGRAPH ig) n) ["eax", "ebx", "ecx", "edx", "esi", "edi"] then 9999999.0 else (nDef + nUse) / real(nAdj)
+                    if tigerutils.inList (nodeToTemp (IGRAPH ig) n) ["eax", "ebx", "ecx", "edx", "esi", "edi", "esp", "ebp"] then 9999999.0 else (nDef + nUse) / real(nAdj)
                 end
             
             fun minElem [] min node = node
@@ -405,7 +397,6 @@ struct
             
             val priorities = List.map (fn x => (spillPriority(x), x)) (Splayset.listItems (!spillWorklist))
             val m = minElem priorities 9999.0 ~1
-            val _ = print ("===============SPILLED SELECTION==========>" ^ (nodeToTemp (IGRAPH ig) m) ^ "\n")
           in
             (*(spillWorklist := Splayset.delete(!spillWorklist, m);*)
              (spillWorklist := Splayset.difference(!spillWorklist, Splayset.singleton Int.compare m);
@@ -483,11 +474,8 @@ struct
                
         fun rewriteProgram() =   
             let 
-                val _ = print ("Initial antes rewrite\n\n")
                 val _ = Splayset.app (fn x => print (x ^ "\n")) (!initial)
-                val _ = printInstrList 0 b
                 val newTemps = ref (Splayset.empty String.compare)
-                val _ = map (tigerassem.printAssem) b
 
                 fun rewriteProgram' (temp, blocks) =
                     let 
@@ -501,41 +489,48 @@ struct
                                                                                                   NONE => raise Fail "No se encontro el nodo en la iTable (rewriteProgram)"
                                                                                                 | SOME i => i
                                                                           in
-                                                                            if inList temp y then (print ("NODO: " ^ Int.toString(x) ^ " DEFS: " ^ (List.foldr (fn (x, xs) => x ^ " " ^ xs) "" y) ^ "\n"); ((x, instr)::xs))
+                                                                            if inList temp y then ((x, instr)::xs)
                                                                             else xs
                                                                           end) [] l
                                                                           
                         val defs = getUseDefs (tigertab.tabAList(!(#def fg)))
                         val uses = getUseDefs (tigertab.tabAList(!(#use fg))) 
-                                               
+                            
+                            
+                        fun peekname oldElem newElem [] = []    
+                          | peekname oldElem newElem (x::xs) = if oldElem = x then (newElem::xs) else (x::(peekname oldElem newElem xs))
+                                                                                
                         fun rewriteDef (nodo, OPER {assem=assem, dst=d, src=s, jump=j}) bls =
                             let 
                                 val t = tigertemp.newtemp()
-                                val _ = print ("NEW TEMP: " ^ t ^ " INSTR DEF: " ^ assem ^ " SPILLED TEMP: " ^ temp ^ "\n")
+                                val _ = if t = "T208" then (print "TAPABUM APAM TEPEN 1\n"; print (Int.toString(nodo) ^ temp ^ "\n") ) else ()
+                                val _ = if t = "T222" then (print "TAPABUM APAM TEPEN 1.5\n"; print (Int.toString(nodo) ^ temp ^ "\n") ) else ()
                                 val _ = newTemps := Splayset.add(!newTemps, t)
-                                val store = [OPER {assem=assem, dst=[t], src=s, jump=j},
+                                val store = [OPER {assem=assem, dst=(peekname temp t d), src=s, jump=j},
                                              OPER {assem="movl (%ebp-"^m^"), `s0", dst=[], src=[t], jump=NONE}]
                             in
-                                tigerutils.setNthList nodo bls store
+                                 tigerutils.setNthList nodo bls store
                             end
                            | rewriteDef (nodo, LABEL l) bls = bls 
                            | rewriteDef (nodo, MOVE {assem=assem, dst=d, src=s}) bls =
                                 let 
                                     val t = tigertemp.newtemp()
-                                    val _ = print ("NEW TEMP: " ^ t ^ " INSTR DEF: " ^ assem ^ " SPILLED TEMP: " ^ temp ^ "\n")
+                                    val _ = if t = "T208" then print "TAPABUM APAM TEPEN 2\n" else ()
                                     val _ = newTemps := Splayset.add(!newTemps, t)
                                     val store = [MOVE {assem=assem, dst=d, src=s},
                                                  OPER {assem="movl (%ebp-"^m^"), `s0", dst=[], src=[t], jump=NONE}]
                                 in
                                     tigerutils.setNthList nodo bls store
                                 end
+                                
+                                
                         fun rewriteUse (nodo, OPER {assem=assem, dst=d, src=s, jump=j}) bls =
                             let 
                                 val t = tigertemp.newtemp()
-                                val _ = print ("NEW TEMP: " ^ t ^ " INSTR USE: " ^ assem ^ " SPILLED TEMP: " ^ temp ^ "\n")
+                                (*val _ = if t = "T208" then print "TAPABUM APAM TEPEN 3\n" else ()*)
                                 val _ = newTemps := Splayset.add(!newTemps, t)
                                 val fetch = [OPER {assem="movl `d0, (%ebp-"^m^")", dst=[t], src=[], jump=NONE},
-                                             OPER {assem=assem, dst=d, src=[t], jump=j}]
+                                             OPER {assem=assem, dst=d, src=(peekname temp t s), jump=j}]
                             in
                                 tigerutils.setNthList nodo bls fetch
                             end
@@ -543,7 +538,7 @@ struct
                           | rewriteUse (nodo, MOVE {assem=assem, dst=d, src=s}) bls =
                                 let 
                                     val t = tigertemp.newtemp()
-                                    val _ = print ("NEW TEMP: " ^ t ^ " INSTR USE: " ^ assem ^ " SPILLED TEMP: " ^ temp ^ "\n")
+                                    (*val _ = if t = "T208" then print "TAPABUM APAM TEPEN 4\n" else ()*)
                                     val _ = newTemps := Splayset.add(!newTemps, t)
                                     val fetch = [OPER {assem="movl `d0, (%ebp-"^m^")", dst=[t], src=[], jump=NONE},
                                                  MOVE {assem=assem, dst=d, src=t}]
@@ -556,27 +551,43 @@ struct
                     in
                         defUses
                     end  
-                val rewritedProgram = Splayset.foldr (fn (x, xs) => (print ("========>" ^ Int.toString(x) ^"\n"); rewriteProgram' (nodeToTemp (IGRAPH ig) x, xs))) (tigerutils.singletonList b) (!spilledNodes)
+                val rewritedProgram = Splayset.foldr (fn (x, xs) => let 
+                                                                      val tmpN = nodeToTemp (IGRAPH ig) x
+                                                                    in
+                                                                      if Splayset.member(precolored, tmpN) then xs
+                                                                      else rewriteProgram' (nodeToTemp (IGRAPH ig) x, xs)
+                                                                    end) (tigerutils.singletonList b) (!spilledNodes)
 
                 (* Pasamos los nodos de numero a temps *)
                 val coloredNodesTmp = ref (Splayset.foldr (fn (x, xs) => Splayset.add(xs, nodeToTemp (IGRAPH ig) x)) (Splayset.empty String.compare) (!coloredNodes))   
                 val coalescedNodesTmp = ref (Splayset.foldr (fn (x, xs) => Splayset.add(xs, nodeToTemp (IGRAPH ig) x)) (Splayset.empty String.compare) (!coalescedNodes))
             in
-                (initial := Splayset.union(!coloredNodesTmp, Splayset.union(!coalescedNodesTmp, !newTemps));
+                ( spilledNodes := Splayset.empty Int.compare;
+                  initial := Splayset.union(!coloredNodesTmp, Splayset.union(!coalescedNodesTmp, !newTemps));
+                  coloredNodes := Splayset.empty Int.compare;
+                  coalescedNodes := Splayset.empty Int.compare;
+                 print "##########################################################################\n";
+                 print "-------------------------- COLORED NODES TEMP ----------------------------\n";
+                 Splayset.app (fn x => print (x ^"\n")) (!coloredNodesTmp);
+                 print "-------------------------- Coalesced NODES TEMP ----------------------------\n";
+                 Splayset.app (fn x => print (x ^"\n")) (!coalescedNodesTmp);
+                 print "-------------------------- NewTemps  TEMP ----------------------------\n";
+                 Splayset.app (fn x => print (x ^"\n")) (!newTemps);
+                 print "##########################################################################\n";
                  print ("DESPUES rewrite\n\n");
                  Splayset.app (fn x => print (x ^ "\n")) (!initial);
-                 map (tigerassem.printAssem) (List.concat rewritedProgram);
+                 (*map (tigerassem.printAssem) (List.concat rewritedProgram)*)
                  (List.concat rewritedProgram))
             end
 
       in
         (build ();
+        (*printTodo();*)
          if firstRun then
              initial := List.foldr (fn (x, xs) => Splayset.add(xs, nodeToTemp (IGRAPH ig) x)) (Splayset.empty String.compare) (nodes (#graph ig))
          else
             ();
          makeWorklist();        
-         printTodo();
          while not(Splayset.isEmpty(!simplifyWorklist) andalso Splayset.isEmpty(!worklistMoves) andalso
                    Splayset.isEmpty(!freezeWorklist) andalso Splayset.isEmpty(!spillWorklist)) do
                if not(Splayset.isEmpty(!simplifyWorklist)) then (print "JAMON EN simplify\n"; simplify())
@@ -585,9 +596,8 @@ struct
                else if not(Splayset.isEmpty(!spillWorklist)) then (print "JAMON EN selectSpill\n"; selectSpill())
                else ();          
          assignColors();
-         printColorArray (nodes (#graph ig));
+         (*printColorArray (nodes (#graph ig));*)
          if not(Splayset.isEmpty(!spilledNodes)) then
-            (*Splayset.app (fn x => print ("====> " ^ x ^ "\n")) (Splayset.foldr (fn (x, xs) => Splayset.add(xs, nodeToTemp (IGRAPH ig) x)) (Splayset.empty String.compare) (!spilledNodes));*)
             coloring(rewriteProgram(), f, false)
          else
             (b, f))
@@ -596,6 +606,6 @@ struct
 
       end
 
-
+            (*(Splayset.app (fn x => print ("====> " ^ x ^ "\n")) (Splayset.foldr (fn (x, xs) => Splayset.add(xs, nodeToTemp (IGRAPH ig) x)) (Splayset.empty String.compare) (!spilledNodes));*)
 
 end

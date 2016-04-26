@@ -66,7 +66,7 @@ struct
 
         val labelList = createNodes l []
         
-        fun admittedRegs r = (tigerutils.inList r ["eax", "ebx", "ecx", "edx", "esi", "edi"]) orelse (String.isPrefix "T" r)
+        fun admittedRegs r = (tigerutils.inList r ["eax", "ebx", "ecx", "edx", "esi", "edi", "esp", "ebp"]) orelse (String.isPrefix "T" r)
                       
         fun getLabelNode [] l' = raise Fail ("Error al buscar el label " ^ l' ^ " en la lista de labels.")
           | getLabelNode ((l, n)::xs) l' = if l = l' then n
@@ -84,6 +84,7 @@ struct
                                 src = src,
                                 jump = jmp} => let  val validDst = List.filter admittedRegs dst
                                                     val validSrc = List.filter admittedRegs src
+                                                    (*val _ = if tigerutils.inList "T208" src then print "ALEEEEEEEEEEEEEEEEEEEEEEEEJOO \n" else print "VALENTIIIIIIIIIIIINA \n" *)
                                                     val _ = if not (List.null validDst) then (#def fg) := tabInserta(n, validDst, !(#def fg))
                                                             else ()
                                                     val _ = if not (List.null validSrc) then (#use fg) := tabInserta(n, validSrc, !(#use fg))
@@ -101,8 +102,7 @@ struct
                                                 in 
                                                     ()
                                                 end
-                          | MOVE {dst = dst, src = src, ...} => let val _ = print ("MOVEMOVEMOVE ====== MOVE MOVE " ^ src ^ "\n")
-                                                                    val _ = if admittedRegs dst then (#def fg) := tabInserta(n, [dst], !(#def fg))
+                          | MOVE {dst = dst, src = src, ...} => let val _ = if admittedRegs dst then (#def fg) := tabInserta(n, [dst], !(#def fg))
                                                                             else ()
                                                                     val _ = if admittedRegs src then (#use fg) := tabInserta(n, [src], !(#use fg))
                                                                             else ()

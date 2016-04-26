@@ -56,7 +56,7 @@ fun codegen frame stm =
 			(SEQ(a, b)) => (munchStm a; munchStm b)
 			| T.MOVE(TEMP t1, BINOP(MINUS, TEMP t2, CONST i)) =>
 				if t1=tigerframe.sp andalso t2=tigerframe.sp then
-					emit(OPER{assem="movl SP, SP-"^Int.toString i^"\n", src=[], dst=[], jump=NONE})
+					emit(OPER{assem="movl %esp, %esp-"^Int.toString i^"\n", src=[], dst=[], jump=NONE})
 				else
 					emit(OPER{assem="movl `d0, `s0-"^Int.toString i^"\n", src=[t1], dst=[t2], jump=NONE})
 			| T.MOVE(TEMP t1, MEM(BINOP(PLUS, CONST i, TEMP t2))) =>
@@ -148,9 +148,7 @@ fun codegen frame stm =
 			| CJUMP(relop, CONST c1, CONST c2, l1, l2) =>
 				let	
 				    val tmp = tigertemp.newtemp()
-				    (*val _ = emit(MOVE{assem="movl `d0,`s0\n",
-	    			                  src=st c1, dst=tmp})*)
-				    val _ = emit(OPER{assem="movl `d0,`s0\n",
+				    val _ = emit(OPER{assem="movl `d0,$"^st(c1)^"\n",
 	    			                  src=[], dst=[tmp], jump=NONE})	    			                  
 	    	    in
 				    emit(OPER{assem="cmpl `s0, $"^st(c2)^"\n",

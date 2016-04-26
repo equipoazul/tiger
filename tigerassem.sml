@@ -13,7 +13,13 @@
 			| LABEL of {assem: string, lab: tigertemp.label}
 			| MOVE of {assem: string, dst: temp, src: temp}
 		
-		fun printInstr (OPER {assem=a, dst=d, src=s, jump=_}) = "OPER {assem = "^a^" dst = _ src = _ jump = _}\n"
+		fun printInstr (OPER {assem=a, dst=d, src=s, jump=_}) = 
+		      let
+		        val srcStr = foldr (fn (x, xs) => x ^ " " ^ xs) "" s
+		        val dstStr = foldr (fn (x, xs) => x ^ " " ^ xs) "" d
+		      in
+		        "OPER {assem = "^a^" dst = " ^ dstStr ^ ", src = " ^ srcStr ^ ", _ jump = _}\n"
+		      end
 		  | printInstr (LABEL {assem=a, lab=l}) = "LABEL {assem = "^a^" lab = "^l^"}\n"
 		  | printInstr (MOVE {assem=a, dst=d, src=s}) = "MOVE {assem = "^a^" dst = _ src = _}\n"
 		  
@@ -56,7 +62,8 @@
 
 		val format =
 			let	fun speak(assem,dst,src,jump) =
-					let	val saylab = tigertab.name
+					let	
+					    val saylab = tigertab.name
 					    fun saytemp t = t
 						fun f(#"`":: #"s":: i::rest) = 
 							(explode("%"^saytemp(List.nth(src,ord i - ord #"0")))
