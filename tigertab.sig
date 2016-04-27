@@ -22,5 +22,6 @@ val tabFiltra : ('b -> bool) * (''a, 'b) Tabla -> (''a, 'b) Tabla
 val tabPrimer : ('b -> bool) * ('a, 'b) Tabla -> ('a * 'b)
 val tabClaves : ('a, 'b) Tabla -> 'a list
 val tabValores : ('a, 'b) Tabla -> 'b list
+val fromList : (''a * 'b) list -> (''a, 'b) Tabla
 
 end

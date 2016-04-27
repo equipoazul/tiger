@@ -1,0 +1,16 @@
+let 
+  function f (a : int, b : int) : int =
+  (let 
+       var d:int := 0
+       var e:int := a
+   in
+   d := d + b;
+   e := e - 1; 
+   (while e > 0 do
+     d := d + b;
+     e := e - 1);
+   d
+   end)
+in
+ f(1,2)
+end
