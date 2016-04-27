@@ -66,7 +66,7 @@ struct
 
         val labelList = createNodes l []
         
-        fun admittedRegs r = (tigerutils.inList r ["eax", "ebx", "ecx", "edx", "esi", "edi", "esp", "ebp"]) orelse (String.isPrefix "T" r)
+        fun admittedRegs r = (tigerutils.inList r ["eax", "ebx", "ecx", "edx", "esi", "edi"]) orelse (String.isPrefix "T" r)
                       
         fun getLabelNode [] l' = raise Fail ("Error al buscar el label " ^ l' ^ " en la lista de labels.")
           | getLabelNode ((l, n)::xs) l' = if l = l' then n

@@ -21,7 +21,7 @@
 		        "OPER {assem = "^a^" dst = " ^ dstStr ^ ", src = " ^ srcStr ^ ", _ jump = _}\n"
 		      end
 		  | printInstr (LABEL {assem=a, lab=l}) = "LABEL {assem = "^a^" lab = "^l^"}\n"
-		  | printInstr (MOVE {assem=a, dst=d, src=s}) = "MOVE {assem = "^a^" dst = _ src = _}\n"
+		  | printInstr (MOVE {assem=a, dst=d, src=s}) = "MOVE {assem = "^a^", dst ="^d^", src ="^s^"}\n"
 		  
 		fun printInstrList n [] = ""
 		  | printInstrList n (x::xs) = (print (Int.toString(n) ^ "\t" ^ printInstr x); printInstrList (n + 1) (xs))

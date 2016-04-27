@@ -56,9 +56,9 @@ fun codegen frame stm =
 			(SEQ(a, b)) => (munchStm a; munchStm b)
 			| T.MOVE(TEMP t1, BINOP(MINUS, TEMP t2, CONST i)) =>
 				if t1=tigerframe.sp andalso t2=tigerframe.sp then
-					emit(OPER{assem="movl %esp, %esp-"^Int.toString i^"\n", src=[], dst=[], jump=NONE})
+					emit(OPER{assem="movl %esp, (%esp-"^Int.toString i^")\n", src=[], dst=[], jump=NONE})
 				else
-					emit(OPER{assem="movl `d0, `s0-"^Int.toString i^"\n", src=[t1], dst=[t2], jump=NONE})
+					emit(OPER{assem="movl `d0, (`s0-"^Int.toString i^")\n", src=[t1], dst=[t2], jump=NONE})
 			| T.MOVE(TEMP t1, MEM(BINOP(PLUS, CONST i, TEMP t2))) =>
 				if t2=tigerframe.fp then
 					emit(OPER{assem="movl `d0,"^st(i)^"(%fp)\n",
@@ -240,8 +240,10 @@ fun codegen frame stm =
 							src=[t0,t1], dst=[r], jump=NONE}))
 				else
 					result(fn r =>
-						(emit(OPER{assem="movl `d0,`s0\n",
-							src=[t1], dst=[r], jump=NONE});
+					       (*(emit(OPER{assem="movl `d0,`s0\n",
+							src=[t1], dst=[r], jump=NONE});*)
+						(emit(MOVE{assem="movl `d0,`s0\n",
+							src=t1, dst=r});
 						emit(OPER{assem="shll `d0,$"^st(i)^"\n",
 							src=[], dst=[r], jump=NONE});
 						emit(OPER{assem="movl `d0,(`s0)\n",
