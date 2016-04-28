@@ -483,7 +483,11 @@ struct
                 
                 fun makeFetch newT m = OPER {assem="movl `d0, " ^ m ^ "(%ebp)", dst=[newT], src=[], jump=NONE}
                 fun makeStore newT m = OPER {assem="movl "^ m ^ "(%ebp), `s0", dst=[], src=[newT], jump=NONE}
-                
+                fun getNewAlloc () = case (allocLocal f true) of
+                                            InFrame m' => if m' < 0 then Int.toString(~m' * 4)
+                                                          else Int.toString(m' * 4)
+                                            | _ => raise Fail "En true esto no deberia pasar...."
+
                 fun rewriteInstruction (i as LABEL l) = [i]
                   | rewriteInstruction i = 
                     let
@@ -493,10 +497,12 @@ struct
                        fun newTemps x = case tigertab.tabBusca (x, newtempsTab) of
                                             SOME t => t
                                           | NONE => x
-                       val m = case (allocLocal f true) of
-                                    InFrame m' => if m' < 0 then Int.toString(~m' * 4)
-                                                  else Int.toString(m' * 4)
-                                    | _ => raise Fail "En true esto no deberia pasar...."
+
+                       (* Reservamos memoria solo para las intruscciones que vamos a reescribir *)
+                       val m = if (List.null(spillUses) andalso List.null(spillDefs)) then
+                                 "0"
+                               else
+                                 getNewAlloc()
                                     
                        val fetches = List.map (fn t => makeFetch (newTemps t) m) spillUses
                        val stores = List.map (fn t => makeStore (newTemps t) m) spillDefs                   
