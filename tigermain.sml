@@ -6,6 +6,7 @@ open tigerseman
 open tigercodegen
 open tigerflow
 open tigerframe
+open tigerassem
 open BasicIO Nonstdio
 
 fun lexstream(is: instream) =
@@ -40,6 +41,27 @@ fun main(args) =
 		val _ = if arbol then tigerpp.exprAst expr else ()
 		val _ = transProg(expr)
 		
+		
+		
+       fun replaceTforColors instrs colors =
+        let
+          (* Funcion que dado un T busca su color *)
+          val _ = print "ksajdsiojdaikjdsioadjsaoosdjaoi\n"
+          fun getColor t =
+            let 
+              val c = case tigertab.tabBusca(t, colors) of
+                         SOME col => col
+                       | NONE => t (*raise Fail "No deberia pasar " ^ t ^ "(replaceTforColors)"*)
+            in
+              c
+            end
+
+          fun replaceInstr (LABEL l) = LABEL l
+            | replaceInstr (MOVE {assem=a, dst=d, src=s}) = MOVE {assem=a, dst=(getColor d), src=(getColor s)}
+            | replaceInstr (OPER {assem=a, dst=d, src=s, jump=j}) = OPER {assem=a, dst=List.map getColor d, src=List.map getColor s, jump=j}
+        in
+          map replaceInstr instrs
+        end
 
 		fun name (tigerframe.PROC{body, frame}) = tigerframe.name(frame)
 		  | name _ = raise Fail "error interno (name): no es PROC"
@@ -58,8 +80,8 @@ fun main(args) =
 		                in
 		                   List.map strip (List.filter isStr frags)
 		                end
-		(*val _ = println("Fragmentos de string: " ^ Int.toString (List.length(str_frags)) ^ ": " ^ concatWith ", " (List.map (fn (l, s) => "(" ^ l ^ ", " ^ s ^ ")") str_frags))
-		val _ = println(tigertrans.Ir frags)   *) 
+		val _ = println("Fragmentos de string: " ^ Int.toString (List.length(str_frags)) ^ ": " ^ concatWith ", " (List.map (fn (l, s) => "(" ^ l ^ ", " ^ s ^ ")") str_frags))
+		val _ = println(tigertrans.Ir frags)   
 
 		
 		fun canonizar n = tigercanon.traceSchedule o (tigercanon.basicBlocks n) o tigercanon.linearize
@@ -72,16 +94,16 @@ fun main(args) =
                           fun aplanar (x, frame) = List.map (fn y => (frame, y)) x
                           val stm_tpl = List.map aplanar canon_frags
                           
-                          (*val _ = List.map (fn (x, y) => let val _ = print "--------------- BLOQUE --------------\n"
+                          val _ = List.map (fn (x, y) => let val _ = print "--------------- BLOQUE --------------\n"
                                                              val assem = tigercodegen.codegen x y
                                                          in
                                                              (map tigerassem.printAssem assem;
                                                               print "---------------END BLOQUE --------------\n")
-                                                         end) (List.concat stm_tpl)*)
-                         (* val _ = print "\n\nCodigo ANTES del coloreo:\n"                                                         
+                                                         end) (List.concat stm_tpl)
+                          (*val _ = print "\n\nCodigo ANTES del coloreo:\n"                                                         
                           val assems = List.concat (List.map (fn (x, y) => tigercodegen.codegen x y) (List.concat stm_tpl))
-                          val _ = map tigerassem.printAssem assems
-                          val graph = instrs2graph assems
+                          val _ = map tigerassem.printAssem assems*)
+                          (*val graph = instrs2graph assems
                           val _ = tigerflow.printGraphFlow (#1 graph)
                           val _ = tigercoloring.color grAndBlocks 
                           *)
@@ -90,7 +112,8 @@ fun main(args) =
                           val assemsBlocks = List.map (fn (x, y) => (applyCodeGen x y , y)) canon_frags
                           val plainAssemsBlocks = List.map (fn (x, y) => (List.concat x, y, true)) assemsBlocks
                           (*val grAndBlocks = map (fn (x, y) => (instrs2graph x, x)) plainAssemsBlocks*)
-                          val coloredCode = List.map tigercoloring.coloring plainAssemsBlocks
+                          val precoloredCode = List.map tigercoloring.coloring plainAssemsBlocks
+                          val coloredCode = List.map (fn (i, f, c) => (replaceTforColors i c, f)) precoloredCode
                           val procExitedCode = List.map (fn (x, y) => (tigerframe.procEntryExit3 x, y)) coloredCode
                           
                           val _ = print "\n\nCodigo despues del coloreo:\n"

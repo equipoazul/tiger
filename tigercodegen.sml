@@ -261,14 +261,22 @@ fun codegen frame stm =
                     emit(OPER{assem="movl `d0,(`s0+0)\n",
                         src=[munchExp e], dst=[r], jump=NONE}))
             | BINOP(PLUS, e, CONST i) =>
+            (* TODO Aca da el problema del ebp *)
                 result(fn r =>
-                    (emit(MOVE{assem="movl `d0,`s0\n",
+                    (emit(MOVE{assem="movlasdf `d0,`s0\n",
+                        src=munchExp e, dst=r});
+                    emit(OPER{assem="addl `d0,$"^st(i)^"\n",
+                        src=[], dst=[r], jump=NONE})))
+            | BINOP(PLUS, CONST i, e) =>
+            (* TODO Aca da el problema del ebp *)
+                result(fn r =>
+                    (emit(MOVE{assem="movlasdf `d0,`s0\n",
                         src=munchExp e, dst=r});
                     emit(OPER{assem="addl `d0,$"^st(i)^"\n",
                         src=[], dst=[r], jump=NONE})))
             | BINOP(PLUS, e1, e2) =>
                 result(fn r =>
-                    (emit(MOVE{assem="movl `d0,`s0\n",
+                    (emit(MOVE{assem="movlE1 `d0,`s0\n",
                         src=munchExp e1, dst=r});
                     emit(OPER{assem="addl `d0,`s0\n",
                         src=[munchExp e2], dst=[r], jump=NONE})))
@@ -277,25 +285,29 @@ fun codegen frame stm =
                 result(fn r =>
                     (emit(MOVE{assem="movl `d0,`s0\n",
                         src=munchExp e1, dst=r});
-                    emit(OPER{assem="addl `d0,$"^st(i)^"\n",
+                    emit(OPER{assem="subl `d0,$"^st(i)^"\n",
                         src=[], dst=[r], jump=NONE})))
             (* ACAAA DA ERROR DEL NODO 0 EN EL MERGE (YA ESTA CORREGIDO PERO REVISAR) TODO *)
-            | BINOP(MINUS, e1, e2) =>
-                let 
-                   val exp1 = munchExp e1
-                in
+             | BINOP(MINUS, CONST i, e2) =>
                 result(fn r =>
-                    (*(emit(MOVE{assem="movlEEEE `d0,`s0\n",
-                        src=munchExp e1, dst=r});*)
-                    (emit(OPER{assem="movl `d0, $"^ exp1 ^ "\n",
+                    (emit(OPER{assem="movl `d0, $"^ st(i) ^ "\n",
                         src=[], dst=[r], jump=NONE});
                     emit(OPER{assem="subl `d0,`s0\n",
                         src=[munchExp e2], dst=[r], jump=NONE})))
-                end
+            | BINOP(MINUS, e1, e2) =>
+                result(fn r =>
+                    (emit(MOVE{assem="movl `d0,`s0\n",
+                        src=munchExp e1, dst=r});
+                    emit(OPER{assem="subl `d0,`s0\n",
+                        src=[munchExp e2], dst=[r], jump=NONE})))
             | BINOP(MUL, e1, CONST i) =>
                 result(fn r =>
                     emit(OPER{assem="imul `d0,`s0*$"^st(i)^"\n",
                         src=[munchExp e1], dst=[r], jump=NONE}))
+            | BINOP(MUL, CONST i, e2) =>
+                result(fn r =>
+                    emit(OPER{assem="imul `d0,`s0*$"^st(i)^"\n",
+                        src=[munchExp e2], dst=[r], jump=NONE}))
             | BINOP(MUL, e1, e2) =>
                 result(fn r =>
                     (emit(MOVE{assem="movl `d0,`s0\n",

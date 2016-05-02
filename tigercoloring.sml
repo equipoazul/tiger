@@ -15,10 +15,11 @@ struct
     
     val precolored = listToSet String.compare [rv, ov, "ecx", "ebx", "esi", "edi"]
     val initial = ref (Splayset.empty String.compare)
+
     
     fun coloring (b, f, firstRun) =
       let
-        (*val _ = (print ("CODIGO: \n"); tigerassem.printInstrList 0 b; print ("\n"))*)
+        val _ = (print ("CODIGO: \n"); tigerassem.printInstrList 0 b; print ("\n"))
         val (FGRAPH fg, iTable) = instrs2graph b
         (*val _ = tigerflow.printGraphFlow (FGRAPH fg)*)
         val (liveIn, liveOut) = liveAnalysis (FGRAPH fg) 
@@ -27,6 +28,7 @@ struct
         val defs = List.concat (tabValores (!(#def fg)))
         val totalRegs = unionList (String.compare) uses defs
         val (IGRAPH ig) = newInterGraph()
+        (*val _ = insertNodesLiv (IGRAPH ig) totalRegs*)
         val _ = insertNodesLiv (IGRAPH ig) ([rv, ov, "ecx", "ebx", "esi", "edi"] @ totalRegs)
         val _ = List.map (fn x => List.map (fn y =>  if x <> y then mk_edge (#graph ig) {from=x , to=y}
                                                      else ()) [0, 1, 2, 3, 4, 5]) [0, 1, 2, 3, 4, 5] 
@@ -41,6 +43,8 @@ struct
         val moveList = array(lenNodes, Splayset.empty (tupleCompare String.compare))
         val alias = array(lenNodes, ~1)
         val color = array(lenNodes, "noColor")
+        (* Esto deberiamos mantenerlo en cada rewrite *)
+
         val spillWorklist = ref (Splayset.empty Int.compare)
         val freezeWorklist = ref (Splayset.empty Int.compare)
         val simplifyWorklist = ref (Splayset.empty Int.compare)
@@ -135,8 +139,8 @@ struct
             let 
                 val l = List.length(b)
                 val live = ref (List.foldr (fn (s, ss) => (case tabBusca(s, liveOut) of
-                                        NONE => raise Fail "La instruccion no esta en la tabla liveOut"
-                                      | SOME s' => Splayset.union (s', ss)) ) (Splayset.empty String.compare) interNodes)
+                                                                    NONE => raise Fail ("La instruccion " ^ Int.toString(s) ^ " no esta en la tabla liveOut")
+                                                                  | SOME s' => Splayset.union (s', ss)) ) (Splayset.empty String.compare) flowNodes)
                                                  
                 fun updateLive (n) =
                     let
@@ -147,7 +151,9 @@ struct
                                       NONE => (Splayset.empty String.compare) (*raise Fail ("El nodo " ^ Int.toString(n) ^ " no existe en la tabla def")*)
                                     | SOME d => listToSet String.compare d
                         val _ = case tabBusca(n, !iTable) of
-                                    SOME (MOVE {assem=a, src=u, dst=v}) => 
+                                     SOME (MOVE {assem=a, src="ebp", dst=v}) => ()
+                                   | SOME (MOVE {assem=a, src=s, dst="ebp"}) => ()
+                                   | SOME (MOVE {assem=a, src=u, dst=v}) => 
                                                let
                                                  val _ = live := Splayset.difference (!live, use)
                                                  val union = Splayset.listItems (Splayset.union(use, def))
@@ -175,8 +181,9 @@ struct
                     end
           
              in 
-             (*tigerflow.printGraphFlow(FGRAPH fg);
-             List.map updateLive (List.rev (ListPair.zip (b, flowNodes)))*)
+             (*print "_------------------------------------------_>\n";
+             tigerflow.printGraphFlow(FGRAPH fg);*)
+             (*List.map updateLive (List.rev (ListPair.zip (b, flowNodes)))*)
              List.map updateLive (List.rev flowNodes)
              end
 
@@ -504,21 +511,20 @@ struct
        else if not(Splayset.isEmpty(!spillWorklist)) then (print "JAMON EN selectSpill\n"; selectSpill())
        else ()         
 
-      fun replaceTforColors instrs =
-        let
-          (* Funcion que dado un T busca su color *)
-          fun getColor t =
-            let 
-              val c = sub(color, tempToNode (IGRAPH ig) t)
-            in
-              if c = "noColor" then t else c
-            end
-
-          fun replaceInstr (LABEL l) = LABEL l
-            | replaceInstr (MOVE {assem=a, dst=d, src=s}) = MOVE {assem=a, dst=(getColor d), src=(getColor s)}
-            | replaceInstr (OPER {assem=a, dst=d, src=s, jump=j}) = OPER {assem=a, dst=List.map getColor d, src=List.map getColor s, jump=j}
+      (* Pasamos los colores a una tabla para devolverlos *)
+      fun returnColors() =
+        let 
+            val tabColor:((tigertemp.temp, string) tigertab.Tabla) ref = ref (tabNueva())
+            val _ = Array.appi (fn (i, x) => if x <> "noColor" then let
+                                                                     val temp = nodeToTemp (IGRAPH ig) i
+                                                                     val color = sub(color, i)
+                                                                     val _ = print ("~~~~~~~~~~> " ^ temp ^ " " ^ color ^ "\n")
+                                                                   in 
+                                                                    tabColor := tabInserta(temp, color, !tabColor)
+                                                                   end
+                                            else ()) color
         in
-          map replaceInstr instrs
+            (!tabColor)
         end
 
       in
@@ -542,7 +548,7 @@ struct
          if not(Splayset.isEmpty(!spilledNodes)) then
             coloring(rewriteProgram(), f, false)
          else
-            (b, f))
+            (b, f, returnColors()))
 
          
 

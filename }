@@ -1,0 +1,17 @@
+let
+	function sumaint (a:int):int =
+	  let
+		var i := 4
+		function sumaint2 ():int =
+			let 
+				function sumaint3():int =
+					10
+			in
+				5 + sumaint3() 
+			end
+	  in
+        a + i + sumaint2()
+      end
+in
+   sumaint(3)
+end
