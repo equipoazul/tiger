@@ -46,7 +46,6 @@ fun main(args) =
        fun replaceTforColors instrs colors =
         let
           (* Funcion que dado un T busca su color *)
-          val _ = print "ksajdsiojdaikjdsioadjsaoosdjaoi\n"
           fun getColor t =
             let 
               val c = case tigertab.tabBusca(t, colors) of
@@ -62,6 +61,8 @@ fun main(args) =
         in
           map replaceInstr instrs
         end
+        
+        fun printColorTable colors = (print "Tabla de colores:\n"; map (fn (x, y) => print (x ^ ": "^ y ^ "\n")) (tigertab.tabAList colors))
 
 		fun name (tigerframe.PROC{body, frame}) = tigerframe.name(frame)
 		  | name _ = raise Fail "error interno (name): no es PROC"
@@ -80,8 +81,8 @@ fun main(args) =
 		                in
 		                   List.map strip (List.filter isStr frags)
 		                end
-		val _ = println("Fragmentos de string: " ^ Int.toString (List.length(str_frags)) ^ ": " ^ concatWith ", " (List.map (fn (l, s) => "(" ^ l ^ ", " ^ s ^ ")") str_frags))
-		val _ = println(tigertrans.Ir frags)   
+		(*val _ = println("Fragmentos de string: " ^ Int.toString (List.length(str_frags)) ^ ": " ^ concatWith ", " (List.map (fn (l, s) => "(" ^ l ^ ", " ^ s ^ ")") str_frags))
+		val _ = println(tigertrans.Ir frags)   *)
 
 		
 		fun canonizar n = tigercanon.traceSchedule o (tigercanon.basicBlocks n) o tigercanon.linearize
@@ -92,28 +93,28 @@ fun main(args) =
 		(*val _ = tigerinterp.inter true canon_frags str_frags*)
         val instrlist = let
                           fun aplanar (x, frame) = List.map (fn y => (frame, y)) x
-                          val stm_tpl = List.map aplanar canon_frags
+                          (*val stm_tpl = List.map aplanar canon_frags
                           
                           val _ = List.map (fn (x, y) => let val _ = print "--------------- BLOQUE --------------\n"
                                                              val assem = tigercodegen.codegen x y
                                                          in
                                                              (map tigerassem.printAssem assem;
                                                               print "---------------END BLOQUE --------------\n")
-                                                         end) (List.concat stm_tpl)
+                                                         end) (List.concat stm_tpl)*)
                           (*val _ = print "\n\nCodigo ANTES del coloreo:\n"                                                         
                           val assems = List.concat (List.map (fn (x, y) => tigercodegen.codegen x y) (List.concat stm_tpl))
                           val _ = map tigerassem.printAssem assems*)
                           (*val graph = instrs2graph assems
                           val _ = tigerflow.printGraphFlow (#1 graph)
                           val _ = tigercoloring.color grAndBlocks 
-                          *)
-                          val _ = print "\n\n-------------------------------------\n"   
+                          
+                          val _ = print "\n\n-------------------------------------\n"   *)
                           fun applyCodeGen stmList frame = List.map (fn x => tigercodegen.codegen frame x) stmList
                           val assemsBlocks = List.map (fn (x, y) => (applyCodeGen x y , y)) canon_frags
                           val plainAssemsBlocks = List.map (fn (x, y) => (List.concat x, y, true)) assemsBlocks
                           (*val grAndBlocks = map (fn (x, y) => (instrs2graph x, x)) plainAssemsBlocks*)
                           val precoloredCode = List.map tigercoloring.coloring plainAssemsBlocks
-                          val coloredCode = List.map (fn (i, f, c) => (replaceTforColors i c, f)) precoloredCode
+                          val coloredCode = List.map (fn (i, f, c) => (printColorTable c; (replaceTforColors i c, f))) precoloredCode
                           val procExitedCode = List.map (fn (x, y) => (tigerframe.procEntryExit3 x, y)) coloredCode
                           
                           val _ = print "\n\nCodigo despues del coloreo:\n"
