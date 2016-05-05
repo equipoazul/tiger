@@ -114,6 +114,9 @@ struct
           in
             ()
           end  
+          
+        
+              
         (* Fin funciones para imprimir *)
 
         (* Invariantes *)
@@ -123,8 +126,9 @@ struct
                 val emptySet = Splayset.empty Int.compare
                 val precoloredTemps = Splayset.foldr (fn (x, xs) => Splayset.add(xs, (tempToNode (IGRAPH ig) x))) emptySet precolored
                 val cjto2 = Splayset.union(precoloredTemps, cjto1)
+                fun printError node g1 g2 = print ("Grado de " ^ Int.toString(node) ^ "(" ^ (nodeToTemp (IGRAPH ig) node) ^ ") " ^ " = " ^ Int.toString(g1) ^ " != " ^ Int.toString(g2) ^ "\n")
             in
-                Splayset.foldr (fn (x, xs) => if xs andalso (sub(degrees, x) = Splayset.numItems(Splayset.intersection(sub(adjList, x), cjto2))) then true else (print("Fallo degreeinv nodo " ^ Int.toString(x) ^ "\n"); false)) true cjto1
+                Splayset.foldr (fn (x, xs) => if xs andalso (sub(degrees, x) = Splayset.numItems(Splayset.intersection(sub(adjList, x), cjto2))) then true else (printError x (sub(degrees, x)) (Splayset.numItems(Splayset.intersection(sub(adjList, x), cjto2))); false)) true cjto1
             end
             
         fun simplifyInv() =
@@ -261,6 +265,10 @@ struct
 
 
         fun adjacent n = Splayset.difference(sub(adjList, n), Splayset.union(stackToSet Int.compare (!(selectStack)), !coalescedNodes))
+        
+        fun printAdjacentes n =
+            (print("Adjacentes de " ^ Int.toString(n) ^ "\n");
+            Splayset.app (fn x => print(Int.toString(x) ^"\n")) (adjacent n))
 
         fun enableMoves nodes = 
             let
@@ -584,7 +592,7 @@ struct
          if simplifyInv() then () else raise Fail "Error en degreeInv";
          if freezeInv() then () else raise Fail "Error en degreeInv";
          if spillInv() then () else raise Fail "Error en degreeInv";
-         (*printTodo();*)
+         printTodo();
          repeat();     
          while not(Splayset.isEmpty(!simplifyWorklist) andalso Splayset.isEmpty(!worklistMoves) andalso
                    Splayset.isEmpty(!freezeWorklist) andalso Splayset.isEmpty(!spillWorklist)) do
