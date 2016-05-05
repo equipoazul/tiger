@@ -100,12 +100,15 @@ struct
 
                 val _ = inn := Splayset.union (use, (Splayset.difference (!out, def)));
                 val _ = out := List.foldr Splayset.union (Splayset.empty String.compare) (getSuccIn n)
-                
-                val _ = while (not (Splayset.equal (!inn, !inn') andalso Splayset.equal (!out, !out'))) do
+
+                fun repeat() =
                            (inn' := !inn;
                             out' := !out;
                             inn := Splayset.union (use, (Splayset.difference (!out, def)));
                             out := List.foldr Splayset.union (Splayset.empty String.compare) (getSuccIn n))
+                val _ = repeat()
+                val _ = while (not (Splayset.equal (!inn, !inn') andalso Splayset.equal (!out, !out'))) do
+                           repeat()
                 val _ = liveIn := tabRInserta(n, !inn, !liveIn)
                 val _ = liveOut := tabRInserta(n, !out, !liveOut)
                 in

@@ -4,7 +4,7 @@ let
   var b : int := 2 
   var c : int := 3 
   var d : int := 4 
-  var k : int := a + b  + c  + d
+  var k : int := a + b  + c + d 
 in
   k
 end

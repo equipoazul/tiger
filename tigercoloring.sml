@@ -14,9 +14,8 @@ struct
     type adjSetT     = tigergraph.edge Splayset.set ref
     
     val precolored = listToSet String.compare [rv, ov, "ecx", "ebx", "esi", "edi"]
+    val precoloredList = [rv, ov, "ecx", "ebx", "esi", "edi"]
     val initial = ref (Splayset.empty String.compare)
-    
-
     
     fun coloring (b, f, firstRun) =
       let
@@ -30,15 +29,25 @@ struct
         val totalRegs = unionList (String.compare) uses defs
         val (IGRAPH ig) = newInterGraph()
         (*val _ = insertNodesLiv (IGRAPH ig) totalRegs*)
-        val _ = insertNodesLiv (IGRAPH ig) ([rv, ov, "ecx", "ebx", "esi", "edi"] @ totalRegs)
-        val _ = List.map (fn x => List.map (fn y =>  if x <> y then mk_edge (#graph ig) {from=x , to=y}
-                                                     else ()) [0, 1, 2, 3, 4, 5]) [0, 1, 2, 3, 4, 5] 
+        val _ = insertNodesLiv (IGRAPH ig) (tigerutils.unionList String.compare totalRegs precoloredList)
+        fun meterCompleto() =
+            let
+                val nodeList = List.map (fn x => tempToNode (IGRAPH ig) x) precoloredList
+                fun aristasPorNodo n = List.foldr (fn (x, xs) => if n <> x then mk_edge (#graph ig) {from=n, to=x} else ()) () nodeList
+            in
+                List.foldr (fn (x, xs) => aristasPorNodo x) () nodeList
+            end
+        
+        
+        val _ = meterCompleto() 
+                                                     
+        
+             
 (*        val _ = print "=====================================////////////////////===============================\n"
         val _ = List.map (fn n => print ((nodeToTemp (IGRAPH ig) n) ^  "\n")) [0, 1, 2, 3, 4, 5]
         val _ = tigergraph.printGraph (#graph ig) 
         val _ = print "=====================================////////////////////===============================\n"*)
-        val interNodes = nodes (#graph ig)
-        
+        val interNodes = nodes (#graph ig) 
         
         val flowNodes = nodes (#control fg)
         val lenNodes = List.length(interNodes)
@@ -104,11 +113,10 @@ struct
             val _ = printStringTupleSet (!frozenMoves) "frozenMoves: "
             val _ = printStringTupleSet (!constrainedMoves) "constrainedMoves: "
             val _ = print ("Degrees: " ^ Int.toString(List.length(interNodes)) ^ "\n")
-            
             val _ = printIntArray degrees interNodes
             val _ = print "\n"
             val _ = print "CODIGO: \n"
-            (*val _ = printInstrList 0 b*)
+            val _ = printInstrList 0 b
             val _ = print "\n=========================================\n"
 
           in
@@ -331,7 +339,7 @@ struct
               (*spillWorklist := Splayset.delete(!spillWorklist, v);*)
               spillWorklist := Splayset.difference(!spillWorklist, Splayset.singleton Int.compare v);
             coalescedNodes := Splayset.add(!coalescedNodes, v);
-            print ("\t Meto en el alias -> " ^ (nodeToTemp (IGRAPH ig) v) ^ " " ^ (nodeToTemp (IGRAPH ig) u) ^ "\n");
+            print ("Meto en el alias -> " ^ (nodeToTemp (IGRAPH ig) v) ^ " " ^ (nodeToTemp (IGRAPH ig) u) ^ "\n");
             update(alias, v, u);
             update(moveList, u, Splayset.union(sub(moveList, u), sub(moveList, v)));
             enableMoves(Splayset.singleton Int.compare v);
@@ -518,36 +526,48 @@ struct
        
         fun rewriteProgram () =
             let
-                val newTemps = ref (Splayset.empty String.compare)
+                val newTempsC = ref (Splayset.empty String.compare)
                 val spilledNodesTmp = ref (Splayset.foldr (fn (x, xs) => Splayset.add(xs, nodeToTemp (IGRAPH ig) x)) (Splayset.empty String.compare) (!spilledNodes)) 
-                (*val memLocsTab = tigertab.fromList (List.map (fn s => (s, (fn (tigerframe.InFrame i) => i) (tigerframe.allocLocal f true))) spills)*)
-
-                
-                fun makeFetch newT m = OPER {assem="movl `d0, " ^ m ^ "(%ebp)", dst=[newT], src=[], jump=NONE}
-                fun makeStore newT m = OPER {assem="movl "^ m ^ "(%ebp), `s0", dst=[], src=[newT], jump=NONE}
                 fun getNewAlloc () = case (allocLocal f true) of
                                             InFrame m' => if m' < 0 then Int.toString(~m' * 4)
                                                           else Int.toString(m' * 4)
                                             | _ => raise Fail "En true esto no deberia pasar...."
+                val memLocsTab = tigertab.fromList ((List.map (fn s => (s, getNewAlloc()))) (Splayset.listItems (!spilledNodesTmp)))
+
+                
+                fun makeFetch oldT newT= 
+                    let
+                        val m = case tigertab.tabBusca(oldT, memLocsTab) of
+                                     SOME mem => mem
+                                    | NONE => raise Fail("No hay memoria alocada para el temporal " ^ oldT ^ "\n")
+                    in
+                        OPER {assem="movl `d0, " ^ m ^ "(%ebp)", dst=[newT], src=[], jump=NONE}
+                    end
+                    
+                fun makeStore oldT newT= 
+                    let
+                        val m = case tigertab.tabBusca(oldT, memLocsTab) of
+                                     SOME mem => mem
+                                    | NONE => raise Fail("No hay memoria alocada para el temporal " ^ oldT ^ "\n")
+                    in
+                        OPER {assem="movl "^ m ^ "(%ebp), `s0", dst=[], src=[newT], jump=NONE}
+                    end
 
                 fun rewriteInstruction (i as LABEL l) = [i]
                   | rewriteInstruction i = 
                     let
                        val spillUses = Splayset.listItems(Splayset.intersection(!spilledNodesTmp, Splayset.addList (Splayset.empty String.compare, tigerassem.src2List i)))
                        val spillDefs = Splayset.listItems(Splayset.intersection(!spilledNodesTmp, Splayset.addList (Splayset.empty String.compare, tigerassem.dst2List i)))
-                       val newtempsTab = tigertab.fromList (List.map (fn t => (t, tigertemp.newtemp())) (tigerutils.unionList (String.compare) spillUses spillDefs))
+                       val newtempsTab = tigertab.fromList (List.map (fn t => let
+                                                                                 val t' = tigertemp.newtemp()
+                                                                                 val _ = newTempsC := Splayset.add(!newTempsC, t')
+                                                                              in (t, t') end) (tigerutils.unionList (String.compare) spillUses spillDefs))
                        fun newTemps x = case tigertab.tabBusca (x, newtempsTab) of
                                             SOME t => t
                                           | NONE => x
 
-                       (* Reservamos memoria solo para las intruscciones que vamos a reescribir *)
-                       val m = if (List.null(spillUses) andalso List.null(spillDefs)) then
-                                 "0"
-                               else
-                                 getNewAlloc()
-                                    
-                       val fetches = List.map (fn t => makeFetch (newTemps t) m) spillUses
-                       val stores = List.map (fn t => makeStore (newTemps t) m) spillDefs                   
+                       val fetches = List.map (fn t => makeFetch t (newTemps t)) spillUses
+                       val stores = List.map (fn t => makeStore t (newTemps t)) spillDefs                   
                        
                        
                        val newInstr = case i of 
@@ -555,7 +575,15 @@ struct
                                       | MOVE {assem, dst, src} => MOVE{assem = assem, dst = newTemps dst, src = newTemps src}
                                       | x => x    
                     in
-                       fetches @ [newInstr] @ stores
+                        (print "=================\nReescritura\n";
+                        print ("Fetches: \n");
+                        printInstrList 0 fetches;
+                        print ("\n Instr: \n");
+                        print(printInstr newInstr);
+                        print ("\n Stores: \n");
+                        printInstrList 0 stores;
+                        print ("===================\n");
+                       fetches @ [newInstr] @ stores)
                     end
                 val rewritedInstrs = List.concat (List.map rewriteInstruction b)
                 
@@ -563,8 +591,8 @@ struct
                 val coloredNodesTmp = ref (Splayset.foldr (fn (x, xs) => Splayset.add(xs, nodeToTemp (IGRAPH ig) x)) (Splayset.empty String.compare) (!coloredNodes))   
                 val coalescedNodesTmp = ref (Splayset.foldr (fn (x, xs) => Splayset.add(xs, nodeToTemp (IGRAPH ig) x)) (Splayset.empty String.compare) (!coalescedNodes))
             in
-                (initial := Splayset.union(!coloredNodesTmp, Splayset.union(!coalescedNodesTmp, !newTemps));
-                 rewritedInstrs)
+                (*initial := Splayset.union(!coloredNodesTmp, Splayset.union(!coalescedNodesTmp, !newTempsC));*)
+                 rewritedInstrs
             end
                 
 
@@ -581,18 +609,19 @@ struct
         (*printTodo();*)
          if firstRun then
              initial := let 
-                           val nodesIG = List.foldr (fn (x, xs) => Splayset.add(xs, nodeToTemp (IGRAPH ig) x)) (Splayset.empty String.compare) (nodes (#graph ig))
+                           val nodesIG = List.foldr (fn (x, xs) => Splayset.add(xs, nodeToTemp (IGRAPH ig) x)) (Splayset.empty String.compare) interNodes
                          in
                            Splayset.difference(nodesIG, precolored)
                          end
          else
             ();
          makeWorklist(); 
+         printTodo();
          if degreeInv() then () else raise Fail "Error en degreeInv";
          if simplifyInv() then () else raise Fail "Error en degreeInv";
          if freezeInv() then () else raise Fail "Error en degreeInv";
          if spillInv() then () else raise Fail "Error en degreeInv";
-         printTodo();
+         
          repeat();     
          while not(Splayset.isEmpty(!simplifyWorklist) andalso Splayset.isEmpty(!worklistMoves) andalso
                    Splayset.isEmpty(!freezeWorklist) andalso Splayset.isEmpty(!spillWorklist)) do
@@ -600,7 +629,7 @@ struct
          assignColors();
          (*printColorArray (nodes (#graph ig));*)
          if not(Splayset.isEmpty(!spilledNodes)) then
-            coloring(rewriteProgram(), f, false)
+            coloring(rewriteProgram(), f, true)
          else
             (b, f, !color))
 
