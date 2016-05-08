@@ -19,9 +19,10 @@ struct
     
     fun coloring (b, f, firstRun) =
       let
+      
         (*val _ = (print ("CODIGO: \n"); tigerassem.printInstrList 0 b; print ("\n"))*)
         val (FGRAPH fg, iTable) = instrs2graph b
-        (*val _ = tigerflow.printGraphFlow (FGRAPH fg)*)
+        val _ = tigerflow.printGraphFlow (FGRAPH fg)
         val (liveIn, liveOut) = liveAnalysis (FGRAPH fg) 
     
         val uses = List.concat (tabValores (!(#use fg)))
@@ -116,7 +117,7 @@ struct
             val _ = printIntArray degrees interNodes
             val _ = print "\n"
             val _ = print "CODIGO: \n"
-            (*val _ = printInstrList 0 b*)
+            val _ = printInstrList 0 b
             val _ = print "\n=========================================\n"
 
           in
@@ -196,22 +197,32 @@ struct
         fun build () =  
             let 
                 val l = List.length(b)
-                val live = ref (List.foldr (fn (s, ss) => (case tabBusca(s, liveOut) of
+                (*val live = ref (List.foldr (fn (s, ss) => (case tabBusca(s, liveOut) of
                                                                     NONE => raise Fail ("La instruccion " ^ Int.toString(s) ^ " no esta en la tabla liveOut")
-                                                                  | SOME s' => Splayset.union (s', ss)) ) (Splayset.empty String.compare) flowNodes)
-                                                 
+                                                                  | SOME s' => Splayset.union (s', ss)) ) (Splayset.empty String.compare) flowNodes)*)
+                val live = ref (case tabBusca((List.hd flowNodes), liveOut) of
+                                 NONE => raise Fail ("La instruccion " ^ Int.toString(List.last flowNodes) ^ " no esta en la tabla liveOut")
+                               | SOME s' => s' )
+                val _ = (print("LIVE QUE VIENE POR ARRASTRE\n"); Splayset.app (fn x => print(x ^ "\n")) (!live))
+                                          
                 fun updateLive (n) =
                     let
+                        (*val _ = print("Anets del build -> LIVE DEL NODO " ^ Int.toString(n) ^ "\n")
+                        val _ = Splayset.app (fn x => print(x ^ "\n")) (!live)*)
+                        (*val _ = print("DATOS DEL NODO " ^ Int.toString(n) ^ "\n")*)
                         val use = case tabBusca(n, (!(#use fg))) of
                                       NONE => (Splayset.empty String.compare) (*raise Fail ("El nodo " ^ Int.toString(n) ^ " no existe en la tabla use")*)
                                     | SOME u => listToSet String.compare u
+                        (*val _ = (print("USE: \n"); Splayset.app (fn x => print(x ^ "\n")) (use))*)
                         val def = case tabBusca(n, (!(#def fg))) of
                                       NONE => (Splayset.empty String.compare) (*raise Fail ("El nodo " ^ Int.toString(n) ^ " no existe en la tabla def")*)
                                     | SOME d => listToSet String.compare d
+                        (*val _ = (print("DEF: \n"); Splayset.app (fn x => print(x ^ "\n")) (def))*)
                         val _ = case tabBusca(n, !iTable) of
-                                     SOME (MOVE {assem=a, src="ebp", dst=v}) => ()
-                                   | SOME (MOVE {assem=a, src=s, dst="ebp"}) => ()
-                                   | SOME (MOVE {assem=a, src=u, dst=v}) => 
+                                   (* Dice guille que el ebp no deberia estar ni en src ni en dst 
+                                   SOME (MOVE {assem=a, src="ebp", dst=v}) => ()
+                                   | SOME (MOVE {assem=a, src=s, dst="ebp"}) => ()*)
+                                   SOME (MOVE {assem=a, src=u, dst=v}) => 
                                                let
                                                  val _ = live := Splayset.difference (!live, use)
                                                  val union = Splayset.listItems (Splayset.union(use, def))
@@ -227,22 +238,28 @@ struct
                                                  ()
                                                end 
                                     | _ => ()
-
+                        val _ = live := Splayset.union(!live, def)
+                        (*val _ = (print("LIVE DESPUES DE LA INSTRUCCION \n"); Splayset.app (fn x => print(x ^ "\n")) (!live));*)
+                        (*val _ = print("ARISTAS AGREGADAS\n")*) 
                         val _ = List.map (fn d => case tabBusca(d, !(#tnode ig)) of
                                         NONE => raise Fail "El temp no esta en la tabla tnode (2)"
                                       | SOME di => List.map (fn l => case tabBusca(l, !(#tnode ig)) of
                                                     NONE => raise Fail "El temp no esta en la tabla tnode (3)"
-                                                  | SOME li => addEdge((li, di))) (Splayset.listItems (!live))) (Splayset.listItems def) 
-                        val _ = Splayset.union(use , Splayset.difference(!live, def))
+                                                  | SOME li => (addEdge((li, di))))(*; print("(" ^ l ^ ", " ^ d ^ ")\n")))*) (Splayset.listItems (!live))) (Splayset.listItems def) 
+                        val _ = live := Splayset.union(use, Splayset.difference(!live, def))
+                        (*val _ = (print("LIVE PARA EL PROXIMO NODO \n"); Splayset.app (fn x => print(x ^ "\n")) (!live))*)
                     in
-                        ()
+                        (print("LIVE DEL NODO " ^ Int.toString(n) ^ "\n");
+                        Splayset.app (fn x => print(x ^ "\n")) (!live))
+                        
                     end
           
              in 
              (*print "_------------------------------------------_>\n";
              tigerflow.printGraphFlow(FGRAPH fg);*)
              (*List.map updateLive (List.rev (ListPair.zip (b, flowNodes)))*)
-             List.map updateLive (List.rev flowNodes)
+             (* flowNodes ya esta en orden inverso *)
+             List.map updateLive flowNodes
              end
 
         fun nodeMoves n = Splayset.intersection(sub(moveList, n), (Splayset.union(!activeMoves, !worklistMoves)))
@@ -462,6 +479,7 @@ struct
                     val nDef = List.foldr (fn ((x, y), xs) => if tigerutils.inList (nodeToTemp (IGRAPH ig) n)  y then 1.0 + xs else xs) 0.0 (tigertab.tabAList (!(#def fg)))
                     val nUse = List.foldr (fn ((x, y), xs) => if tigerutils.inList (nodeToTemp (IGRAPH ig) n) y then 1.0 + xs else xs) 0.0 (tigertab.tabAList (!(#use fg)))
                     val nAdj = Splayset.numItems(sub(adjList, n))
+                    (*val liveRange = *)
                 in
                     if tigerutils.inList (nodeToTemp (IGRAPH ig) n) ["eax", "ebx", "ecx", "edx", "esi", "edi"] then 9999999.0 else (nDef + nUse) / real(nAdj)
                 end
