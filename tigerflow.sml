@@ -39,12 +39,12 @@ struct
     fun printGraphFlow ((FGRAPH f): flowgraph) =
         let
             val g = #control(f)
-            fun printTab t s = print(s ^ ": " ^ (String.concatWith "\n" (List.map (fn (n, ts) => tigergraph.nodename n ^ " -> " ^ (String.concatWith ", " ts) ^ " ") (tigertab.tabAList t))) ^ "\n")
+            fun printTab t s = print(s ^ ":\n" ^ (String.concatWith "\n" (List.map (fn (n, ts) => tigergraph.nodename n ^ " -> " ^ (String.concatWith ", " ts) ^ " ") (tigertab.tabAList t))) ^ "\n")
         in
             print("FLOWGRAPH: \n");
             tigergraph.printGraph g;
-            printTab (!(#use(f))) "Use\n";
-            printTab (!(#def(f))) "Def\n"
+            printTab (!(#use(f))) "Use";
+            printTab (!(#def(f))) "Def"
         end
         
                                   
@@ -75,7 +75,7 @@ struct
         fun instrs2graph' [] n (FGRAPH fg) labelList = fg
            | instrs2graph' (x::xs) n (FGRAPH fg) labelList = 
              let
-                 
+                (*val _ = print("INSTR2GRAPH NODO " ^ Int.toString(n) ^ "\n")*)
                 val (n2, lastNode) = if xs <> [] then (n + 1, false)
                                      else (~1, true)
                 val _ = case x of
@@ -84,10 +84,12 @@ struct
                                 src = src,
                                 jump = jmp} => let  val validDst = List.filter admittedRegs dst
                                                     val validSrc = List.filter admittedRegs src
+                                                    (*val _ = (print("DST: "); List.map (fn x => print(x ^ ", ")) dst; print("\n"))
+                                                    val _ = (print("SRC: "); List.map (fn x => print(x ^ ", ")) src; print("\n"))*)
                                                     (*val _ = if tigerutils.inList "T208" src then print "ALEEEEEEEEEEEEEEEEEEEEEEEEJOO \n" else print "VALENTIIIIIIIIIIIINA \n" *)
-                                                    val _ = if not (List.null validDst) then (print("Inserte "); List.map (fn x => print(x ^ ", ")) validDst; print(" en dst\n"); (#def fg) := tabInserta(n, validDst, !(#def fg)))
+                                                    val _ = if not (List.null validDst) then (*(print("Inserte "); List.map (fn x => print(x ^ ", ")) validDst; print(" en dst\n");*) (#def fg) := tabInserta(n, validDst, !(#def fg))
                                                             else ()
-                                                    val _ = if not (List.null validSrc) then (print("Inserte "); List.map (fn x => print(x ^ ", ")) validDst; print(" en use\n"); (#use fg) := tabInserta(n, validSrc, !(#use fg)))
+                                                    val _ = if not (List.null validSrc) then (*(print("Inserte "); List.map (fn x => print(x ^ ", ")) validSrc; print(" en use\n");*) (#use fg) := tabInserta(n, validSrc, !(#use fg))
                                                             else ()
                                                     val _ = (#ismove fg) := tabInserta(n, false, !(#ismove fg))
                                                     val _ = case jmp of
@@ -102,9 +104,11 @@ struct
                                                 in 
                                                     ()
                                                 end
-                          | MOVE {dst = dst, src = src, ...} => let val _ = if admittedRegs dst then (print("Inserte " ^ dst ^ " en dst\n"); (#def fg) := tabInserta(n, [dst], !(#def fg)))
+                          | MOVE {dst = dst, src = src, ...} => let (*val _ = print("DST: " ^ dst ^ "\n");
+                                                                    val _ = print("SRC: " ^ src ^ "\n");*)
+                                                                    val _ = if admittedRegs dst then (*(print("Inserte " ^ dst ^ " en dst\n"); *)(#def fg) := tabInserta(n, [dst], !(#def fg))
                                                                             else ()
-                                                                    val _ = if admittedRegs src then (print("Inserte " ^ dst ^ " en use\n"); (#use fg) := tabInserta(n, [src], !(#use fg)))
+                                                                    val _ = if admittedRegs src then (* (print("Inserte " ^ src ^ " en use\n");*) (#use fg) := tabInserta(n, [src], !(#use fg))
                                                                             else ()
                                                                     val _ = (#ismove fg) := tabInserta(n, true, !(#ismove fg))
                                                                     val _ = if lastNode then ()

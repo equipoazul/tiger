@@ -19,7 +19,7 @@ struct
     
     fun coloring (b, f, firstRun) =
       let
-      
+        val newTempsC = ref (Splayset.empty String.compare)
         (*val _ = (print ("CODIGO: \n"); tigerassem.printInstrList 0 b; print ("\n"))*)
         val (FGRAPH fg, iTable) = instrs2graph b
         val _ = tigerflow.printGraphFlow (FGRAPH fg)
@@ -87,7 +87,7 @@ struct
         val k = 6
         
         (* Funciones para imprimir *)
-        fun printIntSet s desc = (print (desc ^ "\n");  Splayset.app (fn x => print (Int.toString(x) ^ "\n")) s)
+        fun printIntSet s desc = (print (desc ^ "\n");  Splayset.app (fn x => print (Int.toString(x) ^ "(" ^ (nodeToTemp (IGRAPH ig) x) ^ ")" ^ "\n")) s)
         fun printIntTupleSet s desc = (print (desc ^ "\n"); Splayset.app (fn (x,y) => print ("(" ^ Int.toString(x) ^ ", " ^ Int.toString(y) ^ ")\n")) s)
         fun printStringTupleSet s desc = (print (desc ^ "\n"); Splayset.app (fn (x,y) => print ("(" ^ x ^ ", " ^ y ^ ")\n")) s)   
 (*        fun printColorArray [] = print "No hay mas nodos :)\n"
@@ -97,11 +97,10 @@ struct
           | printIntArray a (n::ns) = (print (Int.toString(n) ^ " (" ^ (nodeToTemp (IGRAPH ig) n) ^ ")" ^ " -> " ^ Int.toString(Array.sub(a, n)) ^ "\n"); printIntArray a ns)
                 
         (*fun printRecordSet s desc = (print (desc ^ "\n"); Splayset.app (fn {from=f, to=t} => print ("From: " ^ Int.toString(f) ^ " To: " ^ Int.toString(t) ^ "\n")) s)*)
-        
         fun printTodo() = 
           let
             val _ = print "=========================================\n"
-            val _ = printIntTupleSet (!adjSet) "adjSet: "
+            (*val _ = printIntTupleSet (!adjSet) "adjSet: "*)
             val _ = printIntSet (!spillWorklist) "spillWorkList: "
             val _ = printIntSet (!freezeWorklist) "freezeWorkList: "
             val _ = printIntSet (!simplifyWorklist) "simplifyWorkList: "
@@ -361,11 +360,14 @@ struct
             update(moveList, u, Splayset.union(sub(moveList, u), sub(moveList, v)));
             enableMoves(Splayset.singleton Int.compare v);
             Splayset.app (fn t => (addEdge((t, u)); decrementDegree t)) (adjacent v);
+            print ("Tabla de Alias: \n"); 
+            printIntArray alias interNodes;
             if sub(degrees, u) >= k andalso Splayset.member(!freezeWorklist, u) then
                (freezeWorklist := Splayset.delete(!freezeWorklist, u);
                 spillWorklist := Splayset.add(!spillWorklist, u))
             else
                 ())
+            
             
         fun addWorkList u =
            let 
@@ -436,7 +438,8 @@ struct
                         activeMoves := Splayset.add(!activeMoves, m))                                         
                    end 
             in
-                Splayset.app coalesce' (!worklistMoves)
+                (Splayset.app coalesce' (!worklistMoves); printIntSet (!coalescedNodes) "coalescedNodes: ";
+                printStringTupleSet (!coalescedMoves) "coalescedMoves: ")
             end
 
         fun freezeMoves u =
@@ -491,6 +494,9 @@ struct
             
             val priorities = List.map (fn x => (spillPriority(x), x)) (Splayset.listItems (!spillWorklist))
             val m = minElem priorities 9999.0 ~1
+            
+            val _ = (print("spilledNodes: "); Splayset.app (fn x => print((nodeToTemp (IGRAPH ig) x) ^ ", ")) (!spillWorklist); print("\n"))
+            val _ = print ("SPILLEO " ^ nodeToTemp (IGRAPH ig) m ^ "\n")
           in
             (*(spillWorklist := Splayset.delete(!spillWorklist, m);*)
              (spillWorklist := Splayset.difference(!spillWorklist, Splayset.singleton Int.compare m);
@@ -543,8 +549,11 @@ struct
        
         fun rewriteProgram () =
             let
-                val newTempsC = ref (Splayset.empty String.compare)
+                val _ = print("REESCRITURA\n")
+                (*val newTempsC = ref (Splayset.empty String.compare)*)
                 val spilledNodesTmp = ref (Splayset.foldr (fn (x, xs) => Splayset.add(xs, nodeToTemp (IGRAPH ig) x)) (Splayset.empty String.compare) (!spilledNodes)) 
+                
+                val _ = (print("TEMPORALES NUEVOS SPILLEADOS: "); Splayset.app (fn x => print(x ^ ", ")) (Splayset.intersection(!newTempsC, !spilledNodesTmp)); print("\n"))
                 fun getNewAlloc () = case (allocLocal f true) of
                                             InFrame m' => if m' < 0 then Int.toString(~m' * 4)
                                                           else Int.toString(m' * 4)
@@ -592,15 +601,22 @@ struct
                                       | MOVE {assem, dst, src} => MOVE{assem = assem, dst = newTemps dst, src = newTemps src}
                                       | x => x    
                     in
-                        (print "=================\nReescritura\n";
-                        print ("Fetches: \n");
-                        printInstrList 0 fetches;
-                        print ("\n Instr: \n");
-                        print(printInstr newInstr);
-                        print ("\n Stores: \n");
-                        printInstrList 0 stores;
-                        print ("===================\n");
-                       fetches @ [newInstr] @ stores)
+                        if not(List.null fetches) orelse not(List.null stores)
+                            then (*(print ("=================\nReescritura: \n");
+                                print ("spilledNodesTmp: \n");
+                                Splayset.app (fn x => print(x ^ ", ")) (!spilledNodesTmp);
+                                print ("\n Orig: \n");
+                                printInstrList 0 [i];
+                                print ("\n Fetches: \n");
+                                printInstrList 0 fetches;
+                                print ("\n Instr: \n");
+                                print(printInstr newInstr);
+                                print ("\n Stores: \n");
+                                printInstrList 0 stores;
+                                print ("===================\n");*)
+                                fetches @ [newInstr] @ stores
+                            else (fetches @ [newInstr] @ stores)
+                        
                     end
                 val rewritedInstrs = List.concat (List.map rewriteInstruction b)
                 
@@ -609,7 +625,7 @@ struct
                 val coalescedNodesTmp = ref (Splayset.foldr (fn (x, xs) => Splayset.add(xs, nodeToTemp (IGRAPH ig) x)) (Splayset.empty String.compare) (!coalescedNodes))
             in
                 (*initial := Splayset.union(!coloredNodesTmp, Splayset.union(!coalescedNodesTmp, !newTempsC));*)
-                 rewritedInstrs
+              (print("TEMPORALES NUEVOS CREADOS: "); Splayset.app (fn x => print(x ^ ", ")) (!newTempsC); print("\n"); rewritedInstrs)
             end
                 
 
