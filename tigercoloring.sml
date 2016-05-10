@@ -16,6 +16,7 @@ struct
     val precolored = listToSet String.compare [rv, ov, "ecx", "ebx", "esi", "edi"]
     val precoloredList = [rv, ov, "ecx", "ebx", "esi", "edi"]
     val initial = ref (Splayset.empty String.compare)
+    val iters = ref 0
     
     fun coloring (b, f, firstRun) =
       let
@@ -82,8 +83,8 @@ struct
                        ref (Splayset.addList ((Splayset.empty (tupleCompare Int.compare)), tupleEdges))
                      end
                      
-        val adjList:adjListT = array(lenNodes, Splayset.empty Int.compare)
-        val degrees:int array = array(lenNodes, 0)
+        val adjList:(adjListT ref) = ref (array(lenNodes, Splayset.empty Int.compare))
+        val degrees:(int array) ref = ref (array(lenNodes, 0))
         val k = 6
         
         (* Funciones para imprimir *)
@@ -100,7 +101,7 @@ struct
         fun printTodo() = 
           let
             val _ = print "=========================================\n"
-            (*val _ = printIntTupleSet (!adjSet) "adjSet: "*)
+            val _ = printIntTupleSet (!adjSet) "adjSet: "
             val _ = printIntSet (!spillWorklist) "spillWorkList: "
             val _ = printIntSet (!freezeWorklist) "freezeWorkList: "
             val _ = printIntSet (!simplifyWorklist) "simplifyWorkList: "
@@ -113,7 +114,7 @@ struct
             val _ = printStringTupleSet (!frozenMoves) "frozenMoves: "
             val _ = printStringTupleSet (!constrainedMoves) "constrainedMoves: "
             val _ = print ("Degrees: " ^ Int.toString(List.length(interNodes)) ^ "\n")
-            val _ = printIntArray degrees interNodes
+            val _ = printIntArray (!degrees) interNodes
             val _ = print "\n"
             val _ = print "CODIGO: \n"
             val _ = printInstrList 0 b
@@ -136,24 +137,24 @@ struct
                 val cjto2 = Splayset.union(precoloredTemps, cjto1)
                 fun printError node g1 g2 = print ("Grado de " ^ Int.toString(node) ^ "(" ^ (nodeToTemp (IGRAPH ig) node) ^ ") " ^ " = " ^ Int.toString(g1) ^ " != " ^ Int.toString(g2) ^ "\n")
             in
-                Splayset.foldr (fn (x, xs) => if xs andalso (sub(degrees, x) = Splayset.numItems(Splayset.intersection(sub(adjList, x), cjto2))) then true else (printError x (sub(degrees, x)) (Splayset.numItems(Splayset.intersection(sub(adjList, x), cjto2))); false)) true cjto1
+                Splayset.foldr (fn (x, xs) => if xs andalso (sub(!degrees, x) = Splayset.numItems(Splayset.intersection(sub(!adjList, x), cjto2))) then true else (printError x (sub(!degrees, x)) (Splayset.numItems(Splayset.intersection(sub(!adjList, x), cjto2))); false)) true cjto1
             end
             
         fun simplifyInv() =
             let
                 val cjto1 = Splayset.union(!activeMoves, !worklistMoves)
             in
-                Splayset.foldr (fn (x, xs) => xs andalso (sub(degrees, x) < k andalso Splayset.isEmpty(Splayset.intersection(sub(moveList, x), cjto1)))) true (!simplifyWorklist)
+                Splayset.foldr (fn (x, xs) => xs andalso (sub(!degrees, x) < k andalso Splayset.isEmpty(Splayset.intersection(sub(moveList, x), cjto1)))) true (!simplifyWorklist)
             end
             
         fun freezeInv() =
             let
                 val cjto1 = Splayset.union(!activeMoves, !worklistMoves)
             in
-                Splayset.foldr (fn (x, xs) => xs andalso (sub(degrees, x) < k andalso (not (Splayset.isEmpty(Splayset.intersection(sub(moveList, x), cjto1)))))) true (!freezeWorklist)
+                Splayset.foldr (fn (x, xs) => xs andalso (sub(!degrees, x) < k andalso (not (Splayset.isEmpty(Splayset.intersection(sub(moveList, x), cjto1)))))) true (!freezeWorklist)
             end
                 
-        fun spillInv() = Splayset.foldr (fn (x, xs) => xs andalso sub(degrees, x) >= k) true (!spillWorklist)
+        fun spillInv() = Splayset.foldr (fn (x, xs) => xs andalso sub(!degrees, x) >= k) true (!spillWorklist)
             
         (* Fin invariantes *)
 
@@ -164,15 +165,15 @@ struct
                  (case tabBusca(u, !(#gtemp ig)) of
                         NONE => raise Fail "Error al buscar un nodo en la tabla gtemp"
                       | SOME ut => if not (Splayset.member (precolored, ut)) then
-                                     (update(adjList, u, Splayset.add(sub(adjList, u), v));
-                                      update(degrees, u, sub(degrees, u) + 1))
+                                     (update(!adjList, u, Splayset.add(sub(!adjList, u), v));
+                                      update(!degrees, u, sub(!degrees, u) + 1))
                                   else
                                      ());
                  (case tabBusca(v, !(#gtemp ig)) of
                         NONE => raise Fail "Error al buscar un nodo en la tabla gtemp"
                       | SOME vt => if not (Splayset.member (precolored, vt)) then
-                                      (update(adjList, v, Splayset.add(sub(adjList, v), u));
-                                      update(degrees, v, sub(degrees, v) + 1))
+                                      (update(!adjList, v, Splayset.add(sub(!adjList, v), u));
+                                      update(!degrees, v, sub(!degrees, v) + 1))
                                    else
                                       ()))
              else
@@ -275,12 +276,12 @@ struct
                    val n = tempToNode (IGRAPH ig) m
                    (*val _ = print "J4J4J4J4J4J4J4J4J4J4J4J4J4J4J4J4 2\n"*)
                 in
-                   if sub(degrees, n) >= k then
+                   if sub(!degrees, n) >= k then
                       spillWorklist := Splayset.add(!spillWorklist, n)
                    else if moveRelated(n) then
                       freezeWorklist := Splayset.add(!freezeWorklist, n)
                    else
-                      simplifyWorklist := Splayset.add(!simplifyWorklist, n)
+                      (print ("METO " ^ nodeToTemp (IGRAPH ig) n ^ " en simplifyWorklist (makeWorkList)\n"); simplifyWorklist := Splayset.add(!simplifyWorklist, n))
                 end
           in
              Splayset.app makeWorklist' (!initial)
@@ -288,7 +289,7 @@ struct
 
 
 
-        fun adjacent n = Splayset.difference(sub(adjList, n), Splayset.union(stackToSet Int.compare (!(selectStack)), !coalescedNodes))
+        fun adjacent n = Splayset.difference(sub(!adjList, n), Splayset.union(stackToSet Int.compare (!(selectStack)), !coalescedNodes))
         
         fun printAdjacentes n =
             (print("Adjacentes de " ^ Int.toString(n) ^ "\n");
@@ -308,11 +309,13 @@ struct
 
         fun decrementDegree n =
             let 
-                val d = sub(degrees, n)
+                val d = sub(!degrees, n)
             in
                 if (d = 0) then () 
                 else
-                    (update(degrees, n, d - 1);
+                    (print("GRADO DE " ^ nodeToTemp (IGRAPH ig) n ^ " ANTES DEL DEC: " ^ Int.toString(sub(!degrees, n)) ^ "\n");
+                    update(!degrees, n, d - 1);
+                    print("GRADO DE " ^ nodeToTemp (IGRAPH ig) n ^ " DESPUES DEL DEC: "^ Int.toString(sub(!degrees, n)) ^ "\n");
                      
                      if d = k then
                         (enableMoves (Splayset.add((adjacent n), n));
@@ -322,7 +325,7 @@ struct
                          if moveRelated n then
                             freezeWorklist := Splayset.add(!freezeWorklist, n)
                          else
-                            simplifyWorklist := Splayset.add(!simplifyWorklist, n))
+                            (print ("METO " ^ nodeToTemp (IGRAPH ig) n ^ " en simplifyWorklist (decrementDegree)\n"); simplifyWorklist := Splayset.add(!simplifyWorklist, n)))
                      else
                          ())
             end
@@ -332,6 +335,7 @@ struct
               val n = List.hd (Splayset.listItems (!simplifyWorklist))
             in
              (simplifyWorklist := Splayset.delete(!simplifyWorklist, n);
+              print("METO " ^ nodeToTemp (IGRAPH ig) n ^ " en el stack\n"); 
               tigerutils.push n selectStack;
               Splayset.app (fn x => decrementDegree x)
                                     (*(print("Grado del nodo " ^ Int.toString(x) ^ " antes: " ^ Int.toString(sub(degrees, x)) ^ "\n");
@@ -360,9 +364,9 @@ struct
             update(moveList, u, Splayset.union(sub(moveList, u), sub(moveList, v)));
             enableMoves(Splayset.singleton Int.compare v);
             Splayset.app (fn t => (addEdge((t, u)); decrementDegree t)) (adjacent v);
-            print ("Tabla de Alias: \n"); 
-            printIntArray alias interNodes;
-            if sub(degrees, u) >= k andalso Splayset.member(!freezeWorklist, u) then
+            (*print ("Tabla de Alias: \n"); 
+            printIntArray alias interNodes;*)
+            if sub(!degrees, u) >= k andalso Splayset.member(!freezeWorklist, u) then
                (freezeWorklist := Splayset.delete(!freezeWorklist, u);
                 spillWorklist := Splayset.add(!spillWorklist, u))
             else
@@ -375,10 +379,10 @@ struct
                                NONE => raise Fail "No se encontro el nodo (addWorkList)"
                              | SOME s => s
            in
-               if not(Splayset.member(precolored, u)) andalso not (moveRelated unode) andalso sub(degrees, unode) < k then
+               if not(Splayset.member(precolored, u)) andalso not (moveRelated unode) andalso sub(!degrees, unode) < k then
                    (*(freezeWorklist := Splayset.delete(!freezeWorklist, unode);*)
                    (freezeWorklist := Splayset.difference(!freezeWorklist, Splayset.singleton Int.compare unode);
-                   simplifyWorklist := Splayset.add(!simplifyWorklist, unode))
+                   (print ("METO " ^ nodeToTemp (IGRAPH ig) unode ^ " en simplifyWorklist (addWorklist)\n"); simplifyWorklist := Splayset.add(!simplifyWorklist, unode)))
                else
                   ()
            end
@@ -393,13 +397,13 @@ struct
                            NONE => raise Fail "No se encontro el nodo (ok - r)"
                          | SOME n => n
           in
-             sub(degrees, tnod) < k orelse Splayset.member(precolored, t) orelse Splayset.member(!adjSet, (tnod, rnod))
+             sub(!degrees, tnod) < k orelse Splayset.member(precolored, t) orelse Splayset.member(!adjSet, (tnod, rnod))
           end
           
         fun conservative cn =
             let 
                 val k' = ref 0
-                val _ = Splayset.app (fn n => if sub(degrees, n) >= k then k' := !k' + 1 else ()) cn
+                val _ = Splayset.app (fn n => if sub(!degrees, n) >= k then k' := !k' + 1 else ()) cn
              in
                 !k' < k
              end
@@ -423,15 +427,15 @@ struct
                    in
                      (worklistMoves := Splayset.difference(!worklistMoves, Splayset.singleton (tupleCompare String.compare) m);
                       if u = v then
-                        (coalescedMoves := Splayset.add(!coalescedMoves, m);
-                         (addWorkList u))
+                        (print("METO " ^ v ^ " en coalescedMoves\n"); (coalescedMoves := Splayset.add(!coalescedMoves, m);      
+                         (addWorkList u)))
                       else if Splayset.member(precolored, v) orelse Splayset.member(!adjSet, (uNode, vNode)) then
                          (constrainedMoves := Splayset.add(!constrainedMoves, m);
                           (addWorkList u);
                           (addWorkList v))
-                      else if (Splayset.member(precolored, u) andalso checkForall) orelse 
-                              (not(Splayset.member(precolored, u)) andalso conservative(Splayset.union(adjacent uNode, adjacent vNode))) then
-                               (coalescedMoves := Splayset.add(!coalescedMoves, m);
+                      else if ((Splayset.member(precolored, u) andalso checkForall)) orelse 
+                              ((not(Splayset.member(precolored, u)) andalso conservative(Splayset.union(adjacent uNode, adjacent vNode)))) then
+(                               print("METO (" ^ x ^ ", " ^ y ^ ") en coalescedMoves\n"); coalescedMoves := Splayset.add(!coalescedMoves, m);
                                 (combine uNode vNode);
                                 (addWorkList u))
                       else
@@ -454,9 +458,9 @@ struct
               in
                 (activeMoves := Splayset.difference(!activeMoves, Splayset.singleton (tupleCompare String.compare) m);
                  frozenMoves := Splayset.add(!frozenMoves, m);
-                 if (Splayset.isEmpty (nodeMoves v)) andalso sub(degrees, v) < k then
+                 if (Splayset.isEmpty (nodeMoves v)) andalso sub(!degrees, v) < k then
                     (freezeWorklist := Splayset.difference(!freezeWorklist, Splayset.singleton Int.compare v);
-                    simplifyWorklist := Splayset.add(!simplifyWorklist, v))
+                    (print ("METO " ^ nodeToTemp (IGRAPH ig) v ^ " en simplifyWorklist (freezeMoves)\n"); simplifyWorklist := Splayset.add(!simplifyWorklist, v)))
                  else
                    ())
               end
@@ -481,8 +485,7 @@ struct
                 let
                     val nDef = List.foldr (fn ((x, y), xs) => if tigerutils.inList (nodeToTemp (IGRAPH ig) n)  y then 1.0 + xs else xs) 0.0 (tigertab.tabAList (!(#def fg)))
                     val nUse = List.foldr (fn ((x, y), xs) => if tigerutils.inList (nodeToTemp (IGRAPH ig) n) y then 1.0 + xs else xs) 0.0 (tigertab.tabAList (!(#use fg)))
-                    val nAdj = Splayset.numItems(sub(adjList, n))
-                    (*val liveRange = *)
+                    val nAdj = Splayset.numItems(sub(!adjList, n))
                 in
                     if tigerutils.inList (nodeToTemp (IGRAPH ig) n) ["eax", "ebx", "ecx", "edx", "esi", "edi"] then 9999999.0 else (nDef + nUse) / real(nAdj)
                 end
@@ -493,9 +496,10 @@ struct
                     else minElem xs min node
             
             val priorities = List.map (fn x => (spillPriority(x), x)) (Splayset.listItems (!spillWorklist))
+            val _ = (print("PRIORITIES: "); (List.map (fn (x, y) => print ("(" ^ Real.toString(x) ^ ", " ^ (nodeToTemp (IGRAPH ig) y) ^ "), ")) priorities); print("\n"))
             val m = minElem priorities 9999.0 ~1
             
-            val _ = (print("spilledNodes: "); Splayset.app (fn x => print((nodeToTemp (IGRAPH ig) x) ^ ", ")) (!spillWorklist); print("\n"))
+            val _ = (print("----> spilleWorkList: "); Splayset.app (fn x => print((nodeToTemp (IGRAPH ig) x) ^ ", ")) (!spillWorklist); print("\n"))
             val _ = print ("SPILLEO " ^ nodeToTemp (IGRAPH ig) m ^ "\n")
           in
             (*(spillWorklist := Splayset.delete(!spillWorklist, m);*)
@@ -518,7 +522,7 @@ struct
                                                                 okColors := List.filter (fn x => x <> wAliasColor) (!okColors)
                                                             else 
                                                                ()
-                                                          end) (sub(adjList, n))
+                                                          end) (sub(!adjList, n))
           
           
           in
@@ -526,14 +530,14 @@ struct
                 (n := pop selectStack;
                  processAdjList (!n);
                  if List.null(!okColors) then
-                     spilledNodes := Splayset.add(!spilledNodes, (!n))
+                     (print("METO " ^ nodeToTemp (IGRAPH ig) (!n) ^ " en spilledNodes\n");spilledNodes := Splayset.add(!spilledNodes, (!n)))
                  else
                     (coloredNodes := Splayset.add(!coloredNodes, (!n));
                      color := tabInserta(nodeToTemp (IGRAPH ig) (!n), List.hd (!okColors), !color);
                      print ("Asigne a " ^ (nodeToTemp (IGRAPH ig) (!n)) ^ " el color " ^ (List.hd (!okColors)) ^ "\n"); 
-                     print ("Alias de " ^ (nodeToTemp (IGRAPH ig) (!n)) ^ ":" ^ (nodeToTemp (IGRAPH ig) (getAlias (!n))) ^ "\n") 
+                     print ("Alias de " ^ (nodeToTemp (IGRAPH ig) (!n)) ^ ":" ^ (nodeToTemp (IGRAPH ig) (getAlias (!n))) ^ "\n");
                      (*update(color, (!n), List.hd (!okColors));*)
-                     (*okColors := List.tl (!okColors)*) ));
+                     okColors := List.tl (!okColors)));
                Splayset.app (fn m => let
                                         val mAliasTmp = nodeToTemp (IGRAPH ig) (getAlias m)
                                         val mTmp = nodeToTemp (IGRAPH ig) (m)
@@ -552,7 +556,7 @@ struct
                 val _ = print("REESCRITURA\n")
                 (*val newTempsC = ref (Splayset.empty String.compare)*)
                 val spilledNodesTmp = ref (Splayset.foldr (fn (x, xs) => Splayset.add(xs, nodeToTemp (IGRAPH ig) x)) (Splayset.empty String.compare) (!spilledNodes)) 
-                
+                val _ = printIntSet (!spilledNodes) "----> spilledNodes en rewrite: "
                 val _ = (print("TEMPORALES NUEVOS SPILLEADOS: "); Splayset.app (fn x => print(x ^ ", ")) (Splayset.intersection(!newTempsC, !spilledNodesTmp)); print("\n"))
                 fun getNewAlloc () = case (allocLocal f true) of
                                             InFrame m' => if m' < 0 then Int.toString(~m' * 4)
@@ -581,7 +585,7 @@ struct
 
                 fun rewriteInstruction (i as LABEL l) = [i]
                   | rewriteInstruction i = 
-                    let
+                    let 
                        val spillUses = Splayset.listItems(Splayset.intersection(!spilledNodesTmp, Splayset.addList (Splayset.empty String.compare, tigerassem.src2List i)))
                        val spillDefs = Splayset.listItems(Splayset.intersection(!spilledNodesTmp, Splayset.addList (Splayset.empty String.compare, tigerassem.dst2List i)))
                        val newtempsTab = tigertab.fromList (List.map (fn t => let
@@ -614,6 +618,7 @@ struct
                                 print ("\n Stores: \n");
                                 printInstrList 0 stores;
                                 print ("===================\n");*)
+                                (*fetches @ [newInstr] @ stores*)
                                 fetches @ [newInstr] @ stores
                             else (fetches @ [newInstr] @ stores)
                         
@@ -621,8 +626,8 @@ struct
                 val rewritedInstrs = List.concat (List.map rewriteInstruction b)
                 
                 (* Pasamos los nodos de numero a temps *)
-                val coloredNodesTmp = ref (Splayset.foldr (fn (x, xs) => Splayset.add(xs, nodeToTemp (IGRAPH ig) x)) (Splayset.empty String.compare) (!coloredNodes))   
-                val coalescedNodesTmp = ref (Splayset.foldr (fn (x, xs) => Splayset.add(xs, nodeToTemp (IGRAPH ig) x)) (Splayset.empty String.compare) (!coalescedNodes))
+                (*val coloredNodesTmp = ref (Splayset.foldr (fn (x, xs) => Splayset.add(xs, nodeToTemp (IGRAPH ig) x)) (Splayset.empty String.compare) (!coloredNodes))   
+                val coalescedNodesTmp = ref (Splayset.foldr (fn (x, xs) => Splayset.add(xs, nodeToTemp (IGRAPH ig) x)) (Splayset.empty String.compare) (!coalescedNodes))*)
             in
                 (*initial := Splayset.union(!coloredNodesTmp, Splayset.union(!coalescedNodesTmp, !newTempsC));*)
               (print("TEMPORALES NUEVOS CREADOS: "); Splayset.app (fn x => print(x ^ ", ")) (!newTempsC); print("\n"); rewritedInstrs)
@@ -659,10 +664,16 @@ struct
          while not(Splayset.isEmpty(!simplifyWorklist) andalso Splayset.isEmpty(!worklistMoves) andalso
                    Splayset.isEmpty(!freezeWorklist) andalso Splayset.isEmpty(!spillWorklist)) do
                repeat();
+         printIntSet (!spilledNodes) "----> spilledNodes antes de assign: ";
          assignColors();
+         printIntSet (!spilledNodes) "----> spilledNodes despues de assign: ";
          (*printColorArray (nodes (#graph ig));*)
          if not(Splayset.isEmpty(!spilledNodes)) then
-            coloring(rewriteProgram(), f, true)
+            if (!iters)<=1 then
+                (iters := (!iters) + 1;
+                coloring(rewriteProgram(), f, true))
+            else (b, f, !color)
+            (*(rewriteProgram(), f, !color)*)
          else
             (b, f, !color))
 

@@ -7,7 +7,7 @@ let
   var e : int := 5 
   var f : int := 6
   var g : int := 7
-  var k : int := a + b + c + d + e + f + g 
+  var k : int := a + b + c + d + e + f + g
 in
   k
 end
