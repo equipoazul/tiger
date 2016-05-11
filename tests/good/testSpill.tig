@@ -1,5 +1,5 @@
 let
-  type  arrtype = array of int
+  var txt : string := "hola"
   var a : int := 1 
   var b : int := 2 
   var c : int := 3 

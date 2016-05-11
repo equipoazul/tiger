@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <stdarg.h>
 
+extern int _tigermain(int n);
+
 typedef struct {
     long length;
     unsigned char chars[1];

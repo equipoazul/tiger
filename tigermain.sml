@@ -73,6 +73,7 @@ fun main(args) =
 		                 in
 		                   List.filter isFunc frags
 		                 end
+
 		(*val _ = println("Fragmentos de funcion: " ^ Int.toString (List.length(func_frags)) ^ ": " ^ concatWith ", " (List.map name func_frags))                 *)
 		val str_frags = let fun isStr (tigerframe.STRING _) = true
 		                      | isStr _ = false
@@ -81,6 +82,12 @@ fun main(args) =
 		                in
 		                   List.map strip (List.filter isStr frags)
 		                end
+		                
+     fun remRedundantMoves [] = []
+       | remRedundantMoves ((i as MOVE {assem=a, dst=d, src=s})::is) = if d = s then remRedundantMoves is
+                                                                 else (i::remRedundantMoves is)
+       | remRedundantMoves (i::is) = (i::remRedundantMoves is)
+
 		(*val _ = println("Fragmentos de string: " ^ Int.toString (List.length(str_frags)) ^ ": " ^ concatWith ", " (List.map (fn (l, s) => "(" ^ l ^ ", " ^ s ^ ")") str_frags))
 		val _ = println(tigertrans.Ir frags)   *)
 
@@ -91,7 +98,7 @@ fun main(args) =
 		  | canon_frag _ = raise Fail "error interno (canon_frag): no es proc"
 		val canon_frags = List.map canon_frag func_frags
 		(*val _ = tigerinterp.inter true canon_frags str_frags*)
-        val instrlist = let
+                val instrlist = let
                           fun aplanar (x, frame) = List.map (fn y => (frame, y)) x
                           (*val stm_tpl = List.map aplanar canon_frags
                           
@@ -115,16 +122,23 @@ fun main(args) =
                           (*val grAndBlocks = map (fn (x, y) => (instrs2graph x, x)) plainAssemsBlocks*)
                           val precoloredCode = List.map tigercoloring.coloring plainAssemsBlocks
                           val coloredCode = List.map (fn (i, f, c) => (printColorTable c; (replaceTforColors i c, f))) precoloredCode
-                          val procExitedCode = List.map (fn (x, y) => (tigerframe.procEntryExit3 x, y)) coloredCode
+                          val procExitedCode = List.map (fn (x, y) => (tigerframe.procEntryExit3 (y, x), y)) coloredCode
                           
                           val _ = print "\n\nCodigo despues del coloreo:\n"
-                          val colprint = (List.map (fn (x,y) => x) procExitedCode)
+                          (*TODO EN CASO DE DESESPERAR, BORRR EL remRedundantMoves POR LAS DUDAS FIXME*)
+                          val colprint = map remRedundantMoves (List.map (fn (x,y) => x) procExitedCode)
                           val stringSection = map tigerframe.string str_frags
-						              val codeSection = map (tigerassem.strAssem) (List.concat colprint)
-						              
-						              val allProgram = stringSection @ codeSection
-						              val _ = map print allProgram
-                         
+                          val globlSection = map tigerframe.globl (List.map name func_frags)
+	                        val codeSection = map (tigerassem.strAssem) (List.concat colprint)
+	                        
+	                        val allProgram = String.concat ([".data\n"] @ stringSection @ [".text\n"] @ globlSection @ codeSection)
+	                        val _ = print allProgram
+	                        (* Pasamos el assembler a un archivo y lo linkeamos con gcc *)
+                          val fd = TextIO.openOut "asgard.s"
+                          val _ = TextIO.output(fd, allProgram)
+                          val _ = TextIO.closeOut fd
+                          val _ = Process.system("gcc -m32 -c runtime.c")
+                          val _ = Process.system("gcc -m32 -g runtime.o asgard.s -o outtiger")
                                                     
                         in
                           (*List.map (fn (x, y) => tigercodegen.codegen x y) (List.concat stm_tpl) *)

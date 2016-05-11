@@ -1,0 +1,5 @@
+let
+  var txt : string := "hola\n"
+in
+  print(txt); 0 
+end

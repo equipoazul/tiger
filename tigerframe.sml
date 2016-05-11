@@ -76,7 +76,9 @@ fun newFrame{name} = {
 }
 fun addAccFrame access (frame:frame) = ((#formals frame) := !(#formals frame) @ [access] ; ())
 fun name(f: frame) = #name f
-fun string(l, s) = l^": .ascii "^tigertemp.makeString(s)^"\n"
+fun string(l, "") = ""
+  | string(l, s) = l^":\n\t.long " ^ Int.toString(String.size(s) - 2) ^ "\n\t.string "^tigertemp.makeString(s)^"\n\n"
+fun globl(l) = "\t.globl\t "^ l ^"\n"
 fun formals({formals=f, ...}: frame) = !f
 	(*let	fun aux(n, []) = []
 		| aux(n, h::t) = InFrame(n)::aux(n+argsGap, t)
@@ -92,7 +94,7 @@ fun allocArg (f: frame) b =
 fun allocLocal (f: frame) b = 
 	case b of
 	true =>
-		let	val ret = InFrame(!(#actualLocal f)+localsGap)
+		let	val ret = InFrame(!(#actualLocal f) + localsGap)
 		in	#actualLocal f:=(!(#actualLocal f)-1); ret end
 	| false => InReg(tigertemp.newtemp())
 fun exp(InFrame k) = MEM(BINOP(PLUS, TEMP(fp), CONST k))
@@ -100,10 +102,10 @@ fun exp(InFrame k) = MEM(BINOP(PLUS, TEMP(fp), CONST k))
 fun externalCall(s, l) = CALL(NAME s, l)
 fun procEntryExit1 (frame,body) = body
 
-fun procEntryExit3 (instrs) = 
+fun procEntryExit3 (frame:frame, instrs) = 
   let
     val label = List.hd(instrs)
-    val prologo = [tigerassem.OPER {assem="enter $666,$0x0\n", src=[], dst=[], jump=NONE}]
+    val prologo = [tigerassem.OPER {assem="enter $" ^ Int.toString((!(#actualLocal frame)) * (~8)) ^ ",$0x0\n", src=[], dst=[], jump=NONE}]
     val epilogo = [tigerassem.OPER {assem="leave\n", src=[], dst=[], jump=NONE},
                    tigerassem.OPER {assem="ret\n", src=[], dst=[], jump=NONE}]
   in
