@@ -32,7 +32,7 @@ struct
         val (IGRAPH ig) = newInterGraph()
         (*val _ = insertNodesLiv (IGRAPH ig) totalRegs*)
         val _ = insertNodesLiv (IGRAPH ig) (tigerutils.unionList String.compare totalRegs precoloredList)
-        fun meterCompleto() =
+        (*fun meterCompleto() =
             let
                 val nodeList = List.map (fn x => tempToNode (IGRAPH ig) x) precoloredList
                 fun aristasPorNodo n = List.foldr (fn (x, xs) => if n <> x then mk_edge (#graph ig) {from=n, to=x} else ()) () nodeList
@@ -41,7 +41,7 @@ struct
             end
         
         
-        val _ = meterCompleto() 
+        val _ = meterCompleto() *)
                                                      
         
              
@@ -53,8 +53,8 @@ struct
         
         val flowNodes = nodes (#control fg)
         val lenNodes = List.length(interNodes)
-        val moveList = array(lenNodes, Splayset.empty (tupleCompare String.compare))
-        val alias = array(lenNodes, ~1)
+        val moveList = ref (array(lenNodes, Splayset.empty (tupleCompare String.compare)))
+        val alias = ref (array(lenNodes, ~1))
         (*val color = array(lenNodes, "noColor")*)
         val color:((tigertemp.temp, string) tigertab.Tabla) ref = ref (tigertab.fromList [("eax", "eax"), ("ebx", "ebx"),("ecx", "ecx"),("edx", "edx"),("esi", "esi"),("edi", "edi")])
         (* Esto deberiamos mantenerlo en cada rewrite *)
@@ -73,8 +73,6 @@ struct
         val coloredNodes = ref (Splayset.empty Int.compare)
         val spilledNodes = ref (Splayset.empty Int.compare)
         
-        val okColors = ref (["eax","ebx","ecx","edx","edi","esi"])
-
         val selectStack: node stack ref = ref tigerutils.emptyStack 
         (* val adjSet:adjSetT = ref (listToSet edgeCompare (edges (#graph ig)))*)
         val adjSet = let 
@@ -144,14 +142,14 @@ struct
             let
                 val cjto1 = Splayset.union(!activeMoves, !worklistMoves)
             in
-                Splayset.foldr (fn (x, xs) => xs andalso (sub(!degrees, x) < k andalso Splayset.isEmpty(Splayset.intersection(sub(moveList, x), cjto1)))) true (!simplifyWorklist)
+                Splayset.foldr (fn (x, xs) => xs andalso (sub(!degrees, x) < k andalso Splayset.isEmpty(Splayset.intersection(sub(!moveList, x), cjto1)))) true (!simplifyWorklist)
             end
             
         fun freezeInv() =
             let
                 val cjto1 = Splayset.union(!activeMoves, !worklistMoves)
             in
-                Splayset.foldr (fn (x, xs) => xs andalso (sub(!degrees, x) < k andalso (not (Splayset.isEmpty(Splayset.intersection(sub(moveList, x), cjto1)))))) true (!freezeWorklist)
+                Splayset.foldr (fn (x, xs) => xs andalso (sub(!degrees, x) < k andalso (not (Splayset.isEmpty(Splayset.intersection(sub(!moveList, x), cjto1)))))) true (!freezeWorklist)
             end
                 
         fun spillInv() = Splayset.foldr (fn (x, xs) => xs andalso sub(!degrees, x) >= k) true (!spillWorklist)
@@ -228,7 +226,7 @@ struct
                                                  val union = Splayset.listItems (Splayset.union(use, def))
                                                  val _ = List.map (fn x => case tabBusca(x, !(#tnode ig)) of
                                                                                NONE => raise Fail ("El temp " ^ x ^ " no esta en la tabla tnode")
-                                                                             | SOME xi => update(moveList, xi, Splayset.add(sub(moveList, xi), (u, v) ))) union
+                                                                             | SOME xi => update(!moveList, xi, Splayset.add(sub(!moveList, xi), (u, v) ))) union
                                                                                 
                                                  (*val _ = print (tigerassem.printInstr (MOVE {assem=a, src=u, dst=v}))
                                                  val _ = print ("A workListMoves -> " ^ u ^ " " ^ v ^ "\n") *)
@@ -262,7 +260,7 @@ struct
              List.map updateLive flowNodes
              end
 
-        fun nodeMoves n = Splayset.intersection(sub(moveList, n), (Splayset.union(!activeMoves, !worklistMoves)))
+        fun nodeMoves n = Splayset.intersection(sub(!moveList, n), (Splayset.union(!activeMoves, !worklistMoves)))
         fun moveRelated n = not (Splayset.isEmpty (nodeMoves n))
         
         (* 6 es el K, y hay que pasarle una lista de todos los temporales (el initial) *)
@@ -348,7 +346,7 @@ struct
 
         fun getAlias n =
             if Splayset.member(!coalescedNodes, n) then
-               getAlias (sub(alias, n))
+               getAlias (sub(!alias, n))
             else
                n
 
@@ -360,8 +358,8 @@ struct
               spillWorklist := Splayset.difference(!spillWorklist, Splayset.singleton Int.compare v);
             coalescedNodes := Splayset.add(!coalescedNodes, v);
             print ("Meto en el alias -> " ^ (nodeToTemp (IGRAPH ig) v) ^ " " ^ (nodeToTemp (IGRAPH ig) u) ^ "\n");
-            update(alias, v, u);
-            update(moveList, u, Splayset.union(sub(moveList, u), sub(moveList, v)));
+            update(!alias, v, u);
+            update(!moveList, u, Splayset.union(sub(!moveList, u), sub(!moveList, v)));
             enableMoves(Splayset.singleton Int.compare v);
             Splayset.app (fn t => (addEdge((t, u)); decrementDegree t)) (adjacent v);
             (*print ("Tabla de Alias: \n"); 
@@ -511,12 +509,14 @@ struct
 
         fun assignColors () =
           let 
+            val okColors = ref (["eax","ebx","ecx","edx","edi","esi"])
             val n = ref ~1 (* Valor dummy para usar en el pop *)
             fun processAdjList n = Splayset.app (fn w => let
                                                             val wAlias = getAlias w
                                                             val wtmp = nodeToTemp (IGRAPH ig) wAlias 
                                                             val coloredNodesTmp = Splayset.foldr (fn (x, xs) => Splayset.add(xs, nodeToTemp (IGRAPH ig) x)) (Splayset.empty String.compare) (!coloredNodes)
                                                             val wAliasColor = getColorTmp wtmp
+                                                            val _ = print ("wALiasColor ===============> " ^ wAliasColor ^ "\n")
                                                           in
                                                             if Splayset.member(Splayset.union(coloredNodesTmp, precolored), wtmp) then
                                                                 okColors := List.filter (fn x => x <> wAliasColor) (!okColors)
@@ -528,9 +528,13 @@ struct
           in
             (while (not(isEmptyStack selectStack)) do
                 (n := pop selectStack;
+                 okColors := ["eax","ebx","ecx","edx","edi","esi"];
                  processAdjList (!n);
                  if List.null(!okColors) then
-                     (print("METO " ^ nodeToTemp (IGRAPH ig) (!n) ^ " en spilledNodes\n");spilledNodes := Splayset.add(!spilledNodes, (!n)))
+                     (print("METO " ^ nodeToTemp (IGRAPH ig) (!n) ^ " en spilledNodes \n");
+                      Splayset.app (fn x => print ((nodeToTemp (IGRAPH ig) x) ^ "\n")) (sub(!adjList, (!n)));
+                      print "Finnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn\n";
+                      spilledNodes := Splayset.add(!spilledNodes, (!n)))
                  else
                     (coloredNodes := Splayset.add(!coloredNodes, (!n));
                      color := tabInserta(nodeToTemp (IGRAPH ig) (!n), List.hd (!okColors), !color);
@@ -669,8 +673,8 @@ struct
          printIntSet (!spilledNodes) "----> spilledNodes despues de assign: ";
          (*printColorArray (nodes (#graph ig));*)
          if not(Splayset.isEmpty(!spilledNodes)) then
-            if (!iters)<=1 then
-                (iters := (!iters) + 1;
+            if (!iters)<=1  then
+                (iters := (!iters) + 0;
                 coloring(rewriteProgram(), f, true))
             else (b, f, !color)
             (*(rewriteProgram(), f, !color)*)
