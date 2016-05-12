@@ -98,7 +98,7 @@ const string consts[256] = {
 };
 string empty = {0, ""};
 
-long *_initArray(long size, long init)
+long *_allocArray(long size, long init)
 {
     int i;
     long *a = malloc(size * sizeof(long) + 1);

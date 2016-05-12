@@ -1,0 +1,12 @@
+/* valid for and let */
+
+let
+	var a := 0
+	var n := 233
+in 
+	for i := 0 to 1000 do (
+             a := i; 
+             ()
+         ); 
+	n
+end

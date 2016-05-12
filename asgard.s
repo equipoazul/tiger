@@ -1,12 +1,4 @@
 .data
-L0:
-	.long 6
-	.string "Nobody"
-
-L1:
-	.long 8
-	.string "Somebody"
-
 .text
 	.globl	 _tigermain
 _tigermain:
@@ -17,49 +9,45 @@ _tigermain:
 
 	pushl %edx
 
-	pushl $1000
+	pushl $0
 
-	pushl L0
+	pushl $10
 
-	pushl $2
+	call _allocArray
 
-	call _allocRecord
-
-	addl $12, %esp
+	addl $8, %esp
 
 	popl %edx
 
 	popl %ecx
 
-	movl $0, %edi 
+	movl $2, %edi 
 
 	pushl %ecx
 
 	pushl %edx
 
+	pushl %edi
+
 	pushl %ebx
 
-	call _checkNil
+	call _checkIndexArray
 
-	addl $4, %esp
+	addl $8, %esp
 
 	popl %edx
 
 	popl %ecx
 
-	movl %ebx,%eax
+	imul $4, %edi, %eax
 
-	imul %edi,%eax*$4
+	addl %eax,%ebx
 
-	addl %eax,%eax
+	movl (%ebx), %eax
 
-	movl %L1, (%eax)
+	jmp L0
 
-	movl $0, %eax 
-
-	jmp L2
-
-L2:
+L0:
 
 	leave
 

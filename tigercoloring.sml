@@ -98,7 +98,7 @@ struct
         fun printTodo() = 
           let
             val _ = print "=========================================\n"
-            val _ = printIntTupleSet (!adjSet) "adjSet: "
+            (*val _ = printIntTupleSet (!adjSet) "adjSet: "
             val _ = printIntSet (!spillWorklist) "spillWorkList: "
             val _ = printIntSet (!freezeWorklist) "freezeWorkList: "
             val _ = printIntSet (!simplifyWorklist) "simplifyWorkList: "
@@ -112,7 +112,7 @@ struct
             val _ = printStringTupleSet (!constrainedMoves) "constrainedMoves: "
             val _ = print ("Degrees: " ^ Int.toString(List.length(interNodes)) ^ "\n")
             val _ = printIntArray (!degrees) interNodes
-            val _ = print "\n"
+            val _ = print "\n"*)
             val _ = print "CODIGO: \n"
             val _ = printInstrList 0 b
             val _ = print "\n=========================================\n"
@@ -227,6 +227,7 @@ struct
                                                  ()
                                                end 
                                     | _ => ()
+                        val _ = (print("LIVE DEL NODO " ^ Int.toString(n) ^ " :\n"); Splayset.app (fn x => print(x ^ "\n")) (!live ))
                         val _ = live := Splayset.union(!live, def)
                         val _ = List.map (fn d => case tabBusca(d, !(#tnode ig)) of
                                         NONE => raise Fail "El temp no esta en la tabla tnode (2)"
@@ -528,8 +529,8 @@ struct
                 (*val _ = printIntSet (!spilledNodes) "----> spilledNodes en rewrite: "
                 val _ = (print("TEMPORALES NUEVOS SPILLEADOS: "); Splayset.app (fn x => print(x ^ ", ")) (Splayset.intersection(!newTempsC, !spilledNodesTmp)); print("\n"))*)
                 fun getNewAlloc () = case (allocLocal f true) of
-                                            InFrame m' => if m' < 0 then "-"^Int.toString(Int.abs(m' * 4))
-                                                          else Int.toString(Int.abs(m' * 4))
+                                            InFrame m' => if m' < 0 then "-"^Int.toString(Int.abs(m'))
+                                                          else Int.toString(Int.abs(m'))
                                             | _ => raise Fail "En true esto no deberia pasar...."
                 val memLocsTab = tigertab.fromList ((List.map (fn s => (s, getNewAlloc()))) (Splayset.listItems (!spilledNodesTmp)))
 
@@ -540,7 +541,7 @@ struct
                                      SOME mem => mem
                                     | NONE => raise Fail("No hay memoria alocada para el temporal " ^ oldT ^ "\n")
                     in
-                        OPER {assem="movl `d0, " ^ m ^ "(%ebp)", dst=[newT], src=[], jump=NONE}
+                        OPER {assem="movl " ^ m ^ "(%ebp), `d0\n" , dst=[newT], src=[], jump=NONE}
                     end
                     
                 fun makeStore oldT newT= 
@@ -549,7 +550,7 @@ struct
                                      SOME mem => mem
                                     | NONE => raise Fail("No hay memoria alocada para el temporal " ^ oldT ^ "\n")
                     in
-                        OPER {assem="movl "^ m ^ "(%ebp), `s0", dst=[], src=[newT], jump=NONE}
+                        OPER {assem="movl `s0, "^ m ^ "(%ebp)\n", dst=[], src=[newT], jump=NONE}
                     end
 
                 fun rewriteInstruction (i as LABEL l) = [i]
@@ -608,7 +609,7 @@ struct
          else
             ();
          makeWorklist(); 
-         (*printTodo();*)
+         printTodo();
          if degreeInv() then () else raise Fail "Error en degreeInv";
          if simplifyInv() then () else raise Fail "Error en degreeInv";
          if freezeInv() then () else raise Fail "Error en degreeInv";

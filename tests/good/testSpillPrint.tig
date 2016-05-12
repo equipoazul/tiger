@@ -8,5 +8,5 @@ let
   var g : int := 7
   var k : int := a + b + c + d + e + f + g
 in
-  k
+  print("Te queremos Leus <3\n"); k
 end

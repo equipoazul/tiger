@@ -362,7 +362,7 @@ fun transExp(venv, tenv) =
                                                 val f_result = getResult (#2 x) (#result (#1 x))
                                                 val lev = newLevel{parent=topLevel(), name=f_label}
                                             in
-                                                tabRInserta(f_label, 
+                                                tabRInserta(f_name, 
                                                            Func{level=lev, 
                                                                 label=f_label, 
                                                                 formals=f_formals, 

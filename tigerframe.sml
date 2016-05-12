@@ -37,7 +37,7 @@ val wSz = 4					(* word size in bytes *)
 val log2WSz = 2				(* base two logarithm of word size in bytes *)
 val fpPrev = 0				(* offset (bytes) *)
 val fpPrevLev = 8			(* offset (bytes) *)
-val argsInicial = 0			(* words *)
+val argsInicial = 3			(* words *)
 val argsOffInicial = 0		(* words *)
 val argsGap = wSz			(* bytes *)
 val regInicial = 1			(* reg *)
@@ -85,16 +85,16 @@ fun formals({formals=f, ...}: frame) = !f
 	in aux(argsInicial, f) end *)
 fun maxRegFrame(f: frame) = !(#actualReg f)
 fun allocArg (f: frame) b = 
-	case b of
+	case true of
 	true =>
-		let	val ret = (!(#actualArg f)+argsOffInicial)*wSz
+		let	val ret = (!(#actualArg f)*wSz+argsOffInicial)
 			val _ = #actualArg f := !(#actualArg f)+1
 		in	InFrame ret end
 	| false => InReg(tigertemp.newtemp())
 fun allocLocal (f: frame) b = 
 	case b of
 	true =>
-		let	val ret = InFrame(!(#actualLocal f) + localsGap)
+		let	val ret = InFrame(!(#actualLocal f)*4 + localsGap)
 		in	#actualLocal f:=(!(#actualLocal f)-1); ret end
 	| false => InReg(tigertemp.newtemp())
 fun exp(InFrame k) = MEM(BINOP(PLUS, TEMP(fp), CONST k))
@@ -105,7 +105,7 @@ fun procEntryExit1 (frame,body) = body
 fun procEntryExit3 (frame:frame, instrs) = 
   let
     val label = List.hd(instrs)
-    val prologo = [tigerassem.OPER {assem="enter $" ^ Int.toString((!(#actualLocal frame)) * (~8)) ^ ",$0x0\n", src=[], dst=[], jump=NONE}]
+    val prologo = [tigerassem.OPER {assem="enter $" ^ Int.toString((!(#actualLocal frame)) * (~4)) ^ ",$0x0\n", src=[], dst=[], jump=NONE}]
     val epilogo = [tigerassem.OPER {assem="leave\n", src=[], dst=[], jump=NONE},
                    tigerassem.OPER {assem="ret\n", src=[], dst=[], jump=NONE}]
   in

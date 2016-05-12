@@ -56,28 +56,28 @@ fun codegen frame stm =
             (SEQ(a, b)) => (munchStm a; munchStm b)
             | T.MOVE(TEMP t1, BINOP(MINUS, TEMP t2, CONST i)) =>
                 if t1=tigerframe.sp andalso t2=tigerframe.sp then
-                    emit(OPER{assem="movl %esp, (%esp-"^Int.toString i^")\n", src=[], dst=[], jump=NONE})
+                    emit(OPER{assem="movl %esp, -"^Int.toString i^"(%esp)\n", src=[], dst=[], jump=NONE})
                 else
-                    emit(OPER{assem="movl (`s0-"^Int.toString i^"), `d0\n", src=[t1], dst=[t2], jump=NONE})
+                    emit(OPER{assem="movl -"^Int.toString i^"(`s0), `d0\n", src=[t1], dst=[t2], jump=NONE})
             | T.MOVE(TEMP t1, MEM(BINOP(PLUS, CONST i, TEMP t2))) =>
                 if t2=tigerframe.fp then
-                    emit(OPER{assem="movl "^ st(i) ^ "(%fp), `d0 \n",
+                    emit(OPER{assem="movl "^ st(i) ^ "(%ebp), `d0 \n",
                         src=[], dst=[t1], jump=NONE})
                 else
-                    emit(OPER{assem="movl ("^st(i)^"+`s0), `d0\n",
+                    emit(OPER{assem="movl " ^ st(i) ^ "(`s0), `d0\n",
                         src=[t2], dst=[t1], jump=NONE})
             | T.MOVE(MEM(BINOP(PLUS, CONST i, e)), CONST j) =>
-                emit(OPER{assem="movl $"^st(j)^", (`s0+"^st(i)^")\n",
+                emit(OPER{assem="movl " ^ st(i) ^ "(`s0) $" ^ st(j) ^ "\n",
                     src=[munchExp e], dst=[], jump=NONE})
             | T.MOVE(MEM(BINOP(PLUS, CONST i, TEMP t)), e2) =>
                 if t=tigerframe.fp then
-                    emit(OPER{assem="movl `s0, "^st(i)^"(%fp)\n",
+                    emit(OPER{assem="movl `s0, "^st(i)^"(%ebp)\n",
                         src=[munchExp e2], dst=[], jump=NONE})
                 else
-                    emit(OPER{assem="movl `s1, (`s0+"^st(i)^")\n",
+                    emit(OPER{assem="movl `s1, " ^ st(i) ^ "(`s0)\n",
                         src=[t, munchExp e2], dst=[], jump=NONE})
             | T.MOVE(MEM(BINOP(PLUS, CONST i, e1)), e2) =>
-                emit(OPER{assem="movl `s1, (`s0+"^st(i)^")\n",
+                emit(OPER{assem="movl `s1, " ^ st(i) ^ "(`s0)\n",
                     src=[munchExp e1, munchExp e2], dst=[], jump=NONE})
             | T.MOVE(MEM e1, MEM e2) => (* 386 NO tiene M <- M *)
                 let val t = tigertemp.newtemp()
@@ -88,9 +88,12 @@ fun codegen frame stm =
                         src=[t,munchExp e1], dst=[], jump=NONE})
                 end
             | T.MOVE(MEM e1, CONST i) =>
-                emit(OPER{assem="movl (`s0), $"^st(i)^"\n",
+                emit(OPER{assem="movl $" ^ st(i) ^ ", (`s0)\n",
                     src=[munchExp e1], dst=[], jump=NONE})
                     
+            | T.MOVE(MEM e1, NAME n) =>
+                emit(OPER{assem="movl $" ^ n ^ ", (`s0)\n",
+                    src=[munchExp e1], dst=[], jump=NONE})
             | T.MOVE(MEM e1, e2) =>
                 emit(OPER{assem="movl `s1, (`s0)\n",
                     src=[munchExp e1, munchExp e2], dst=[], jump=NONE})
@@ -106,7 +109,7 @@ fun codegen frame stm =
             | T.MOVE(e1, e2) => 
                 let val t=tigertemp.newtemp()
                 in
-                    emit(MOVE{assem="movl `s0,`d0\n",
+                    emit(MOVE{assem="movl8 `s0,`d0\n",
                         src=munchExp e2, dst=t});
                     emit(MOVE{assem="movl `s0,`d0\n",
                         src=t, dst=munchExp e1})
@@ -151,11 +154,11 @@ fun codegen frame stm =
                     val _ = emit(OPER{assem="movl $"^st(c1)^", `d0\n",
                                       src=[], dst=[tmp], jump=NONE})                                      
                 in
-                    emit(OPER{assem="cmpl `s0, $"^st(c2)^"\n",
+                    emit(OPER{assem="cmpl $" ^ st(c2) ^ ", `s0\n",
                               src=[tmp], dst=[], jump=NONE})
                 end
             | CJUMP(relop, e1, CONST c2, l1, l2) =>
-                let val () = emit(OPER{assem="cmpl `s0, $"^st(c2)^"\n",
+                let val () = emit(OPER{assem="cmpl $" ^ st(c2) ^ ", `s0\n",
                         src=[munchExp e1], dst=[], jump=NONE})
                 in  emit(OPER{assem=relOp(relop)^l1^"\n", src=[],
                         dst=[], jump=SOME[l1, l2]}) end
@@ -182,28 +185,28 @@ fun codegen frame stm =
                             case h of
                             CONST i => (OPER{assem="pushl $"^st(i)^"\n",
                                         src=[], dst=[], jump=NONE}, "")
-                            | NAME n => (OPER{assem="pushl "^n^"\n",
+                            | NAME n => (OPER{assem="pushl $"^n^"\n",
                                         src=[], dst=[], jump=NONE}, "")
                             | TEMP n =>
                                     if n=tigerframe.fp then
-                                        (OPER{assem="pushl %fp\n",
+                                        (OPER{assem="pushl %ebp\n",
                                         src=[], dst=[], jump=NONE}, "") (*before print "Elegimos bien0\n" *)
                                     else
                                         (OPER{assem="pushl `s0\n",
                                         src=[n], dst=[], jump=NONE}, "")
                             | MEM(TEMP n) =>
                                         if n=tigerframe.fp then
-                                            (OPER{assem="pushl (%fp)\n",
+                                            (OPER{assem="pushl (%ebp)\n",
                                             src=[], dst=[], jump=NONE}, "") (* before print "Elegimos bien1\n" *)
                                         else
                                             (OPER{assem="pushl (`s0)\n",
                                             src=[n], dst=[], jump=NONE}, "")
                             | MEM(BINOP(PLUS, TEMP n, CONST c)) =>
                                         if n=tigerframe.fp then
-                                            (OPER{assem="pushl (%fp+"^st(c)^")\n",
+                                            (OPER{assem="pushl "^st(c)^"(%ebp)\n",
                                             src=[], dst=[], jump=NONE}, "") (* before print "Elegimos bien1\n" *)
                                         else
-                                            (OPER{assem="pushl (`s0+"^st(c)^")\n",
+                                            (OPER{assem="pushl " ^ st(c) ^ "(`s0)\n",
                                             src=[n], dst=[], jump=NONE}, "")
                             | _ =>  let val e = munchExp h
                                     in  (OPER{assem="pushl `s0\n", src=[e],
@@ -231,8 +234,9 @@ fun codegen frame stm =
                         src=[], dst=[r], jump=NONE})))
             | MEM(BINOP(PLUS, e1, CONST i)) =>
                 result(fn r =>
-                    emit(OPER{assem="movl (s0+"^st(i)^"), `d0\n",
+                    emit(OPER{assem="movl "^ st(i) ^ "(`s0), `d0\n",
                         src=[munchExp e1], dst=[r], jump=NONE}))
+             (* TODO *)
             | MEM(BINOP(PLUS, TEMP t0, BINOP(LSHIFT, TEMP t1, CONST i))) =>
                 if scaleFact i then
                     result(fn r =>
@@ -258,7 +262,7 @@ fun codegen frame stm =
                         src=[munchExp e], dst=[r], jump=NONE}))
             | MEM e =>
                 result(fn r =>
-                    emit(OPER{assem="movl (`s0+0), `d0\n",
+                    emit(OPER{assem="movl (`s0), `d0\n",
                         src=[munchExp e], dst=[r], jump=NONE}))
             | BINOP(PLUS, e, CONST i) =>
             (* TODO Aca da el problema del ebp *)
@@ -273,13 +277,13 @@ fun codegen frame stm =
                     (emit(MOVE{assem="movl `s0,`d0\n",
                         src=munchExp e, dst=r});
                     emit(OPER{assem="addl $"^st(i)^", `d0\n",
-                        src=[], dst=[r], jump=NONE})))
+                        src=[r], dst=[r], jump=NONE})))
             | BINOP(PLUS, e1, e2) =>
                 result(fn r =>
                     (emit(MOVE{assem="movl `s0,`d0\n",
                         src=munchExp e1, dst=r});
                     emit(OPER{assem="addl `s0,`d0\n",
-                        src=[munchExp e2], dst=[r], jump=NONE})))
+                        src=[munchExp e2, r], dst=[r], jump=NONE})))
             (* los casos especiales de 0-exp, generados por el parser *)
             | BINOP(MINUS, e1, CONST i) =>
                 result(fn r =>
@@ -302,11 +306,11 @@ fun codegen frame stm =
                         src=[munchExp e2], dst=[r], jump=NONE})))
             | BINOP(MUL, e1, CONST i) =>
                 result(fn r =>
-                    emit(OPER{assem="imul `s0,`d0*$"^st(i)^"\n",
+                    emit(OPER{assem="imul $"^st(i)^", `s0, `d0\n",
                         src=[munchExp e1], dst=[r], jump=NONE}))
             | BINOP(MUL, CONST i, e2) =>
                 result(fn r =>
-                    emit(OPER{assem="imul `s0,`d0*$"^st(i)^"\n",
+                    emit(OPER{assem="imul $"^st(i)^", `s0, `d0\n",
                         src=[munchExp e2], dst=[r], jump=NONE}))
             | BINOP(MUL, e1, e2) =>
                 result(fn r =>
