@@ -1,3 +1,6 @@
-(while 1
-do
-  if 1 then break; 0)
+let
+    var a := 0
+in
+   while 1 
+        do (if 1 then break);0
+end

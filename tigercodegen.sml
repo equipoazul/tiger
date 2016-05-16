@@ -54,6 +54,12 @@ fun codegen frame stm =
         fun munchStm s =
             case s of
             (SEQ(a, b)) => (munchStm a; munchStm b)
+            | T.MOVE(TEMP t, CALL e) =>
+              let
+                  val assCall = munchExp (CALL e)
+              in
+                  emit(MOVE{assem="movl `s0, `d0\n", src=rv, dst=t})
+              end
             | T.MOVE(TEMP t1, BINOP(MINUS, TEMP t2, CONST i)) =>
                 if t1=tigerframe.sp andalso t2=tigerframe.sp then
                     emit(OPER{assem="movl %esp, -"^Int.toString i^"(%esp)\n", src=[], dst=[], jump=NONE})
@@ -155,18 +161,34 @@ fun codegen frame stm =
                                       src=[], dst=[tmp], jump=NONE})                                      
                 in
                     emit(OPER{assem="cmpl $" ^ st(c2) ^ ", `s0\n",
-                              src=[tmp], dst=[], jump=NONE})
+                              src=[tmp], dst=[], jump=NONE});
+                    emit(OPER{assem = relOp relop ^ l1 ^ "\n", 
+                              src = [],
+                              dst = [],
+                              jump = SOME [l1, l2]})
                 end
             | CJUMP(relop, e1, CONST c2, l1, l2) =>
                 let val () = emit(OPER{assem="cmpl $" ^ st(c2) ^ ", `s0\n",
                         src=[munchExp e1], dst=[], jump=NONE})
-                in  emit(OPER{assem=relOp(relop)^l1^"\n", src=[],
-                        dst=[], jump=SOME[l1, l2]}) end
+                in  
+                    emit(OPER{assem=relOp(relop)^l1^"\n", src=[],
+                          dst=[], jump=SOME[l1, l2]});
+                    emit(OPER{assem = relOp relop ^ l1 ^ "\n", 
+                          src = [],
+                          dst = [],
+                          jump = SOME [l1, l2]})
+                end
             | CJUMP(relop, e1, e2, l1, l2) =>
                 let val () = emit(OPER{assem="cmpl `s0,`s1\n",
                         src=[munchExp e1, munchExp e2], dst=[], jump=NONE})
-                in  emit(OPER{assem=relOp(relop)^l1^"\n", src=[],
-                        dst=[], jump=SOME[l1, l2]}) end
+                in  
+                      emit(OPER{assem=relOp(relop)^l1^"\n", src=[],
+                          dst=[], jump=SOME[l1, l2]});
+                      emit(OPER{assem = relOp relop ^ l1 ^ "\n", 
+                            src = [],
+                            dst = [],
+                            jump = SOME [l1, l2]})
+                end
             | T.LABEL l => emit(LABEL{assem=l^":\n", lab=l})
         and saveCallerSaves() =
             let fun emitcdefs s =

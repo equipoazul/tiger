@@ -102,13 +102,15 @@ long *_allocArray(long size, long init)
 {
     int i;
     long *a = malloc(size * sizeof(long) + 1);
-	a[0] = size;
+	  a[0] = size;
     for (i = 1; i <= size; i++)
 		a[i] = init;
+		/*printf("(allocArray) ----> %p\n", a);*/
     return a+1;
 }
 void _checkIndexArray(long *a, long i)
 {
+	/*printf("(checkIndexArray) ----> %p\n", a);*/
 	if(i<0 || i>a[-1]) {
 		fprintf(stderr, "indice %ld excedido!\n", i);
 		exit(-1);

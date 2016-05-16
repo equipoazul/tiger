@@ -271,7 +271,7 @@ fun transExp(venv, tenv) =
         else {exp=arrayExp{size=(#exp tysize), init=(#exp tyinit)}, ty=TArray (#ty t)}
       end
     and trvar(SimpleVar s, nl) = (case tabBusca(s, venv) of 
-                                       SOME (Var {access=acc, ty=t, level=lv}) => {exp=simpleVar(acc, lv), ty=t}
+                                       SOME (Var {access=acc, ty=t, level=lv}) => (print ("aslñdkasñl -> "^ Int.toString(acc) ^ "\n"); {exp=simpleVar(acc, lv), ty=t})
                                       |SOME (VIntro {access=acc, level=lv}) => {exp=simpleVar(acc, lv), ty=TInt} 
                                       | _ => error("Variable inexistente", nl))
     (*fieldvar-> v.s*) 

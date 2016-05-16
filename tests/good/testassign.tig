@@ -1,0 +1,6 @@
+let
+   
+   var a : int := 34
+in
+   a
+end

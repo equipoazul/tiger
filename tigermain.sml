@@ -88,8 +88,8 @@ fun main(args) =
                                                                  else (i::remRedundantMoves is)
        | remRedundantMoves (i::is) = (i::remRedundantMoves is)
 
-		(*val _ = println("Fragmentos de string: " ^ Int.toString (List.length(str_frags)) ^ ": " ^ concatWith ", " (List.map (fn (l, s) => "(" ^ l ^ ", " ^ s ^ ")") str_frags))
-		val _ = println(tigertrans.Ir frags)   *)
+		val _ = println("Fragmentos de string: " ^ Int.toString (List.length(str_frags)) ^ ": " ^ concatWith ", " (List.map (fn (l, s) => "(" ^ l ^ ", " ^ s ^ ")") str_frags))
+		val _ = println(tigertrans.Ir frags)   
 
 		
 		fun canonizar n = tigercanon.traceSchedule o (tigercanon.basicBlocks n) o tigercanon.linearize
@@ -126,12 +126,13 @@ fun main(args) =
                           
                           val _ = print "\n\nCodigo despues del coloreo:\n"
                           (*TODO EN CASO DE DESESPERAR, BORRR EL remRedundantMoves POR LAS DUDAS FIXME*)
-                          val colprint = map remRedundantMoves (List.map (fn (x,y) => x) procExitedCode)
+                          (*val colprint = map remRedundantMoves (List.map (fn (x,y) => x) procExitedCode)*)
+                          val colprint = (List.map (fn (x,y) => x) procExitedCode)
                           val stringSection = map tigerframe.string str_frags
                           val globlSection = map tigerframe.globl (List.map name func_frags)
 	                        val codeSection = map (tigerassem.strAssem) (List.concat colprint)
 	                        
-	                        val allProgram = String.concat ([".data\n"] @ stringSection @ [".text\n"] @ globlSection @ codeSection)
+	                        val allProgram = String.concat ([".data\n"] @ stringSection @ [".text\n\t.globl _tigermain\n"] @ codeSection)
 	                        val _ = print allProgram
 	                        (* Pasamos el assembler a un archivo y lo linkeamos con gcc *)
                           val fd = TextIO.openOut "asgard.s"

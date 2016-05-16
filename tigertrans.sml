@@ -194,6 +194,10 @@ let
 	val i = unEx ind
 	val ra = newtemp()
 	val ri = newtemp()
+	val _ = print "Subscript Var arrr"
+	val _ = print (printExp a)
+	val _ = print (printExp i)
+	val _ = print "\n"
 in
 	Ex( ESEQ(seq[MOVE(TEMP ra, a),
 		MOVE(TEMP ri, i),
@@ -214,6 +218,10 @@ fun arrayExp{size, init} =
 let
 	val s = unEx size
 	val i = unEx init
+	val _ = print "alloc Var arrr"
+	val _ = print (printExp s)
+	val _ = print (printExp i)
+	val _ = print "\n"
 in
 	Ex (externalCall("_allocArray", [s, i]))
 end
@@ -297,7 +305,7 @@ fun postWhileForExp() = (popSalida(); ())
 
 fun whileExp {test: exp, body: exp, lev:level} =
 let
-	val cf = unCx test
+	val cf = unCx test   (*JUMP( NAME t, [t]) *)
 	val expb = unNx body
 	val (l1, l2, l3) = (newlabel(), newlabel(), topSalida())
 in

@@ -1,53 +1,27 @@
 .data
 .text
-	.globl	 _tigermain
+	.globl _tigermain
 _tigermain:
 
 	enter $0,$0x0
 
-	pushl %ecx
+	movl $0, %eax 
 
-	pushl %edx
+L3:
 
-	pushl $0
+L4:
 
-	pushl $10
-
-	call _allocArray
-
-	addl $8, %esp
-
-	popl %edx
-
-	popl %ecx
-
-	movl $2, %edi 
-
-	pushl %ecx
-
-	pushl %edx
-
-	pushl %edi
-
-	pushl %ebx
-
-	call _checkIndexArray
-
-	addl $8, %esp
-
-	popl %edx
-
-	popl %ecx
-
-	imul $4, %edi, %eax
-
-	addl %eax,%ebx
-
-	movl (%ebx), %eax
-
-	jmp L0
+L1:
 
 L0:
+
+	jmp L4
+
+L2:
+
+	jmp L3
+
+L5:
 
 	leave
 
