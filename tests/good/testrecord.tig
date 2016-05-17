@@ -1,0 +1,9 @@
+let
+  type arrtype1 = array of int
+  type rectype2 = {name : string, dates : arrtype1}
+  var rec2 := rectype2 {name="Allos", dates=arrtype1 [3] of 1900}
+in
+  rec2.dates[0] := 44;
+  rec2.dates[2] := 45; 
+  rec2.dates[2] 
+end

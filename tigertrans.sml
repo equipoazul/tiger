@@ -308,8 +308,10 @@ let
 	val cf = unCx test   (*JUMP( NAME t, [t]) *)
 	val expb = unNx body
 	val (l1, l2, l3) = (newlabel(), newlabel(), topSalida())
+	val _ = print ("Whileexp ets: l2 -> " ^ l2 ^ " l1 -> " ^ l1 ^ " ^ l3 -> " ^ l3 ^ "\n")
 in
-	Nx (seq[LABEL l1,
+	Nx (seq[JUMP(NAME l1, [l1]),
+	        LABEL l1,
 		        cf(l2,l3),
 		      LABEL l2,
 		         expb,
@@ -317,30 +319,31 @@ in
 		      LABEL l3])
 end
 
+
 fun forExp {lo, hi, var, body} =
 	let val var' = unEx var
 		val (l1, l2, lsal) = (newlabel(), newlabel(), topSalida())
 	in
 		Nx (seq(case hi of
 				Ex (CONST n) =>
-					if n = 999999 then (*haremos un while*)
-					   [MOVE (var', unEx lo),
-					    JUMP (NAME l2, [l2]),
-					    LABEL l1, 
-						    unNx body,
-						    MOVE (var', BINOP (PLUS, var', CONST 1)),
-					    LABEL l2,
-					    	CJUMP (GT, var', CONST n, lsal, l1),
-					    LABEL lsal]
-                    else 
-                        [MOVE (var', unEx lo),
-                         LABEL l2,
-                         	CJUMP (EQ, var', CONST n, lsal, l1),
-                         LABEL l1,
-                         	unNx body,
-                         	MOVE (var', BINOP (PLUS, var', CONST 1)),
-                         	JUMP (NAME l2, [l2]),
-                         LABEL lsal]
+					              if n = 999999 then (*haremos un while*)
+					                 [MOVE (var', unEx lo),
+					                  JUMP (NAME l2, [l2]),
+					                  LABEL l1, 
+						                  unNx body,
+						                  MOVE (var', BINOP (PLUS, var', CONST 1)),
+					                  LABEL l2,
+					                  	CJUMP (GT, var', CONST n, lsal, l1),
+					                  LABEL lsal]
+                        else 
+                            [MOVE (var', unEx lo),
+                             LABEL l2,
+                             	CJUMP (EQ, var', CONST n, lsal, l1),
+                             LABEL l1,
+                             	unNx body,
+                             	MOVE (var', BINOP (PLUS, var', CONST 1)),
+                             	JUMP (NAME l2, [l2]),
+                             LABEL lsal]
                 |_  => (*high no es CONST*)
                 		let val t = newtemp()
                 		in
@@ -369,6 +372,8 @@ fun ifThenExp{test, then'} =
 				      expThen,
 				    LABEL l2])
 	end
+
+
 
 fun ifThenElseExp {test,then',else'} =
 	let

@@ -126,8 +126,8 @@ fun main(args) =
                           
                           val _ = print "\n\nCodigo despues del coloreo:\n"
                           (*TODO EN CASO DE DESESPERAR, BORRR EL remRedundantMoves POR LAS DUDAS FIXME*)
-                          (*val colprint = map remRedundantMoves (List.map (fn (x,y) => x) procExitedCode)*)
-                          val colprint = (List.map (fn (x,y) => x) procExitedCode)
+                          val colprint = map remRedundantMoves (List.map (fn (x,y) => x) procExitedCode)
+                          (*val colprint = (List.map (fn (x,y) => x) procExitedCode)*)
                           val stringSection = map tigerframe.string str_frags
                           val globlSection = map tigerframe.globl (List.map name func_frags)
 	                        val codeSection = map (tigerassem.strAssem) (List.concat colprint)
