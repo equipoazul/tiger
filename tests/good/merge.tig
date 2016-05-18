@@ -8,14 +8,19 @@ let
          ord ("0") <= ord (s) & ord (s) <= ord ("9")
        function skipto () =
    	 while buffer = " " | buffer = "\n"
-   	   do buffer := getchar ()
+   	   do (buffer := getchar ();
+               print ("queso\n"))
    in skipto ();
       any.any := isdigit (buffer);
+      print("j3i3i3i3i3\n");
       while isdigit (buffer)
    	do (i := i * 10 + ord (buffer) - ord ("0");
-            buffer := getchar ());
+            buffer := getchar ();
+            print("l3 l00p?\n")
+	    );
       i
    end
+
 
  type list = {first : int, rest : list}
 
@@ -26,7 +31,7 @@ let
         then list{first=i,rest=readlist ()}
         else nil
    end
-
+ 
  function merge (a : list, b : list) : list =
    if a = nil then b
    else if b = nil then a
@@ -44,11 +49,11 @@ let
    end
 
  function printlist (l : list) =
-   if l = nil then print ("\n")
+   if l = nil then print ("LEUS PUTO")
    else (printint (l.first); print (" "); printlist (l.rest))
 
-   var list1 := readlist ()
-   var list2 := (buffer := getchar (); readlist ())
+  var list1 := readlist ()
+  var list2 := (buffer := getchar (); readlist ())
 
 in printlist (merge (list1,list2)); 0
 end

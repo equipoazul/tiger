@@ -609,7 +609,7 @@ struct
          else
             ();
          makeWorklist(); 
-         printTodo();
+         (*printTodo();*)
          if degreeInv() then () else raise Fail "Error en degreeInv";
          if simplifyInv() then () else raise Fail "Error en degreeInv";
          if freezeInv() then () else raise Fail "Error en degreeInv";

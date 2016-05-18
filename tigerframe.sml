@@ -46,8 +46,12 @@ val localsGap = ~4 			(* bytes *)
 val calldefs = [rv]
 val specialregs = [rv, fp, sp]
 val argregs = []
+(*
+ * Terminology:
+          o %eax, %ecx, %edx are "caller save" registers
+          o %ebp, %ebx, %esi, %edi are "callee save" registers*)
 val callersaves = ["ecx", "edx"]
-val calleesaves = [fp, sp, "ebx"]
+val calleesaves = ["ebx", "edi", "esi"]
 type register = string
 datatype access = InFrame of int | InReg of tigertemp.label
 
@@ -104,12 +108,14 @@ fun procEntryExit1 (frame,body) = body
 
 fun procEntryExit3 (frame:frame, instrs) = 
   let
+    val saveCalleeSaves = List.map (fn s => OPER{assem="pushl `s0\n", src=[s], dst=[], jump=NONE}) calleesaves
+    val restoreCalleeSaves = List.map (fn s => OPER{assem="popl `d0\n", src=[], dst=[s], jump=NONE}) (List.rev calleesaves)
     val label = List.hd(instrs)
     val prologo = [tigerassem.OPER {assem="enter $" ^ Int.toString((!(#actualLocal frame)) * (~4)) ^ ",$0x0\n", src=[], dst=[], jump=NONE}]
     val epilogo = [tigerassem.OPER {assem="leave\n", src=[], dst=[], jump=NONE},
                    tigerassem.OPER {assem="ret\n", src=[], dst=[], jump=NONE}]
   in
-    [label] @ prologo @ (List.tl(instrs)) @ epilogo
+    [label] @ prologo @ saveCalleeSaves @ (List.tl(instrs)) @ restoreCalleeSaves @ epilogo
   end
 
 

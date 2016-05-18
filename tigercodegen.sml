@@ -124,18 +124,18 @@ fun codegen frame stm =
                 (saveCallerSaves();
                 emit(OPER{assem="call "^n^"\n",
                     src=munchArgs args,
-                    dst=calldefs, jump=NONE});
+                    dst=calldefs, jump=NONE});                
                 if length args - length argregs>0 then
                     emit(OPER{assem="addl $"^
                             st(wSz*(length(args)-length(argregs)))^", %"^sp^"\n",
-                        src=[], dst=[rv]@callersaves, jump=NONE})
+                        src=[rv], dst=[rv]@callersaves, jump=NONE})
                 else ();
                 restoreCallerSaves())
             | EXP(CALL(e, args)) =>
                 (saveCallerSaves();
                 emit(OPER{assem="call `s0\n",
                     src=munchExp e::munchArgs args,
-                    dst=calldefs, jump=NONE});
+                    dst=calldefs, jump=NONE});  
                 if length args-length argregs>0 then
                     emit(OPER{assem="addl $"^
                             st(wSz*(length(args)-length(argregs)))^", `d0\n",
@@ -153,7 +153,6 @@ fun codegen frame stm =
                 let val e' = munchExp e
                 in  emit(OPER{assem="jmp `s0\n",
                         src=[e'], dst=[], jump=SOME l}) end
-                        (* TODO ACAAA PROBLEMA DEL 10 en test08 FIXME *)
             | CJUMP(relop, CONST c1, CONST c2, l1, l2) =>
                 let 
                     val tmp = tigertemp.newtemp()
@@ -162,7 +161,7 @@ fun codegen frame stm =
                 in
                     emit(OPER{assem="cmpl $" ^ st(c2) ^ ", `s0\n",
                               src=[tmp], dst=[], jump=NONE});
-                    emit(OPER{assem = relOp relop ^ l1 ^ "\n", 
+                    emit(OPER{assem = relOp(relop) ^ l1 ^ "\n", 
                               src = [],
                               dst = [],
                               jump = SOME [l1, l2]})
@@ -194,6 +193,8 @@ fun codegen frame stm =
                     emit(OPER{assem="popl `d0\n", src=[],
                                 dst=[s], jump=NONE})
             in  List.app emitcdefs (rev tigerframe.callersaves) end
+
+
         and munchArgs params =
             let fun munchArgsSt [] = []
                 | munchArgsSt(h::t) = 
@@ -324,14 +325,24 @@ fun codegen frame stm =
                         src=munchExp e1, dst=r});
                     emit(OPER{assem="subl `s0,`d0\n",
                         src=[munchExp e2, r], dst=[r], jump=NONE})))
+            | BINOP(MUL, CONST j, CONST i) =>
+              let 
+                  val t = tigertemp.newtemp()
+              in
+                result(fn r =>
+                    (emit(OPER{assem="movl $"^st(i)^",`d0\n",
+                        src=[], dst=[t], jump=NONE});
+                    emit(OPER{assem="imul $"^st(j)^", `s0, `d0\n",
+                        src=[t], dst=[r], jump=NONE})))
+              end
             | BINOP(MUL, e1, CONST i) =>
                 result(fn r =>
                     emit(OPER{assem="imul $"^st(i)^", `s0, `d0\n",
-                        src=[munchExp e1, r], dst=[r], jump=NONE}))
+                        src=[munchExp e1], dst=[r], jump=NONE}))
             | BINOP(MUL, CONST i, e2) =>
                 result(fn r =>
                     emit(OPER{assem="imul $"^st(i)^", `s0, `d0\n",
-                        src=[munchExp e2, r], dst=[r], jump=NONE}))
+                        src=[munchExp e2], dst=[r], jump=NONE}))
             | BINOP(MUL, e1, e2) =>
                 result(fn r =>
                     (emit(MOVE{assem="movl `s0,`d0\n",

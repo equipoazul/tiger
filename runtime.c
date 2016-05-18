@@ -134,7 +134,8 @@ void _checkNil(long* r)
 		exit(-1);
 	}
 }
-long _stringCompare(string *s, string *t)
+/*long _stringCompare(string *s, string *t)*/
+long _stringcmp(string *s, string *t)
 {
     int i;
     if(s == t)

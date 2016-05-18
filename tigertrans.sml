@@ -44,13 +44,22 @@ fun unEx (Ex e) = e
 		val r = newtemp()
 		val t = newlabel()
 		val f = newlabel()
+		val s = newlabel()
 	in
-		ESEQ(seq [MOVE(TEMP r, CONST 1),
+		(*ESEQ(seq [MOVE(TEMP r, CONST 1),
 			cf (t, f),
 			LABEL f,
 			MOVE(TEMP r, CONST 0),
 			LABEL t],
-			TEMP r)
+			TEMP r)*)
+		ESEQ(seq[cf (t, f),
+			       LABEL f,
+			       MOVE(TEMP r, CONST 0),
+			       JUMP (NAME s, [s]),
+			       LABEL t,
+			       MOVE(TEMP r, CONST 1),
+			       LABEL s],
+			       TEMP r)
 	end
 
 fun unNx (Ex e) = EXP e
