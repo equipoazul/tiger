@@ -64,7 +64,14 @@ fun codegen frame stm =
                 if t1=tigerframe.sp andalso t2=tigerframe.sp then
                     emit(OPER{assem="movl %esp, -"^Int.toString i^"(%esp)\n", src=[], dst=[], jump=NONE})
                 else
-                    emit(OPER{assem="movl -"^Int.toString i^"(`s0), `d0\n", src=[t1], dst=[t2], jump=NONE})
+                  let
+                    val _ = munchExp (BINOP(MINUS, TEMP t2, CONST i))
+                  in
+                    emit(MOVE{assem="movl `s0, `d0\n", src=t2, dst=t1})
+                  end
+                    (*emit(OPER{assem="movl -"^Int.toString i^"(`s0), `d0\n",
+                    * src=[t1], dst=[t2], jump=NONE})*)
+             (* TODO revisar este caso que debe ser como arriba *)
             | T.MOVE(TEMP t1, MEM(BINOP(PLUS, CONST i, TEMP t2))) =>
                 if t2=tigerframe.fp then
                     emit(OPER{assem="movl "^ st(i) ^ "(%ebp), `d0 \n",

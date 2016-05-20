@@ -1,0 +1,14 @@
+let
+    var N := 8
+    type intArray = array of int
+    var col := intArray [ N ] of 0
+
+/*    function printboard () =
+	  for i := 0 to (N-2)
+	      do print (if col[i]=0 then " O" else " .")*/
+
+in
+(for i := 0 to (N-2)
+do print (if col[i]=0 then " O" else " ."); 0)
+
+end

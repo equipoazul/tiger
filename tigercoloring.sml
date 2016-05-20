@@ -227,7 +227,9 @@ struct
                                                  ()
                                                end 
                                     | _ => ()
-                        val _ = (print("LIVE DEL NODO " ^ Int.toString(n) ^ " :\n"); Splayset.app (fn x => print(x ^ "\n")) (!live ))
+                        (*val _ = (print("LIVE DEL NODO " ^ Int.toString(n) ^ "
+                        * :\n"); Splayset.app (fn x => print(x ^ "\n")) (!live
+                        * ))*)
                         val _ = live := Splayset.union(!live, def)
                         val _ = List.map (fn d => case tabBusca(d, !(#tnode ig)) of
                                         NONE => raise Fail "El temp no esta en la tabla tnode (2)"
