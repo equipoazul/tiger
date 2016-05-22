@@ -110,7 +110,7 @@ long *_allocArray(long size, long init)
 }
 void _checkIndexArray(long *a, long i)
 {
-	printf("(checkIndexArray) ----> %p, %ld, %ld\n", a, i, a[-1]);
+	printf("(checkIndexArray) ----> %p, %ld, %ld, %p\n", a, i, a[-1], (a-1));
 	if(i<0 || i>a[-1]) {
 		fprintf(stderr, "indice %ld excedido!\n", i);
 		exit(-1);

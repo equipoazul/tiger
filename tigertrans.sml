@@ -25,7 +25,10 @@ fun newLevel{parent={parent, frame, level}, name} =
     frame=newFrame{name=name},
     level=level+1}
 fun allocArg{parent, frame, level} b = tigerframe.allocArg frame b
-fun allocLocal{parent, frame, level} b = tigerframe.allocLocal frame b
+(* cambiamos esto por la linea de abajo para que aguarde todas las variable en
+* el stack
+ fun allocLocal{parent, frame, level} b = tigerframe.allocLocal frame b*)
+fun allocLocal{parent, frame, level} b = tigerframe.allocLocal frame true
 fun formals{parent, frame, level} = tigerframe.formals frame
 
 datatype exp =

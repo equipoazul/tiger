@@ -65,9 +65,10 @@ fun codegen frame stm =
                     emit(OPER{assem="movl %esp, -"^Int.toString i^"(%esp)\n", src=[], dst=[], jump=NONE})
                 else
                   let
-                    val _ = munchExp (BINOP(MINUS, TEMP t2, CONST i))
+                    val e = (BINOP(MINUS, TEMP t2, CONST i))
                   in
-                    emit(MOVE{assem="movl `s0, `d0\n", src=t2, dst=t1})
+                    emit(OPER {assem="movl `s0, `d0\n", src=[munchExp e],
+                    dst=[t1], jump=NONE})
                   end
                     (*emit(OPER{assem="movl -"^Int.toString i^"(`s0), `d0\n",
                     * src=[t1], dst=[t2], jump=NONE})*)

@@ -1,0 +1,12 @@
+let
+    var N := 3
+    type intArray = array of string 
+    var col := intArray [ N ] of "ea\n"
+in
+(
+for i := 0 to (N - 1) do
+    print (col[i]); 
+0
+)
+
+end

@@ -1,0 +1,8 @@
+let
+    var N := 8
+
+in
+(for i := 0 to (N-5) do
+    print (".\n"); 0)
+
+end
