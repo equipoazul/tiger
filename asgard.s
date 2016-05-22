@@ -1,25 +1,29 @@
 .data
-L5:
+L4:
 	.long 2
 	.string " O"
 
-L6:
+L5:
 	.long 2
 	.string " ."
+
+L14:
+	.long 2
+	.string " O"
 
 L15:
 	.long 2
-	.string " O"
-
-L16:
-	.long 2
 	.string " ."
+
+L24:
+	.long 4
+	.string "\x0a"
 
 L25:
 	.long 4
 	.string "\x0a"
 
-L26:
+L28:
 	.long 4
 	.string "\x0a"
 
@@ -27,223 +31,11 @@ L29:
 	.long 4
 	.string "\x0a"
 
-L30:
-	.long 4
-	.string "\x0a"
-
 .text
 	.globl _tigermain
-printboard_L0:
-
-	enter $8,$0x0
-
-	pushl %ebx
-
-	pushl %edi
-
-	pushl %esi
-
-	movl 8(%ebp), %eax
-
-	addl $-4, %eax
-
-	movl $0, (%eax)
-
-	movl 8(%ebp), %eax
-
-	movl -4(%eax), %ebx
-
-	subl $1,%ebx
-
-	movl 8(%ebp), %eax
-
-	movl -4(%eax), %eax
-
-	cmpl %ebx,%eax
-
-	jle L28
-
-L1:
-
-	pushl %ecx
-
-	pushl %edx
-
-	pushl $L30
-
-	call print
-
-	addl $4, %esp
-
-	popl %edx
-
-	popl %ecx
-
-	jmp L31
-
-L28:
-
-	movl 8(%ebp), %eax
-
-	addl $-8, %eax
-
-	movl $0, (%eax)
-
-	movl 8(%ebp), %eax
-
-	movl -4(%eax), %esi
-
-	subl $1,%esi
-
-	movl 8(%ebp), %eax
-
-	movl -8(%eax), %eax
-
-	cmpl %esi,%eax
-
-	jle L24
-
-L2:
-
-	pushl %ecx
-
-	pushl %edx
-
-	pushl $L26
-
-	call print
-
-	addl $4, %esp
-
-	popl %edx
-
-	popl %ecx
-
-	movl 8(%ebp), %eax
-
-	movl -4(%eax), %eax
-
-	cmpl %eax,%ebx
-
-	je L1
-
-L27:
-
-	movl 8(%ebp), %ebx
-
-	addl $-4, %ebx
-
-	movl 8(%ebp), %eax
-
-	movl -4(%eax), %eax
-
-	addl $1, %eax
-
-	movl %eax, (%ebx)
-
-	jmp L28
-
-L24:
-
-	movl 8(%ebp), %eax
-
-	movl -12(%eax), %edi
-
-	movl -4(%ebp), %ebx
-
-	pushl %ecx
-
-	pushl %edx
-
-	pushl %ebx
-
-	pushl %edi
-
-	call _checkIndexArray
-
-	addl $8, %esp
-
-	popl %edx
-
-	popl %ecx
-
-	imul $4, %ebx, %eax
-
-	addl %eax,%edi
-
-	movl (%edi), %ebx
-
-	movl -8(%ebp), %eax
-
-	cmpl %ebx,%eax
-
-	je L20
-
-L21:
-
-	movl $L16, %eax
-
-L22:
-
-	pushl %ecx
-
-	pushl %edx
-
-	pushl %eax
-
-	call print
-
-	addl $4, %esp
-
-	popl %edx
-
-	popl %ecx
-
-	movl 8(%ebp), %eax
-
-	movl -8(%eax), %eax
-
-	cmpl %eax,%esi
-
-	je L2
-
-L23:
-
-	movl 8(%ebp), %ebx
-
-	addl $-8, %ebx
-
-	movl 8(%ebp), %eax
-
-	movl -8(%eax), %eax
-
-	addl $1, %eax
-
-	movl %eax, (%ebx)
-
-	jmp L24
-
-L20:
-
-	movl $L15, %eax
-
-	jmp L22
-
-L31:
-
-	popl %esi
-
-	popl %edi
-
-	popl %ebx
-
-	leave
-
-	ret
-
 _tigermain:
 
-	enter $20,$0x0
+	enter $28,$0x0
 
 	pushl %ebx
 
@@ -361,13 +153,31 @@ _tigermain:
 
 	movl %eax, (%ebx)
 
+	movl %ebp,%eax
+
+	addl $-24, %eax
+
+	movl $0, (%eax)
+
+	movl -4(%ebp), %ebx
+
+	subl $1,%ebx
+
+	movl -24(%ebp), %eax
+
+	cmpl %ebx,%eax
+
+	jle L27
+
+L0:
+
 	pushl %ecx
 
 	pushl %edx
 
-	pushl %ebp
+	pushl $L29
 
-	call printboard_L0
+	call print
 
 	addl $4, %esp
 
@@ -377,9 +187,143 @@ _tigermain:
 
 	movl $0, %eax 
 
-	jmp L32
+	jmp L30
 
-L32:
+L27:
+
+	movl %ebp,%eax
+
+	addl $-28, %eax
+
+	movl $0, (%eax)
+
+	movl -4(%ebp), %esi
+
+	subl $1,%esi
+
+	movl -28(%ebp), %eax
+
+	cmpl %esi,%eax
+
+	jle L23
+
+L1:
+
+	pushl %ecx
+
+	pushl %edx
+
+	pushl $L25
+
+	call print
+
+	addl $4, %esp
+
+	popl %edx
+
+	popl %ecx
+
+	movl -24(%ebp), %eax
+
+	cmpl %eax,%ebx
+
+	je L0
+
+L26:
+
+	movl %ebp,%ebx
+
+	addl $-24, %ebx
+
+	movl -24(%ebp), %eax
+
+	addl $1, %eax
+
+	movl %eax, (%ebx)
+
+	jmp L27
+
+L23:
+
+	movl -12(%ebp), %edi
+
+	movl -24(%ebp), %ebx
+
+	pushl %ecx
+
+	pushl %edx
+
+	pushl %ebx
+
+	pushl %edi
+
+	call _checkIndexArray
+
+	addl $8, %esp
+
+	popl %edx
+
+	popl %ecx
+
+	imul $4, %ebx, %eax
+
+	addl %eax,%edi
+
+	movl (%edi), %ebx
+
+	movl -28(%ebp), %eax
+
+	cmpl %ebx,%eax
+
+	je L19
+
+L20:
+
+	movl $L15, %eax
+
+L21:
+
+	pushl %ecx
+
+	pushl %edx
+
+	pushl %eax
+
+	call print
+
+	addl $4, %esp
+
+	popl %edx
+
+	popl %ecx
+
+	movl -28(%ebp), %eax
+
+	cmpl %eax,%esi
+
+	je L1
+
+L22:
+
+	movl %ebp,%ebx
+
+	addl $-28, %ebx
+
+	movl -28(%ebp), %eax
+
+	addl $1, %eax
+
+	movl %eax, (%ebx)
+
+	jmp L23
+
+L19:
+
+	movl $L14, %eax
+
+	jmp L21
+
+L30:
 
 	popl %esi
 
