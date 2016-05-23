@@ -341,16 +341,16 @@ fun codegen frame stm =
                     (emit(OPER{assem="movl $"^st(i)^",`d0\n",
                         src=[], dst=[t], jump=NONE});
                     emit(OPER{assem="imul $"^st(j)^", `s0, `d0\n",
-                        src=[t], dst=[r], jump=NONE})))
+                        src=[t, r], dst=[r], jump=NONE})))
               end
             | BINOP(MUL, e1, CONST i) =>
                 result(fn r =>
                     emit(OPER{assem="imul $"^st(i)^", `s0, `d0\n",
-                        src=[munchExp e1], dst=[r], jump=NONE}))
+                        src=[munchExp e1, r], dst=[r], jump=NONE}))
             | BINOP(MUL, CONST i, e2) =>
                 result(fn r =>
                     emit(OPER{assem="imul $"^st(i)^", `s0, `d0\n",
-                        src=[munchExp e2], dst=[r], jump=NONE}))
+                        src=[munchExp e2, r], dst=[r], jump=NONE}))
             | BINOP(MUL, e1, e2) =>
                 result(fn r =>
                     (emit(MOVE{assem="movl `s0,`d0\n",
