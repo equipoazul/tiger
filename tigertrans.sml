@@ -335,19 +335,19 @@ end
 
 fun forExp {lo, hi, var, body} =
     let val var' = unEx var
-        val (lin, l1, l2, lsal) = (newlabel(), newlabel(), newlabel(), topSalida())
+        val (l1, l2, lsal) = (newlabel(), newlabel(), topSalida())
     in
         Nx (seq(case hi of
                 Ex (CONST n) =>
-                                  if n = 999999 then (*haremos un while*)
-                                     [MOVE (var', unEx lo),
-                                      JUMP (NAME l2, [l2]),
-                                      LABEL l1, 
-                                          unNx body,
-                                          MOVE (var', BINOP (PLUS, var', CONST 1)),
-                                      LABEL l2,
-                                        CJUMP (GT, var', CONST n, lsal, l1),
-                                      LABEL lsal]
+                          if n = 999999 then (*haremos un while*)
+                             [MOVE (var', unEx lo),
+                              JUMP (NAME l2, [l2]),
+                              LABEL l1, 
+                                  unNx body,
+                                  MOVE (var', BINOP (PLUS, var', CONST 1)),
+                              LABEL l2,
+                                CJUMP (GT, var', CONST n, lsal, l1),
+                              LABEL lsal]
                         else 
                             [MOVE (var', unEx lo),
                              LABEL l2,
@@ -363,7 +363,7 @@ fun forExp {lo, hi, var, body} =
                         in
                             [MOVE (var', unEx lo),
                              MOVE (TEMP t, unEx hi),
-                             (*CJUMP (LE, TEMP t, var', l2, lsal),*)
+                             (*JUMP (LE, TEMP t, var', l2, lsal),*)
                              CJUMP (GT, TEMP t, var', lsal, l2),
                              LABEL l2,
                                 unNx body,
@@ -407,7 +407,7 @@ fun ifThenElseExp {test,then',else'} =
                        LABEL l3]), TEMP r))
 
     end
-
+    
 fun ifThenElseExpUnit {test,then',else'} =
     let
         val cf = unCx test

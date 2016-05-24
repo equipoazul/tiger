@@ -58,7 +58,7 @@ fun codegen frame stm =
               let
                   val assCall = munchExp (CALL e)
               in
-                  emit(MOVE{assem="movl `s0, `d0\n", src=rv, dst=t})
+                  emit(OPER{assem="movl `s0, `d0\n", src=[rv], dst=[t, rv], jump=NONE})
               end
             | T.MOVE(TEMP t1, MEM(BINOP(MINUS, TEMP t2, CONST i))) =>
                 if t1=tigerframe.sp andalso t2=tigerframe.sp then

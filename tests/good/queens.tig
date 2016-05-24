@@ -1,33 +1,28 @@
 /* A program to solve the 8-queens problem */
 
 let
-    var N := 8
+    var N := 4
 
     type intArray = array of int
 
-    var row := intArray [ N ] of 0
-    var col := intArray [ N ] of 0
-    var diag1 := intArray [N+N-1] of 0
-    var diag2 := intArray [N+N-1] of 0
+ function printint (i : int) =
+   let function f (i : int) =
+        if i > 0
+	then (f (i/10); print (chr (i-i/10*10+ord ("0"))))
+   in if i < 0 then (print ("-"); f (-i))
+      else if i>0 then f (i)
+      else print ("0")
+   end
 
-    function printboard () =
-       (for i := 0 to N-1
-	 do (for j := 0 to N-1
-	      do print (if col[i]=j then " O" else " .");
-	     print ("\n"));
-         print ("\n"))
 
-    function try (c : int) =
-(   for i := 0 to c do print ("."); print ("\n"); flush ();
-     if c=N
-     then printboard ()
-     else for r := 0 to N-1
-	   do if row[r]=0 & diag1[r+c]=0 & diag2[r+7-c]=0
-	           then (row[r] :=1; diag1[r+c] :=1; diag2[r+7-c] :=1;
-		         col[c] :=r;
-	                 try (c+1);
-			 row[r] :=0; diag1[r+c] :=0; diag2[r+7-c] :=0)
-
-)
+  function try (c : int) =
+    (if c=N
+     then print("1\n")
+     else for r := 0 to 2 do
+            (print("---->");
+            printint(c);
+            print("\n");
+            try (c+1)))
+          
  in try (0); 0
 end
