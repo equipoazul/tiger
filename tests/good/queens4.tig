@@ -8,20 +8,16 @@ let
     var diag1 := intArray [N+N-1] of 0
     var diag2 := intArray [N+N-1] of 0
 
-    /*function printboard () =
+    function printboard () =
        (for i := 0 to N-1
-	 do (for j := 0 to N-1
-	      do print (if col[i]=j then " O" else " .");
-	     print ("\n"));
-         print ("\n"))*/
+	  	    do (for j := 0 to N-1
+		        do print (if col[i]=j then " O" else " .");
+				print ("\n"));	
+       print ("\n"))
 
  in 
-(for i := 0 to N-1
-	 do (for j := 0 to N-1
-	      do print (if col[i]=j then " O" else " .");
-	     print ("\n"));
-         print ("\n");
- 0
-         
-)
+	 printboard();
+	 0
+       
+
 end

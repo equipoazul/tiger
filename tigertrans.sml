@@ -335,7 +335,7 @@ end
 
 fun forExp {lo, hi, var, body} =
     let val var' = unEx var
-        val (l1, l2, lsal) = (newlabel(), newlabel(), topSalida())
+        val (lin, l1, l2, lsal) = (newlabel(), newlabel(), newlabel(), topSalida())
     in
         Nx (seq(case hi of
                 Ex (CONST n) =>
@@ -363,7 +363,8 @@ fun forExp {lo, hi, var, body} =
                         in
                             [MOVE (var', unEx lo),
                              MOVE (TEMP t, unEx hi),
-                             CJUMP (LE, TEMP t, var', l2, lsal),
+                             (*CJUMP (LE, TEMP t, var', l2, lsal),*)
+                             CJUMP (GT, TEMP t, var', lsal, l2),
                              LABEL l2,
                                 unNx body,
                                 CJUMP (EQ, var', TEMP t, lsal, l1),

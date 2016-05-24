@@ -1,1731 +1,740 @@
+LetExp{decs=[VarDec{name=N,escape=true,typ=NONE,init=8}
+             TypeDec([{name=intArray,ty=ArrayTy(int)}])
+             VarDec{name=row,escape=false,typ=NONE,
+              init=ArrayExp{test=intArray,size=VarExp(SimpleVar(N)),init=0}}
+             VarDec{name=col,escape=true,typ=NONE,
+              init=ArrayExp{test=intArray,size=VarExp(SimpleVar(N)),init=0}}
+             VarDec{name=diag1,escape=false,typ=NONE,
+              init=ArrayExp{test=intArray,
+                    size=OpExp{
+                         left=OpExp{left=VarExp(SimpleVar(N)),oper=PlusOp,
+                               right=VarExp(SimpleVar(N))},oper=MinusOp,
+                          right=1},init=0}}
+             VarDec{name=diag2,escape=false,typ=NONE,
+              init=ArrayExp{test=intArray,
+                    size=OpExp{
+                         left=OpExp{left=VarExp(SimpleVar(N)),oper=PlusOp,
+                               right=VarExp(SimpleVar(N))},oper=MinusOp,
+                          right=1},init=0}}
+             FunctionDec([{name=printboard,params=[],result=NONE
+             body=SeqExp([ForExp{var=i,escape=false,lo=0,
+                          hi=OpExp{left=VarExp(SimpleVar(N)),oper=MinusOp,
+                              right=1},
+                          body=SeqExp([ForExp{var=j,escape=false,lo=0,
+                                       hi=OpExp{left=VarExp(SimpleVar(N)),
+                                           oper=MinusOp,right=1},
+                                       body=CallExp{func=print,
+                                            args=[IfExp{
+                                                  test=OpExp{
+                                                       left=VarExp(
+                                                             SubscriptVar(
+                                                              SimpleVar(col),
+                                                              VarExp(
+                                                               SimpleVar(i)))),
+                                                        oper=EqOp,
+                                                        right=VarExp(
+                                                               SimpleVar(j))},
+                                                  then'=" O",else'=" ."}]}}
+                               CallExp{func=print,args=["\x0a"]}])}
+                  CallExp{func=print,args=["\x0a"]}])}])],
+ body=SeqExp([CallExp{func=printboard,args=[]}0])}
+alloc Var arrrMEM BINOP (PLUS, TEMP ebp,CONST ~4)CONST 0
+alloc Var arrrMEM BINOP (PLUS, TEMP ebp,CONST ~4)CONST 0
+alloc Var arrrBINOP (MINUS, BINOP (PLUS, MEM BINOP (PLUS, TEMP ebp,CONST ~4),MEM BINOP (PLUS, TEMP ebp,CONST ~4)),CONST 1)CONST 0
+alloc Var arrrBINOP (MINUS, BINOP (PLUS, MEM BINOP (PLUS, TEMP ebp,CONST ~4),MEM BINOP (PLUS, TEMP ebp,CONST ~4)),CONST 1)CONST 0
+Subscript Var arrrMEM BINOP (PLUS, MEM BINOP (PLUS, TEMP ebp,CONST 8),CONST ~8)TEMP T8
+IF EXP!!!
+Subscript Var arrrMEM BINOP (PLUS, MEM BINOP (PLUS, TEMP ebp,CONST 8),CONST ~8)TEMP T8
+IF EXP!!!
 bien!
-FLOWGRAPH: 
-[23, 22, 21, 20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0, ]
-[<22, 23><21, 22><20, 21><19, 20><18, 19><17, 18><16, 17><15, 16><14, 15><13, 14><12, 13><11, 12><10, 11><9, 10><8, 9><7, 8><6, 7><5, 6><4, 5><3, 4><2, 3><1, 2><0, 1>]
-Use:
-8 -> T0 
-9 -> T1 
-10 -> T19 
-11 -> T2 
-12 -> T18 
-13 -> T3 
-14 -> T17 
-15 -> T4 
-16 -> T16 
-17 -> T5 
-18 -> T15 
-19 -> T6 
-20 -> T14 
-21 -> T13 
-Def:
-1 -> T0 
-2 -> T1 
-3 -> T2 
-4 -> T3 
-5 -> T4 
-6 -> T5 
-7 -> T6 
-8 -> T19 
-9 -> T19 
-10 -> T18 
-11 -> T18 
-12 -> T17 
-13 -> T17 
-14 -> T16 
-15 -> T16 
-16 -> T15 
-17 -> T15 
-18 -> T14 
-19 -> T14 
-20 -> T13 
-21 -> eax 
-LIVE QUE VIENE POR ARRASTRE
-LIVE DEL NODO 23
-LIVE DEL NODO 22
-LIVE DEL NODO 21
-T13
-LIVE DEL NODO 20
-T14
-LIVE DEL NODO 19
-T6
-LIVE DEL NODO 18
-T15
-T6
-LIVE DEL NODO 17
-T5
-T6
-LIVE DEL NODO 16
-T16
-T5
-T6
-LIVE DEL NODO 15
-T4
-T5
-T6
-LIVE DEL NODO 14
-T17
-T4
-T5
-T6
-LIVE DEL NODO 13
-T3
-T4
-T5
-T6
-LIVE DEL NODO 12
-T18
-T3
-T4
-T5
-T6
-LIVE DEL NODO 11
-T2
-T3
-T4
-T5
-T6
-LIVE DEL NODO 10
-T19
-T2
-T3
-T4
-T5
-T6
-LIVE DEL NODO 9
-T1
-T2
-T3
-T4
-T5
-T6
-LIVE DEL NODO 8
-T0
-T1
-T2
-T3
-T4
-T5
-T6
-LIVE DEL NODO 7
-T0
-T1
-T2
-T3
-T4
-T5
-LIVE DEL NODO 6
-T0
-T1
-T2
-T3
-T4
-LIVE DEL NODO 5
-T0
-T1
-T2
-T3
-LIVE DEL NODO 4
-T0
-T1
-T2
-LIVE DEL NODO 3
-T0
-T1
-LIVE DEL NODO 2
-T0
-LIVE DEL NODO 1
-LIVE DEL NODO 0
-=========================================
-adjSet: 
-(0, 1)
-(0, 9)
-(0, 10)
-(0, 11)
-(0, 12)
-(0, 13)
-(1, 0)
-(1, 8)
-(1, 9)
-(1, 10)
-(1, 11)
-(1, 12)
-(1, 13)
-(3, 13)
-(4, 12)
-(4, 13)
-(5, 11)
-(5, 12)
-(5, 13)
-(6, 10)
-(6, 11)
-(6, 12)
-(6, 13)
-(7, 9)
-(7, 10)
-(7, 11)
-(7, 12)
-(7, 13)
-(8, 1)
-(8, 9)
-(8, 10)
-(8, 11)
-(8, 12)
-(8, 13)
-(9, 0)
-(9, 1)
-(9, 7)
-(9, 8)
-(9, 10)
-(9, 11)
-(9, 12)
-(9, 13)
-(10, 0)
-(10, 1)
-(10, 6)
-(10, 7)
-(10, 8)
-(10, 9)
-(10, 11)
-(10, 12)
-(10, 13)
-(11, 0)
-(11, 1)
-(11, 5)
-(11, 6)
-(11, 7)
-(11, 8)
-(11, 9)
-(11, 10)
-(11, 12)
-(11, 13)
-(12, 0)
-(12, 1)
-(12, 4)
-(12, 5)
-(12, 6)
-(12, 7)
-(12, 8)
-(12, 9)
-(12, 10)
-(12, 11)
-(12, 13)
-(13, 0)
-(13, 1)
-(13, 3)
-(13, 4)
-(13, 5)
-(13, 6)
-(13, 7)
-(13, 8)
-(13, 9)
-(13, 10)
-(13, 11)
-(13, 12)
-spillWorkList: 
-0(T0)
-1(T1)
-8(T19)
-9(T2)
-10(T3)
-11(T4)
-12(T5)
-13(T6)
-freezeWorkList: 
-2(T13)
-3(T14)
-4(T15)
-5(T16)
-6(T17)
-7(T18)
-simplifyWorkList: 
-coalescedNodes: 
-coloredNodes: 
-spilledNodes: 
-worklistMoves: 
-(T0, T19)
-(T13, eax)
-(T14, T13)
-(T15, T14)
-(T16, T15)
-(T17, T16)
-(T18, T17)
-(T19, T18)
-activeMoves: 
-coalescedMoves: 
-frozenMoves: 
-constrainedMoves: 
-Degrees: 20
-19 (esi) -> 0
-18 (edx) -> 0
-17 (edi) -> 0
-16 (ecx) -> 0
-15 (ebx) -> 0
-14 (eax) -> 0
-13 (T6) -> 12
-12 (T5) -> 11
-11 (T4) -> 10
-10 (T3) -> 9
-9 (T2) -> 8
-8 (T19) -> 6
-7 (T18) -> 5
-6 (T17) -> 4
-5 (T16) -> 3
-4 (T15) -> 2
-3 (T14) -> 1
-2 (T13) -> 0
-1 (T1) -> 7
-0 (T0) -> 6
-Termine 
+Fragmentos de string: 10: (_tigermain, ), (printboard_L0, ), (L32, "\x0a"), (L31, "\x0a"), (L27, "\x0a"), (L26, "\x0a"), (L16, " ."), (L15, " O"), (L6, " ."), (L5, " O"), 
+L5:	" O"
+L6:	" ."
+L15:	" O"
+L16:	" ."
+L26:	"\x0a"
+L27:	"\x0a"
+L31:	"\x0a"
+L32:	"\x0a"
+printboard_L0:
+SEQ(
+ SEQ(
+  LABEL L28,
+  SEQ(
+   MOVE(
+    TEMP T8,
+    CONST 0),
+   SEQ(
+    MOVE(
+     TEMP T21,
+     BINOP(MINUS,
+      MEM(
+       BINOP(PLUS,
+        MEM(
+         BINOP(PLUS,
+          TEMP ebp,
+          CONST 8)),
+        CONST ~4)),
+      CONST 1)),
+    SEQ(
+     CJUMP(LE,
+      TEMP T21,
+      TEMP T8,
+      L30,L1),
+     SEQ(
+      LABEL L30,
+      SEQ(
+       SEQ(
+        SEQ(
+         LABEL L23,
+         SEQ(
+          MOVE(
+           TEMP T10,
+           CONST 0),
+          SEQ(
+           MOVE(
+            TEMP T20,
+            BINOP(MINUS,
+             MEM(
+              BINOP(PLUS,
+               MEM(
+                BINOP(PLUS,
+                 TEMP ebp,
+                 CONST 8)),
+               CONST ~4)),
+             CONST 1)),
+           SEQ(
+            CJUMP(LE,
+             TEMP T20,
+             TEMP T10,
+             L25,L2),
+            SEQ(
+             LABEL L25,
+             SEQ(
+              SEQ(
+               MOVE(
+                TEMP T19,
+                ESEQ(
+                 SEQ(
+                  CJUMP(EQ,
+                   ESEQ(
+                    SEQ(
+                     MOVE(
+                      TEMP T15,
+                      MEM(
+                       BINOP(PLUS,
+                        MEM(
+                         BINOP(PLUS,
+                          TEMP ebp,
+                          CONST 8)),
+                        CONST ~8))),
+                     SEQ(
+                      MOVE(
+                       TEMP T16,
+                       TEMP T8),
+                      EXP(
+                       CALL(
+                        NAME _checkIndexArray,
+                         TEMP T15,
+                         TEMP T16)))),
+                    MEM(
+                     BINOP(PLUS,
+                      TEMP T15,
+                      BINOP(MUL,
+                       TEMP T16,
+                       CONST 4)))),
+                   TEMP T10,
+                   L20,L21),
+                  SEQ(
+                   LABEL L20,
+                   SEQ(
+                    MOVE(
+                     TEMP T18,
+                     NAME L15),
+                    SEQ(
+                     JUMP(                      NAME L22),
+                     SEQ(
+                      LABEL L21,
+                      SEQ(
+                       MOVE(
+                        TEMP T18,
+                        NAME L16),
+                       LABEL L22)))))),
+                 TEMP T18)),
+               EXP(
+                CALL(
+                 NAME print,
+                  TEMP T19))),
+              SEQ(
+               CJUMP(EQ,
+                TEMP T10,
+                TEMP T20,
+                L2,L24),
+               SEQ(
+                LABEL L24,
+                SEQ(
+                 MOVE(
+                  TEMP T10,
+                  BINOP(PLUS,
+                   TEMP T10,
+                   CONST 1)),
+                 SEQ(
+                  JUMP(                   NAME L25),
+                  LABEL L2)))))))))),
+        EXP(
+         CALL(
+          NAME print,
+           NAME L27))),
+       SEQ(
+        CJUMP(EQ,
+         TEMP T8,
+         TEMP T21,
+         L1,L29),
+        SEQ(
+         LABEL L29,
+         SEQ(
+          MOVE(
+           TEMP T8,
+           BINOP(PLUS,
+            TEMP T8,
+            CONST 1)),
+          SEQ(
+           JUMP(            NAME L30),
+           LABEL L1)))))))))),
+ EXP(
+  CALL(
+   NAME print,
+    NAME L32)))
+_tigermain:
+MOVE(
+ TEMP eax,
+ ESEQ(
+  SEQ(
+   MOVE(
+    MEM(
+     BINOP(PLUS,
+      TEMP ebp,
+      CONST ~4)),
+    CONST 8),
+   SEQ(
+    MOVE(
+     TEMP T0,
+     CALL(
+      NAME _allocArray,
+       MEM(
+        BINOP(PLUS,
+         TEMP ebp,
+         CONST ~4)),
+       CONST 0)),
+    SEQ(
+     MOVE(
+      MEM(
+       BINOP(PLUS,
+        TEMP ebp,
+        CONST ~8)),
+      CALL(
+       NAME _allocArray,
+        MEM(
+         BINOP(PLUS,
+          TEMP ebp,
+          CONST ~4)),
+        CONST 0)),
+     SEQ(
+      MOVE(
+       TEMP T3,
+       CALL(
+        NAME _allocArray,
+         BINOP(MINUS,
+          BINOP(PLUS,
+           MEM(
+            BINOP(PLUS,
+             TEMP ebp,
+             CONST ~4)),
+           MEM(
+            BINOP(PLUS,
+             TEMP ebp,
+             CONST ~4))),
+          CONST 1),
+         CONST 0)),
+      MOVE(
+       TEMP T6,
+       CALL(
+        NAME _allocArray,
+         BINOP(MINUS,
+          BINOP(PLUS,
+           MEM(
+            BINOP(PLUS,
+             TEMP ebp,
+             CONST ~4)),
+           MEM(
+            BINOP(PLUS,
+             TEMP ebp,
+             CONST ~4))),
+          CONST 1),
+         CONST 0)))))),
+  ESEQ(
+   EXP(
+    CALL(
+     NAME printboard_L0,
+      TEMP ebp)),
+   CONST 0)))
 
-CODIGO: 
-0	LABEL {assem = _tigermain:
- lab = _tigermain}
-1	OPER {assem = movl `d0,$1
- dst = T0 , src = , _ jump = _}
-2	OPER {assem = movl `d0,$2
- dst = T1 , src = , _ jump = _}
-3	OPER {assem = movl `d0,$3
- dst = T2 , src = , _ jump = _}
-4	OPER {assem = movl `d0,$4
- dst = T3 , src = , _ jump = _}
-5	OPER {assem = movl `d0,$5
- dst = T4 , src = , _ jump = _}
-6	OPER {assem = movl `d0,$6
- dst = T5 , src = , _ jump = _}
-7	OPER {assem = movl `d0,$7
- dst = T6 , src = , _ jump = _}
-8	MOVE {assem = movlE1 `d0,`s0
-, dst =T19, src =T0}
-9	OPER {assem = addl `d0,`s0
- dst = T19 , src = T1 , _ jump = _}
-10	MOVE {assem = movlE1 `d0,`s0
-, dst =T18, src =T19}
-11	OPER {assem = addl `d0,`s0
- dst = T18 , src = T2 , _ jump = _}
-12	MOVE {assem = movlE1 `d0,`s0
-, dst =T17, src =T18}
-13	OPER {assem = addl `d0,`s0
- dst = T17 , src = T3 , _ jump = _}
-14	MOVE {assem = movlE1 `d0,`s0
-, dst =T16, src =T17}
-15	OPER {assem = addl `d0,`s0
- dst = T16 , src = T4 , _ jump = _}
-16	MOVE {assem = movlE1 `d0,`s0
-, dst =T15, src =T16}
-17	OPER {assem = addl `d0,`s0
- dst = T15 , src = T5 , _ jump = _}
-18	MOVE {assem = movlE1 `d0,`s0
-, dst =T14, src =T15}
-19	OPER {assem = addl `d0,`s0
- dst = T14 , src = T6 , _ jump = _}
-20	MOVE {assem = movl `d0,`s0
-, dst =T13, src =T14}
-21	MOVE {assem = movl `d0,`s0
-, dst =eax, src =T13}
-22	OPER {assem = jmp L0
- dst = , src = , _ jump = _}
-23	LABEL {assem = L0:
- lab = L0}
-
-=========================================
-METO (T13, eax) en coalescedMoves
-Meto en el alias -> T13 eax
-METO (T15, T14) en coalescedMoves
-Meto en el alias -> T14 T15
-GRADO DE T6 ANTES DEL DEC: 12
-GRADO DE T6 DESPUES DEL DEC: 11
-METO (T16, T15) en coalescedMoves
-Meto en el alias -> T15 T16
-GRADO DE T5 ANTES DEL DEC: 11
-GRADO DE T5 DESPUES DEL DEC: 10
-GRADO DE T6 ANTES DEL DEC: 11
-GRADO DE T6 DESPUES DEL DEC: 10
-METO (T17, T16) en coalescedMoves
-Meto en el alias -> T16 T17
-GRADO DE T4 ANTES DEL DEC: 10
-GRADO DE T4 DESPUES DEL DEC: 9
-GRADO DE T5 ANTES DEL DEC: 10
-GRADO DE T5 DESPUES DEL DEC: 9
-GRADO DE T6 ANTES DEL DEC: 10
-GRADO DE T6 DESPUES DEL DEC: 9
-METO (T18, T17) en coalescedMoves
-Meto en el alias -> T17 T18
-GRADO DE T3 ANTES DEL DEC: 9
-GRADO DE T3 DESPUES DEL DEC: 8
-GRADO DE T4 ANTES DEL DEC: 9
-GRADO DE T4 DESPUES DEL DEC: 8
-GRADO DE T5 ANTES DEL DEC: 9
-GRADO DE T5 DESPUES DEL DEC: 8
-GRADO DE T6 ANTES DEL DEC: 9
-GRADO DE T6 DESPUES DEL DEC: 8
-coalescedNodes: 
-2(T13)
-3(T14)
-4(T15)
-5(T16)
-6(T17)
-coalescedMoves: 
-(T13, eax)
-(T15, T14)
-(T16, T15)
-(T17, T16)
-(T18, T17)
-coalescedNodes: 
-2(T13)
-3(T14)
-4(T15)
-5(T16)
-6(T17)
-coalescedMoves: 
-(T13, eax)
-(T15, T14)
-(T16, T15)
-(T17, T16)
-(T18, T17)
-METO eax en simplifyWorklist (freezeMoves)
-METO T18 en el stack
-GRADO DE T2 ANTES DEL DEC: 8
-GRADO DE T2 DESPUES DEL DEC: 7
-GRADO DE T3 ANTES DEL DEC: 8
-GRADO DE T3 DESPUES DEL DEC: 7
-GRADO DE T4 ANTES DEL DEC: 8
-GRADO DE T4 DESPUES DEL DEC: 7
-GRADO DE T5 ANTES DEL DEC: 8
-GRADO DE T5 DESPUES DEL DEC: 7
-GRADO DE T6 ANTES DEL DEC: 8
-GRADO DE T6 DESPUES DEL DEC: 7
-METO eax en el stack
-PRIORITIES: (0.333333333333, T0), (0.285714285714, T1), (0.5, T19), (0.25, T2), (0.222222222222, T3), (0.2, T4), (0.181818181818, T5), (0.166666666667, T6), 
-----> spilleWorkList: T0, T1, T19, T2, T3, T4, T5, T6, 
-SPILLEO T6
-METO T6 en el stack
-GRADO DE T0 ANTES DEL DEC: 6
-GRADO DE T0 DESPUES DEL DEC: 5
-GRADO DE T1 ANTES DEL DEC: 7
-GRADO DE T1 DESPUES DEL DEC: 6
-GRADO DE T19 ANTES DEL DEC: 6
-GRADO DE T19 DESPUES DEL DEC: 5
-GRADO DE T2 ANTES DEL DEC: 7
-GRADO DE T2 DESPUES DEL DEC: 6
-GRADO DE T3 ANTES DEL DEC: 7
-GRADO DE T3 DESPUES DEL DEC: 6
-GRADO DE T4 ANTES DEL DEC: 7
-GRADO DE T4 DESPUES DEL DEC: 6
-GRADO DE T5 ANTES DEL DEC: 7
-GRADO DE T5 DESPUES DEL DEC: 6
-METO (T0, T19) en coalescedMoves
-Meto en el alias -> T19 T0
-GRADO DE T1 ANTES DEL DEC: 6
-GRADO DE T1 DESPUES DEL DEC: 5
-METO T1 en simplifyWorklist (decrementDegree)
-GRADO DE T2 ANTES DEL DEC: 6
-GRADO DE T2 DESPUES DEL DEC: 5
-METO T2 en simplifyWorklist (decrementDegree)
-GRADO DE T3 ANTES DEL DEC: 6
-GRADO DE T3 DESPUES DEL DEC: 5
-METO T3 en simplifyWorklist (decrementDegree)
-GRADO DE T4 ANTES DEL DEC: 6
-GRADO DE T4 DESPUES DEL DEC: 5
-METO T4 en simplifyWorklist (decrementDegree)
-GRADO DE T5 ANTES DEL DEC: 6
-GRADO DE T5 DESPUES DEL DEC: 5
-METO T5 en simplifyWorklist (decrementDegree)
-METO T0 en simplifyWorklist (addWorklist)
-coalescedNodes: 
-2(T13)
-3(T14)
-4(T15)
-5(T16)
-6(T17)
-8(T19)
-coalescedMoves: 
-(T0, T19)
-(T13, eax)
-(T15, T14)
-(T16, T15)
-(T17, T16)
-(T18, T17)
-METO T0 en el stack
-GRADO DE T1 ANTES DEL DEC: 5
-GRADO DE T1 DESPUES DEL DEC: 4
-GRADO DE T2 ANTES DEL DEC: 5
-GRADO DE T2 DESPUES DEL DEC: 4
-GRADO DE T3 ANTES DEL DEC: 5
-GRADO DE T3 DESPUES DEL DEC: 4
-GRADO DE T4 ANTES DEL DEC: 5
-GRADO DE T4 DESPUES DEL DEC: 4
-GRADO DE T5 ANTES DEL DEC: 5
-GRADO DE T5 DESPUES DEL DEC: 4
-METO T1 en el stack
-GRADO DE T2 ANTES DEL DEC: 4
-GRADO DE T2 DESPUES DEL DEC: 3
-GRADO DE T3 ANTES DEL DEC: 4
-GRADO DE T3 DESPUES DEL DEC: 3
-GRADO DE T4 ANTES DEL DEC: 4
-GRADO DE T4 DESPUES DEL DEC: 3
-GRADO DE T5 ANTES DEL DEC: 4
-GRADO DE T5 DESPUES DEL DEC: 3
-METO T2 en el stack
-GRADO DE T3 ANTES DEL DEC: 3
-GRADO DE T3 DESPUES DEL DEC: 2
-GRADO DE T4 ANTES DEL DEC: 3
-GRADO DE T4 DESPUES DEL DEC: 2
-GRADO DE T5 ANTES DEL DEC: 3
-GRADO DE T5 DESPUES DEL DEC: 2
-METO T3 en el stack
-GRADO DE T4 ANTES DEL DEC: 2
-GRADO DE T4 DESPUES DEL DEC: 1
-GRADO DE T5 ANTES DEL DEC: 2
-GRADO DE T5 DESPUES DEL DEC: 1
-METO T4 en el stack
-GRADO DE T5 ANTES DEL DEC: 1
-GRADO DE T5 DESPUES DEL DEC: 0
-METO T5 en el stack
-----> spilledNodes antes de assign: 
-wALiasColor ===============> noColor
-wALiasColor ===============> noColor
-wALiasColor ===============> noColor
-wALiasColor ===============> noColor
-wALiasColor ===============> noColor
-wALiasColor ===============> noColor
-wALiasColor ===============> noColor
-wALiasColor ===============> noColor
-wALiasColor ===============> noColor
-wALiasColor ===============> noColor
-wALiasColor ===============> noColor
-Asigne a T5 el color eax
-Alias de T5:T5
-wALiasColor ===============> noColor
-wALiasColor ===============> noColor
-wALiasColor ===============> noColor
-wALiasColor ===============> noColor
-wALiasColor ===============> noColor
-wALiasColor ===============> noColor
-wALiasColor ===============> noColor
-wALiasColor ===============> noColor
-wALiasColor ===============> eax
-wALiasColor ===============> noColor
-Asigne a T4 el color ebx
-Alias de T4:T4
-wALiasColor ===============> noColor
-wALiasColor ===============> noColor
-wALiasColor ===============> noColor
-wALiasColor ===============> noColor
-wALiasColor ===============> noColor
-wALiasColor ===============> noColor
-wALiasColor ===============> ebx
-wALiasColor ===============> eax
-wALiasColor ===============> noColor
-Asigne a T3 el color ecx
-Alias de T3:T3
-wALiasColor ===============> noColor
-wALiasColor ===============> noColor
-wALiasColor ===============> noColor
-wALiasColor ===============> noColor
-wALiasColor ===============> ecx
-wALiasColor ===============> ebx
-wALiasColor ===============> eax
-wALiasColor ===============> noColor
-Asigne a T2 el color edx
-Alias de T2:T2
-wALiasColor ===============> noColor
-wALiasColor ===============> noColor
-wALiasColor ===============> edx
-wALiasColor ===============> ecx
-wALiasColor ===============> ebx
-wALiasColor ===============> eax
-wALiasColor ===============> noColor
-Asigne a T1 el color edi
-Alias de T1:T1
-wALiasColor ===============> edi
-wALiasColor ===============> edx
-wALiasColor ===============> ecx
-wALiasColor ===============> ebx
-wALiasColor ===============> eax
-wALiasColor ===============> noColor
-Asigne a T0 el color esi
-Alias de T0:T0
-wALiasColor ===============> esi
-wALiasColor ===============> edi
-wALiasColor ===============> noColor
-wALiasColor ===============> noColor
-wALiasColor ===============> noColor
-wALiasColor ===============> noColor
-wALiasColor ===============> noColor
-wALiasColor ===============> esi
-wALiasColor ===============> edx
-wALiasColor ===============> ecx
-wALiasColor ===============> ebx
-wALiasColor ===============> eax
-METO T6 en spilledNodes 
-T0
-T1
-T14
-T15
-T16
-T17
-T18
-T19
-T2
-T3
-T4
-T5
-Finnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn
-Asigne a eax el color eax
-Alias de eax:eax
-wALiasColor ===============> edx
-wALiasColor ===============> ecx
-wALiasColor ===============> ebx
-wALiasColor ===============> eax
-wALiasColor ===============> noColor
-Asigne a T18 el color edi
-Alias de T18:T18
-(ALIAS) Asigne a T13 el color eax
-(ALIAS) Asigne a T14 el color edi
-(ALIAS) Asigne a T15 el color edi
-(ALIAS) Asigne a T16 el color edi
-(ALIAS) Asigne a T17 el color edi
-(ALIAS) Asigne a T19 el color esi
-----> spilledNodes despues de assign: 
-13(T6)
-REESCRITURA
-----> spilledNodes en rewrite: 
-13(T6)
-TEMPORALES NUEVOS SPILLEADOS: 
-TEMPORALES NUEVOS CREADOS: T20, T21, 
-FLOWGRAPH: 
-[25, 24, 23, 22, 21, 20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0, ]
-[<24, 25><23, 24><22, 23><21, 22><20, 21><19, 20><18, 19><17, 18><16, 17><15, 16><14, 15><13, 14><12, 13><11, 12><10, 11><9, 10><8, 9><7, 8><6, 7><5, 6><4, 5><3, 4><2, 3><1, 2><0, 1>]
-Use:
-8 -> T20 
-9 -> T0 
-10 -> T1 
-11 -> T19 
-12 -> T2 
-13 -> T18 
-14 -> T3 
-15 -> T17 
-16 -> T4 
-17 -> T16 
-18 -> T5 
-19 -> T15 
-21 -> T21 
-22 -> T14 
-23 -> T13 
-Def:
-1 -> T0 
-2 -> T1 
-3 -> T2 
-4 -> T3 
-5 -> T4 
-6 -> T5 
-7 -> T20 
-9 -> T19 
-10 -> T19 
-11 -> T18 
-12 -> T18 
-13 -> T17 
-14 -> T17 
-15 -> T16 
-16 -> T16 
-17 -> T15 
-18 -> T15 
-19 -> T14 
-20 -> T21 
-21 -> T14 
-22 -> T13 
-23 -> eax 
-LIVE QUE VIENE POR ARRASTRE
-LIVE DEL NODO 25
-LIVE DEL NODO 24
-LIVE DEL NODO 23
-T13
-LIVE DEL NODO 22
-T14
-LIVE DEL NODO 21
-T21
-LIVE DEL NODO 20
-LIVE DEL NODO 19
-T15
-LIVE DEL NODO 18
-T5
-LIVE DEL NODO 17
-T16
-T5
-LIVE DEL NODO 16
-T4
-T5
-LIVE DEL NODO 15
-T17
-T4
-T5
-LIVE DEL NODO 14
-T3
-T4
-T5
-LIVE DEL NODO 13
-T18
-T3
-T4
-T5
-LIVE DEL NODO 12
-T2
-T3
-T4
-T5
-LIVE DEL NODO 11
-T19
-T2
-T3
-T4
-T5
-LIVE DEL NODO 10
-T1
-T2
-T3
-T4
-T5
-LIVE DEL NODO 9
-T0
-T1
-T2
-T3
-T4
-T5
-LIVE DEL NODO 8
-T0
-T1
-T2
-T20
-T3
-T4
-T5
-LIVE DEL NODO 7
-T0
-T1
-T2
-T3
-T4
-T5
-LIVE DEL NODO 6
-T0
-T1
-T2
-T3
-T4
-LIVE DEL NODO 5
-T0
-T1
-T2
-T3
-LIVE DEL NODO 4
-T0
-T1
-T2
-LIVE DEL NODO 3
-T0
-T1
-LIVE DEL NODO 2
-T0
-LIVE DEL NODO 1
-LIVE DEL NODO 0
-METO T21 en simplifyWorklist (makeWorkList)
-=========================================
-adjSet: 
-(0, 1)
-(0, 9)
-(0, 10)
-(0, 12)
-(0, 13)
-(0, 14)
-(1, 0)
-(1, 8)
-(1, 9)
-(1, 10)
-(1, 12)
-(1, 13)
-(1, 14)
-(4, 14)
-(5, 13)
-(5, 14)
-(6, 12)
-(6, 13)
-(6, 14)
-(7, 9)
-(7, 12)
-(7, 13)
-(7, 14)
-(8, 1)
-(8, 9)
-(8, 12)
-(8, 13)
-(8, 14)
-(9, 0)
-(9, 1)
-(9, 7)
-(9, 8)
-(9, 10)
-(9, 12)
-(9, 13)
-(9, 14)
-(10, 0)
-(10, 1)
-(10, 9)
-(10, 12)
-(10, 13)
-(10, 14)
-(12, 0)
-(12, 1)
-(12, 6)
-(12, 7)
-(12, 8)
-(12, 9)
-(12, 10)
-(12, 13)
-(12, 14)
-(13, 0)
-(13, 1)
-(13, 5)
-(13, 6)
-(13, 7)
-(13, 8)
-(13, 9)
-(13, 10)
-(13, 12)
-(13, 14)
-(14, 0)
-(14, 1)
-(14, 4)
-(14, 5)
-(14, 6)
-(14, 7)
-(14, 8)
-(14, 9)
-(14, 10)
-(14, 12)
-(14, 13)
-spillWorkList: 
-0(T0)
-1(T1)
-9(T2)
-10(T20)
-12(T3)
-13(T4)
-14(T5)
-freezeWorkList: 
-2(T13)
-3(T14)
-4(T15)
-5(T16)
-6(T17)
-7(T18)
-8(T19)
-simplifyWorkList: 
-11(T21)
-coalescedNodes: 
-coloredNodes: 
-spilledNodes: 
-worklistMoves: 
-(T0, T19)
-(T13, eax)
-(T14, T13)
-(T15, T14)
-(T16, T15)
-(T17, T16)
-(T18, T17)
-(T19, T18)
-activeMoves: 
-coalescedMoves: 
-frozenMoves: 
-constrainedMoves: 
-Degrees: 21
-20 (esi) -> 0
-19 (edx) -> 0
-18 (edi) -> 0
-17 (ecx) -> 0
-16 (ebx) -> 0
-15 (eax) -> 0
-14 (T5) -> 11
-13 (T4) -> 10
-12 (T3) -> 9
-11 (T21) -> 0
-10 (T20) -> 6
-9 (T2) -> 8
-8 (T19) -> 5
-7 (T18) -> 4
-6 (T17) -> 3
-5 (T16) -> 2
-4 (T15) -> 1
-3 (T14) -> 0
-2 (T13) -> 0
-1 (T1) -> 7
-0 (T0) -> 6
-Termine 
-
-CODIGO: 
-0	LABEL {assem = _tigermain:
- lab = _tigermain}
-1	OPER {assem = movl `d0,$1
- dst = T0 , src = , _ jump = _}
-2	OPER {assem = movl `d0,$2
- dst = T1 , src = , _ jump = _}
-3	OPER {assem = movl `d0,$3
- dst = T2 , src = , _ jump = _}
-4	OPER {assem = movl `d0,$4
- dst = T3 , src = , _ jump = _}
-5	OPER {assem = movl `d0,$5
- dst = T4 , src = , _ jump = _}
-6	OPER {assem = movl `d0,$6
- dst = T5 , src = , _ jump = _}
-7	OPER {assem = movl `d0,$7
- dst = T20 , src = , _ jump = _}
-8	OPER {assem = movl 16(%ebp), `s0 dst = , src = T20 , _ jump = _}
-9	MOVE {assem = movlE1 `d0,`s0
-, dst =T19, src =T0}
-10	OPER {assem = addl `d0,`s0
- dst = T19 , src = T1 , _ jump = _}
-11	MOVE {assem = movlE1 `d0,`s0
-, dst =T18, src =T19}
-12	OPER {assem = addl `d0,`s0
- dst = T18 , src = T2 , _ jump = _}
-13	MOVE {assem = movlE1 `d0,`s0
-, dst =T17, src =T18}
-14	OPER {assem = addl `d0,`s0
- dst = T17 , src = T3 , _ jump = _}
-15	MOVE {assem = movlE1 `d0,`s0
-, dst =T16, src =T17}
-16	OPER {assem = addl `d0,`s0
- dst = T16 , src = T4 , _ jump = _}
-17	MOVE {assem = movlE1 `d0,`s0
-, dst =T15, src =T16}
-18	OPER {assem = addl `d0,`s0
- dst = T15 , src = T5 , _ jump = _}
-19	MOVE {assem = movlE1 `d0,`s0
-, dst =T14, src =T15}
-20	OPER {assem = movl `d0, 16(%ebp) dst = T21 , src = , _ jump = _}
-21	OPER {assem = addl `d0,`s0
- dst = T14 , src = T21 , _ jump = _}
-22	MOVE {assem = movl `d0,`s0
-, dst =T13, src =T14}
-23	MOVE {assem = movl `d0,`s0
-, dst =eax, src =T13}
-24	OPER {assem = jmp L0
- dst = , src = , _ jump = _}
-25	LABEL {assem = L0:
- lab = L0}
-
-=========================================
-METO T21 en el stack
-METO (T13, eax) en coalescedMoves
-Meto en el alias -> T13 eax
-METO (T14, T13) en coalescedMoves
-Meto en el alias -> T14 eax
-METO (T16, T15) en coalescedMoves
-Meto en el alias -> T15 T16
-GRADO DE T5 ANTES DEL DEC: 11
-GRADO DE T5 DESPUES DEL DEC: 10
-METO (T17, T16) en coalescedMoves
-Meto en el alias -> T16 T17
-GRADO DE T4 ANTES DEL DEC: 10
-GRADO DE T4 DESPUES DEL DEC: 9
-GRADO DE T5 ANTES DEL DEC: 10
-GRADO DE T5 DESPUES DEL DEC: 9
-METO (T18, T17) en coalescedMoves
-Meto en el alias -> T17 T18
-GRADO DE T3 ANTES DEL DEC: 9
-GRADO DE T3 DESPUES DEL DEC: 8
-GRADO DE T4 ANTES DEL DEC: 9
-GRADO DE T4 DESPUES DEL DEC: 8
-GRADO DE T5 ANTES DEL DEC: 9
-GRADO DE T5 DESPUES DEL DEC: 8
-METO (T19, T18) en coalescedMoves
-Meto en el alias -> T18 T19
-GRADO DE T2 ANTES DEL DEC: 8
-GRADO DE T2 DESPUES DEL DEC: 7
-GRADO DE T3 ANTES DEL DEC: 8
-GRADO DE T3 DESPUES DEL DEC: 7
-GRADO DE T4 ANTES DEL DEC: 8
-GRADO DE T4 DESPUES DEL DEC: 7
-GRADO DE T5 ANTES DEL DEC: 8
-GRADO DE T5 DESPUES DEL DEC: 7
-coalescedNodes: 
-2(T13)
-3(T14)
-4(T15)
-5(T16)
-6(T17)
-7(T18)
-coalescedMoves: 
-(T13, eax)
-(T14, T13)
-(T16, T15)
-(T17, T16)
-(T18, T17)
-(T19, T18)
-coalescedNodes: 
-2(T13)
-3(T14)
-4(T15)
-5(T16)
-6(T17)
-7(T18)
-coalescedMoves: 
-(T13, eax)
-(T14, T13)
-(T16, T15)
-(T17, T16)
-(T18, T17)
-(T19, T18)
-METO eax en simplifyWorklist (freezeMoves)
-METO T19 en el stack
-GRADO DE T1 ANTES DEL DEC: 7
-GRADO DE T1 DESPUES DEL DEC: 6
-GRADO DE T2 ANTES DEL DEC: 7
-GRADO DE T2 DESPUES DEL DEC: 6
-GRADO DE T3 ANTES DEL DEC: 7
-GRADO DE T3 DESPUES DEL DEC: 6
-GRADO DE T4 ANTES DEL DEC: 7
-GRADO DE T4 DESPUES DEL DEC: 6
-GRADO DE T5 ANTES DEL DEC: 7
-GRADO DE T5 DESPUES DEL DEC: 6
-METO eax en el stack
-PRIORITIES: (0.333333333333, T0), (0.285714285714, T1), (0.25, T2), (0.333333333333, T20), (0.222222222222, T3), (0.2, T4), (0.181818181818, T5), 
-----> spilleWorkList: T0, T1, T2, T20, T3, T4, T5, 
-SPILLEO T5
-METO T5 en el stack
-GRADO DE T0 ANTES DEL DEC: 6
-GRADO DE T0 DESPUES DEL DEC: 5
-METO T0 en simplifyWorklist (decrementDegree)
-GRADO DE T1 ANTES DEL DEC: 6
-GRADO DE T1 DESPUES DEL DEC: 5
-METO T1 en simplifyWorklist (decrementDegree)
-GRADO DE T2 ANTES DEL DEC: 6
-GRADO DE T2 DESPUES DEL DEC: 5
-METO T2 en simplifyWorklist (decrementDegree)
-GRADO DE T20 ANTES DEL DEC: 6
-GRADO DE T20 DESPUES DEL DEC: 5
-METO T20 en simplifyWorklist (decrementDegree)
-GRADO DE T3 ANTES DEL DEC: 6
-GRADO DE T3 DESPUES DEL DEC: 5
-METO T3 en simplifyWorklist (decrementDegree)
-GRADO DE T4 ANTES DEL DEC: 6
-GRADO DE T4 DESPUES DEL DEC: 5
-METO T4 en simplifyWorklist (decrementDegree)
-METO T0 en el stack
-GRADO DE T1 ANTES DEL DEC: 5
-GRADO DE T1 DESPUES DEL DEC: 4
-GRADO DE T2 ANTES DEL DEC: 5
-GRADO DE T2 DESPUES DEL DEC: 4
-GRADO DE T20 ANTES DEL DEC: 5
-GRADO DE T20 DESPUES DEL DEC: 4
-GRADO DE T3 ANTES DEL DEC: 5
-GRADO DE T3 DESPUES DEL DEC: 4
-GRADO DE T4 ANTES DEL DEC: 5
-GRADO DE T4 DESPUES DEL DEC: 4
-METO T1 en el stack
-GRADO DE T2 ANTES DEL DEC: 4
-GRADO DE T2 DESPUES DEL DEC: 3
-GRADO DE T20 ANTES DEL DEC: 4
-GRADO DE T20 DESPUES DEL DEC: 3
-GRADO DE T3 ANTES DEL DEC: 4
-GRADO DE T3 DESPUES DEL DEC: 3
-GRADO DE T4 ANTES DEL DEC: 4
-GRADO DE T4 DESPUES DEL DEC: 3
-METO T2 en el stack
-GRADO DE T20 ANTES DEL DEC: 3
-GRADO DE T20 DESPUES DEL DEC: 2
-GRADO DE T3 ANTES DEL DEC: 3
-GRADO DE T3 DESPUES DEL DEC: 2
-GRADO DE T4 ANTES DEL DEC: 3
-GRADO DE T4 DESPUES DEL DEC: 2
-METO T20 en el stack
-GRADO DE T3 ANTES DEL DEC: 2
-GRADO DE T3 DESPUES DEL DEC: 1
-GRADO DE T4 ANTES DEL DEC: 2
-GRADO DE T4 DESPUES DEL DEC: 1
-METO T3 en el stack
-GRADO DE T4 ANTES DEL DEC: 1
-GRADO DE T4 DESPUES DEL DEC: 0
-METO T4 en el stack
-----> spilledNodes antes de assign: 
-wALiasColor ===============> noColor
-wALiasColor ===============> noColor
-wALiasColor ===============> noColor
-wALiasColor ===============> noColor
-wALiasColor ===============> noColor
-wALiasColor ===============> noColor
-wALiasColor ===============> noColor
-wALiasColor ===============> noColor
-wALiasColor ===============> noColor
-wALiasColor ===============> noColor
-Asigne a T4 el color eax
-Alias de T4:T4
-wALiasColor ===============> noColor
-wALiasColor ===============> noColor
-wALiasColor ===============> noColor
-wALiasColor ===============> noColor
-wALiasColor ===============> noColor
-wALiasColor ===============> noColor
-wALiasColor ===============> noColor
-wALiasColor ===============> eax
-wALiasColor ===============> noColor
-Asigne a T3 el color ebx
-Alias de T3:T3
-wALiasColor ===============> noColor
-wALiasColor ===============> noColor
-wALiasColor ===============> noColor
-wALiasColor ===============> ebx
-wALiasColor ===============> eax
-wALiasColor ===============> noColor
-Asigne a T20 el color ecx
-Alias de T20:T20
-wALiasColor ===============> noColor
-wALiasColor ===============> noColor
-wALiasColor ===============> noColor
-wALiasColor ===============> noColor
-wALiasColor ===============> ecx
-wALiasColor ===============> ebx
-wALiasColor ===============> eax
-wALiasColor ===============> noColor
-Asigne a T2 el color edx
-Alias de T2:T2
-wALiasColor ===============> noColor
-wALiasColor ===============> noColor
-wALiasColor ===============> edx
-wALiasColor ===============> ecx
-wALiasColor ===============> ebx
-wALiasColor ===============> eax
-wALiasColor ===============> noColor
-Asigne a T1 el color edi
-Alias de T1:T1
-wALiasColor ===============> edi
-wALiasColor ===============> edx
-wALiasColor ===============> ecx
-wALiasColor ===============> ebx
-wALiasColor ===============> eax
-wALiasColor ===============> noColor
-Asigne a T0 el color esi
-Alias de T0:T0
-wALiasColor ===============> esi
-wALiasColor ===============> edi
-wALiasColor ===============> noColor
-wALiasColor ===============> noColor
-wALiasColor ===============> noColor
-wALiasColor ===============> noColor
-wALiasColor ===============> noColor
-wALiasColor ===============> edx
-wALiasColor ===============> ecx
-wALiasColor ===============> ebx
-wALiasColor ===============> eax
-METO T5 en spilledNodes 
-T0
-T1
-T15
-T16
-T17
-T18
-T19
-T2
-T20
-T3
-T4
-Finnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn
-Asigne a eax el color eax
-Alias de eax:eax
-wALiasColor ===============> edi
-wALiasColor ===============> edx
-wALiasColor ===============> ebx
-wALiasColor ===============> eax
-wALiasColor ===============> noColor
-Asigne a T19 el color ecx
-Alias de T19:T19
-Asigne a T21 el color eax
-Alias de T21:T21
-(ALIAS) Asigne a T13 el color eax
-(ALIAS) Asigne a T14 el color eax
-(ALIAS) Asigne a T15 el color ecx
-(ALIAS) Asigne a T16 el color ecx
-(ALIAS) Asigne a T17 el color ecx
-(ALIAS) Asigne a T18 el color ecx
-----> spilledNodes despues de assign: 
-14(T5)
-REESCRITURA
-----> spilledNodes en rewrite: 
-14(T5)
-TEMPORALES NUEVOS SPILLEADOS: 
-TEMPORALES NUEVOS CREADOS: T22, T23, 
-FLOWGRAPH: 
-[27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0, ]
-[<26, 27><25, 26><24, 25><23, 24><22, 23><21, 22><20, 21><19, 20><18, 19><17, 18><16, 17><15, 16><14, 15><13, 14><12, 13><11, 12><10, 11><9, 10><8, 9><7, 8><6, 7><5, 6><4, 5><3, 4><2, 3><1, 2><0, 1>]
-Use:
-7 -> T22 
-9 -> T20 
-10 -> T0 
-11 -> T1 
-12 -> T19 
-13 -> T2 
-14 -> T18 
-15 -> T3 
-16 -> T17 
-17 -> T4 
-18 -> T16 
-20 -> T23 
-21 -> T15 
-23 -> T21 
-24 -> T14 
-25 -> T13 
-Def:
-1 -> T0 
-2 -> T1 
-3 -> T2 
-4 -> T3 
-5 -> T4 
-6 -> T22 
-8 -> T20 
-10 -> T19 
-11 -> T19 
-12 -> T18 
-13 -> T18 
-14 -> T17 
-15 -> T17 
-16 -> T16 
-17 -> T16 
-18 -> T15 
-19 -> T23 
-20 -> T15 
-21 -> T14 
-22 -> T21 
-23 -> T14 
-24 -> T13 
-25 -> eax 
-LIVE QUE VIENE POR ARRASTRE
-LIVE DEL NODO 27
-LIVE DEL NODO 26
-LIVE DEL NODO 25
-T13
-LIVE DEL NODO 24
-T14
-LIVE DEL NODO 23
-T21
-LIVE DEL NODO 22
-LIVE DEL NODO 21
-T15
-LIVE DEL NODO 20
-T23
-LIVE DEL NODO 19
-LIVE DEL NODO 18
-T16
-LIVE DEL NODO 17
-T4
-LIVE DEL NODO 16
-T17
-T4
-LIVE DEL NODO 15
-T3
-T4
-LIVE DEL NODO 14
-T18
-T3
-T4
-LIVE DEL NODO 13
-T2
-T3
-T4
-LIVE DEL NODO 12
-T19
-T2
-T3
-T4
-LIVE DEL NODO 11
-T1
-T2
-T3
-T4
-LIVE DEL NODO 10
-T0
-T1
-T2
-T3
-T4
-LIVE DEL NODO 9
-T0
-T1
-T2
-T20
-T3
-T4
-LIVE DEL NODO 8
-T0
-T1
-T2
-T3
-T4
-LIVE DEL NODO 7
-T0
-T1
-T2
-T22
-T3
-T4
-LIVE DEL NODO 6
-T0
-T1
-T2
-T3
-T4
-LIVE DEL NODO 5
-T0
-T1
-T2
-T3
-LIVE DEL NODO 4
-T0
-T1
-T2
-LIVE DEL NODO 3
-T0
-T1
-LIVE DEL NODO 2
-T0
-LIVE DEL NODO 1
-LIVE DEL NODO 0
-METO T20 en simplifyWorklist (makeWorkList)
-METO T21 en simplifyWorklist (makeWorkList)
-METO T22 en simplifyWorklist (makeWorkList)
-METO T23 en simplifyWorklist (makeWorkList)
-=========================================
-adjSet: 
-(0, 1)
-(0, 9)
-(0, 10)
-(0, 12)
-(0, 14)
-(0, 15)
-(1, 0)
-(1, 8)
-(1, 9)
-(1, 10)
-(1, 12)
-(1, 14)
-(1, 15)
-(5, 15)
-(6, 14)
-(6, 15)
-(7, 9)
-(7, 14)
-(7, 15)
-(8, 1)
-(8, 9)
-(8, 14)
-(8, 15)
-(9, 0)
-(9, 1)
-(9, 7)
-(9, 8)
-(9, 10)
-(9, 12)
-(9, 14)
-(9, 15)
-(10, 0)
-(10, 1)
-(10, 9)
-(10, 14)
-(10, 15)
-(12, 0)
-(12, 1)
-(12, 9)
-(12, 14)
-(12, 15)
-(14, 0)
-(14, 1)
-(14, 6)
-(14, 7)
-(14, 8)
-(14, 9)
-(14, 10)
-(14, 12)
-(14, 15)
-(15, 0)
-(15, 1)
-(15, 5)
-(15, 6)
-(15, 7)
-(15, 8)
-(15, 9)
-(15, 10)
-(15, 12)
-(15, 14)
-spillWorkList: 
-0(T0)
-1(T1)
-9(T2)
-14(T3)
-15(T4)
-freezeWorkList: 
-2(T13)
-3(T14)
-4(T15)
-5(T16)
-6(T17)
-7(T18)
-8(T19)
-simplifyWorkList: 
-10(T20)
-11(T21)
-12(T22)
-13(T23)
-coalescedNodes: 
-coloredNodes: 
-spilledNodes: 
-worklistMoves: 
-(T0, T19)
-(T13, eax)
-(T14, T13)
-(T15, T14)
-(T16, T15)
-(T17, T16)
-(T18, T17)
-(T19, T18)
-activeMoves: 
-coalescedMoves: 
-frozenMoves: 
-constrainedMoves: 
-Degrees: 22
-21 (esi) -> 0
-20 (edx) -> 0
-19 (edi) -> 0
-18 (ecx) -> 0
-17 (ebx) -> 0
-16 (eax) -> 0
-15 (T4) -> 10
-14 (T3) -> 9
-13 (T23) -> 0
-12 (T22) -> 5
-11 (T21) -> 0
-10 (T20) -> 5
-9 (T2) -> 8
-8 (T19) -> 4
-7 (T18) -> 3
-6 (T17) -> 2
-5 (T16) -> 1
-4 (T15) -> 0
-3 (T14) -> 0
-2 (T13) -> 0
-1 (T1) -> 7
-0 (T0) -> 6
-Termine 
-
-CODIGO: 
-0	LABEL {assem = _tigermain:
- lab = _tigermain}
-1	OPER {assem = movl `d0,$1
- dst = T0 , src = , _ jump = _}
-2	OPER {assem = movl `d0,$2
- dst = T1 , src = , _ jump = _}
-3	OPER {assem = movl `d0,$3
- dst = T2 , src = , _ jump = _}
-4	OPER {assem = movl `d0,$4
- dst = T3 , src = , _ jump = _}
-5	OPER {assem = movl `d0,$5
- dst = T4 , src = , _ jump = _}
-6	OPER {assem = movl `d0,$6
- dst = T22 , src = , _ jump = _}
-7	OPER {assem = movl 20(%ebp), `s0 dst = , src = T22 , _ jump = _}
-8	OPER {assem = movl `d0,$7
- dst = T20 , src = , _ jump = _}
-9	OPER {assem = movl 16(%ebp), `s0 dst = , src = T20 , _ jump = _}
-10	MOVE {assem = movlE1 `d0,`s0
-, dst =T19, src =T0}
-11	OPER {assem = addl `d0,`s0
- dst = T19 , src = T1 , _ jump = _}
-12	MOVE {assem = movlE1 `d0,`s0
-, dst =T18, src =T19}
-13	OPER {assem = addl `d0,`s0
- dst = T18 , src = T2 , _ jump = _}
-14	MOVE {assem = movlE1 `d0,`s0
-, dst =T17, src =T18}
-15	OPER {assem = addl `d0,`s0
- dst = T17 , src = T3 , _ jump = _}
-16	MOVE {assem = movlE1 `d0,`s0
-, dst =T16, src =T17}
-17	OPER {assem = addl `d0,`s0
- dst = T16 , src = T4 , _ jump = _}
-18	MOVE {assem = movlE1 `d0,`s0
-, dst =T15, src =T16}
-19	OPER {assem = movl `d0, 20(%ebp) dst = T23 , src = , _ jump = _}
-20	OPER {assem = addl `d0,`s0
- dst = T15 , src = T23 , _ jump = _}
-21	MOVE {assem = movlE1 `d0,`s0
-, dst =T14, src =T15}
-22	OPER {assem = movl `d0, 16(%ebp) dst = T21 , src = , _ jump = _}
-23	OPER {assem = addl `d0,`s0
- dst = T14 , src = T21 , _ jump = _}
-24	MOVE {assem = movl `d0,`s0
-, dst =T13, src =T14}
-25	MOVE {assem = movl `d0,`s0
-, dst =eax, src =T13}
-26	OPER {assem = jmp L0
- dst = , src = , _ jump = _}
-27	LABEL {assem = L0:
- lab = L0}
-
-=========================================
-METO T20 en el stack
-GRADO DE T0 ANTES DEL DEC: 6
-GRADO DE T0 DESPUES DEL DEC: 5
-GRADO DE T1 ANTES DEL DEC: 7
-GRADO DE T1 DESPUES DEL DEC: 6
-GRADO DE T2 ANTES DEL DEC: 8
-GRADO DE T2 DESPUES DEL DEC: 7
-GRADO DE T3 ANTES DEL DEC: 9
-GRADO DE T3 DESPUES DEL DEC: 8
-GRADO DE T4 ANTES DEL DEC: 10
-GRADO DE T4 DESPUES DEL DEC: 9
-METO T21 en el stack
-METO T22 en el stack
-GRADO DE T0 ANTES DEL DEC: 5
-GRADO DE T0 DESPUES DEL DEC: 4
-GRADO DE T1 ANTES DEL DEC: 6
-GRADO DE T1 DESPUES DEL DEC: 5
-METO T1 en simplifyWorklist (decrementDegree)
-GRADO DE T2 ANTES DEL DEC: 7
-GRADO DE T2 DESPUES DEL DEC: 6
-GRADO DE T3 ANTES DEL DEC: 8
-GRADO DE T3 DESPUES DEL DEC: 7
-GRADO DE T4 ANTES DEL DEC: 9
-GRADO DE T4 DESPUES DEL DEC: 8
-METO T1 en el stack
-GRADO DE T0 ANTES DEL DEC: 4
-GRADO DE T0 DESPUES DEL DEC: 3
-GRADO DE T19 ANTES DEL DEC: 4
-GRADO DE T19 DESPUES DEL DEC: 3
-GRADO DE T2 ANTES DEL DEC: 6
-GRADO DE T2 DESPUES DEL DEC: 5
-METO T2 en simplifyWorklist (decrementDegree)
-GRADO DE T3 ANTES DEL DEC: 7
-GRADO DE T3 DESPUES DEL DEC: 6
-GRADO DE T4 ANTES DEL DEC: 8
-GRADO DE T4 DESPUES DEL DEC: 7
-METO T2 en el stack
-GRADO DE T0 ANTES DEL DEC: 3
-GRADO DE T0 DESPUES DEL DEC: 2
-GRADO DE T18 ANTES DEL DEC: 3
-GRADO DE T18 DESPUES DEL DEC: 2
-GRADO DE T19 ANTES DEL DEC: 3
-GRADO DE T19 DESPUES DEL DEC: 2
-GRADO DE T3 ANTES DEL DEC: 6
-GRADO DE T3 DESPUES DEL DEC: 5
-METO T3 en simplifyWorklist (decrementDegree)
-GRADO DE T4 ANTES DEL DEC: 7
-GRADO DE T4 DESPUES DEL DEC: 6
-METO T23 en el stack
-METO T3 en el stack
-GRADO DE T0 ANTES DEL DEC: 2
-GRADO DE T0 DESPUES DEL DEC: 1
-GRADO DE T17 ANTES DEL DEC: 2
-GRADO DE T17 DESPUES DEL DEC: 1
-GRADO DE T18 ANTES DEL DEC: 2
-GRADO DE T18 DESPUES DEL DEC: 1
-GRADO DE T19 ANTES DEL DEC: 2
-GRADO DE T19 DESPUES DEL DEC: 1
-GRADO DE T4 ANTES DEL DEC: 6
-GRADO DE T4 DESPUES DEL DEC: 5
-METO T4 en simplifyWorklist (decrementDegree)
-METO T4 en el stack
-GRADO DE T0 ANTES DEL DEC: 1
-GRADO DE T0 DESPUES DEL DEC: 0
-GRADO DE T16 ANTES DEL DEC: 1
-GRADO DE T16 DESPUES DEL DEC: 0
-GRADO DE T17 ANTES DEL DEC: 1
-GRADO DE T17 DESPUES DEL DEC: 0
-GRADO DE T18 ANTES DEL DEC: 1
-GRADO DE T18 DESPUES DEL DEC: 0
-GRADO DE T19 ANTES DEL DEC: 1
-GRADO DE T19 DESPUES DEL DEC: 0
-METO (T0, T19) en coalescedMoves
-Meto en el alias -> T19 T0
-METO (T13, eax) en coalescedMoves
-Meto en el alias -> T13 eax
-METO (T14, T13) en coalescedMoves
-Meto en el alias -> T14 eax
-METO (T15, T14) en coalescedMoves
-Meto en el alias -> T15 eax
-METO (T16, T15) en coalescedMoves
-Meto en el alias -> T16 eax
-METO (T17, T16) en coalescedMoves
-Meto en el alias -> T17 eax
-METO (T18, T17) en coalescedMoves
-Meto en el alias -> T18 eax
-METO (T19, T18) en coalescedMoves
-Meto en el alias -> T0 eax
-coalescedNodes: 
-0(T0)
-2(T13)
-3(T14)
-4(T15)
-5(T16)
-6(T17)
-7(T18)
-8(T19)
-coalescedMoves: 
-(T0, T19)
-(T13, eax)
-(T14, T13)
-(T15, T14)
-(T16, T15)
-(T17, T16)
-(T18, T17)
-(T19, T18)
-----> spilledNodes antes de assign: 
-wALiasColor ===============> eax
-wALiasColor ===============> noColor
-wALiasColor ===============> eax
-wALiasColor ===============> eax
-wALiasColor ===============> eax
-wALiasColor ===============> eax
-wALiasColor ===============> noColor
-wALiasColor ===============> noColor
-wALiasColor ===============> noColor
-wALiasColor ===============> noColor
-Asigne a T4 el color ebx
-Alias de T4:T4
-wALiasColor ===============> eax
-wALiasColor ===============> noColor
-wALiasColor ===============> eax
-wALiasColor ===============> eax
-wALiasColor ===============> eax
-wALiasColor ===============> noColor
-wALiasColor ===============> noColor
-wALiasColor ===============> noColor
-wALiasColor ===============> ebx
-Asigne a T3 el color ecx
-Alias de T3:T3
-Asigne a T23 el color eax
-Alias de T23:T23
-wALiasColor ===============> eax
-wALiasColor ===============> noColor
-wALiasColor ===============> eax
-wALiasColor ===============> eax
-wALiasColor ===============> noColor
-wALiasColor ===============> noColor
-wALiasColor ===============> ecx
-wALiasColor ===============> ebx
-Asigne a T2 el color edx
-Alias de T2:T2
-wALiasColor ===============> eax
-wALiasColor ===============> eax
-wALiasColor ===============> edx
-wALiasColor ===============> noColor
-wALiasColor ===============> noColor
-wALiasColor ===============> ecx
-wALiasColor ===============> ebx
-Asigne a T1 el color edi
-Alias de T1:T1
-wALiasColor ===============> eax
-wALiasColor ===============> edi
-wALiasColor ===============> edx
-wALiasColor ===============> ecx
-wALiasColor ===============> ebx
-Asigne a T22 el color esi
-Alias de T22:T22
-Asigne a T21 el color eax
-Alias de T21:T21
-wALiasColor ===============> eax
-wALiasColor ===============> edi
-wALiasColor ===============> edx
-wALiasColor ===============> ecx
-wALiasColor ===============> ebx
-Asigne a T20 el color esi
-Alias de T20:T20
-(ALIAS) Asigne a T0 el color eax
-(ALIAS) Asigne a T13 el color eax
-(ALIAS) Asigne a T14 el color eax
-(ALIAS) Asigne a T15 el color eax
-(ALIAS) Asigne a T16 el color eax
-(ALIAS) Asigne a T17 el color eax
-(ALIAS) Asigne a T18 el color eax
-(ALIAS) Asigne a T19 el color eax
-----> spilledNodes despues de assign: 
 Tabla de colores:
+T51: eax
+T53: eax
+T54: eax
+eax: eax
+T55: eax
+T57: eax
+T59: eax
+T61: eax
+T63: eax
+ebx: ebx
+T65: eax
+T67: eax
+T69: eax
+T71: eax
+T73: eax
+T74: ebx
+ecx: ecx
+T75: eax
+T76: eax
+T77: eax
+T78: eax
+edi: edi
+T79: eax
+T15: edi
+T80: eax
+T16: esi
+T18: eax
+T19: eax
+edx: edx
+T20: ebx
+T21: edi
+T24: edi
+esi: esi
+T25: edi
+T26: eax
+T27: ebx
+T29: eax
+T30: esi
+T31: edi
+T32: eax
+T33: edi
+T34: edi
+T36: eax
+T8: esi
+Tabla de colores:
+T42: eax
+T43: eax
+T44: eax
+T45: ebx
+T47: eax
+T48: eax
+T49: eax
+T50: ebx
 eax: eax
 ebx: ebx
 ecx: ecx
 edi: edi
-T13: eax
-T14: eax
-T15: eax
-T16: eax
-T17: eax
-T18: eax
-T19: eax
 edx: edx
-T20: esi
-T21: eax
-T22: esi
-T23: eax
+T22: eax
+T23: ebx
 esi: esi
 T0: eax
-T1: edi
-T2: edx
-T3: ecx
-T4: ebx
+T3: eax
+T6: eax
+T37: eax
+T39: ebx
 
 
 Codigo despues del coloreo:
-_tigermain: .ascii 
-_tigermain:
+.data
+L5:
+	.long 2
+	.string " O"
 
-	enter $666,$0x0
+L6:
+	.long 2
+	.string " ."
 
-	movl %eax,$1
+L15:
+	.long 2
+	.string " O"
 
-	movl %edi,$2
+L16:
+	.long 2
+	.string " ."
 
-	movl %edx,$3
+L26:
+	.long 4
+	.string "\x0a"
 
-	movl %ecx,$4
+L27:
+	.long 4
+	.string "\x0a"
 
-	movl %ebx,$5
+L31:
+	.long 4
+	.string "\x0a"
 
-	movl %esi,$6
+L32:
+	.long 4
+	.string "\x0a"
 
-	movl 20(%ebp), %esi
-	movl %esi,$7
+.text
+	.globl _tigermain
+L28:
 
-	movl 16(%ebp), %esi
-	movlE1 %eax,%eax
+	enter $52,$0x0
+
+	pushl %ebx
+
+	pushl %edi
+
+	pushl %esi
+
+	movl $0, %esi 
+
+	movl 8(%ebp), %eax
+
+	movl -4(%eax), %edi
+
+	subl $1,%edi
+
+	cmpl %edi,%esi
+
+	jle L30
+
+L1:
+
+	pushl %ecx
+
+	pushl %edx
+
+	pushl $L32
+
+	call print
+
+	addl $4, %esp
+
+	popl %edx
+
+	popl %ecx
+
+	jmp L33
+
+L30:
+
+L23:
+
+	movl $0, %eax 
+
+	movl %eax, -52(%ebp)
+
+	movl 8(%ebp), %eax
+
+	movl -4(%eax), %eax
+
+	movl %eax, -4(%ebp)
+
+	movl -4(%ebp), %eax
+
+	movl %eax, -12(%ebp)
+
+	movl -12(%ebp), %eax
+
+	movl %eax, -16(%ebp)
+
+	movl -16(%ebp), %eax
+
+	movl %eax, -20(%ebp)
+
+	movl -20(%ebp), %eax
+
+	movl %eax, -24(%ebp)
+
+	movl -24(%ebp), %eax
+
+	movl %eax, -28(%ebp)
+
+	movl -28(%ebp), %eax
+
+	movl %eax, -32(%ebp)
+
+	movl -32(%ebp), %eax
+
+	movl %eax, -36(%ebp)
+
+	movl -36(%ebp), %eax
+
+	movl %eax, -40(%ebp)
+
+	movl -40(%ebp), %eax
+
+	movl %eax, -44(%ebp)
+
+	movl -44(%ebp), %eax
+
+	movl %eax, -48(%ebp)
+
+	movl -48(%ebp), %ebx
+
+	subl $1,%ebx
+
+	movl -52(%ebp), %eax
+
+	cmpl %ebx,%eax
+
+	jle L25
+
+L2:
+
+	pushl %ecx
+
+	pushl %edx
+
+	pushl $L27
+
+	call print
+
+	addl $4, %esp
+
+	popl %edx
+
+	popl %ecx
+
+	cmpl %esi,%edi
+
+	je L1
+
+L29:
+
+	addl $1, %esi
+
+	jmp L30
+
+L25:
+
+	movl 8(%ebp), %eax
+
+	movl -8(%eax), %edi
+
+	pushl %ecx
+
+	pushl %edx
+
+	pushl %esi
+
+	pushl %edi
+
+	call _checkIndexArray
+
+	addl $8, %esp
+
+	popl %edx
+
+	popl %ecx
+
+	movl -8(%ebp), %eax
+
+	imul $4, %esi, %eax
+
+	movl %eax, -8(%ebp)
+
+	movl -8(%ebp), %eax
 
 	addl %eax,%edi
 
-	movlE1 %eax,%eax
+	movl (%edi), %edi
 
-	addl %eax,%edx
+	movl -52(%ebp), %eax
 
-	movlE1 %eax,%eax
+	cmpl %edi,%eax
 
-	addl %eax,%ecx
+	je L20
 
-	movlE1 %eax,%eax
+L21:
 
-	addl %eax,%ebx
+	movl $L16, %eax
 
-	movlE1 %eax,%eax
+L22:
 
-	movl %eax, 20(%ebp)
-	addl %eax,%eax
+	pushl %ecx
 
-	movlE1 %eax,%eax
+	pushl %edx
 
-	movl %eax, 16(%ebp)
-	addl %eax,%eax
+	pushl %eax
 
-	movl %eax,%eax
+	call print
 
-	movl %eax,%eax
+	addl $4, %esp
 
-	jmp L0
+	popl %edx
 
-L0:
+	popl %ecx
+
+	movl -52(%ebp), %eax
+
+	cmpl %eax,%ebx
+
+	je L2
+
+L24:
+
+	movl -52(%ebp), %eax
+
+	addl $1, %eax
+
+	movl %eax, -52(%ebp)
+
+	jmp L25
+
+L20:
+
+	movl $L15, %eax
+
+	jmp L22
+
+L33:
+
+	popl %esi
+
+	popl %edi
+
+	popl %ebx
+
+	leave
+
+	ret
+
+_tigermain:
+
+	enter $8,$0x0
+
+	pushl %ebx
+
+	pushl %edi
+
+	pushl %esi
+
+	movl %ebp,%eax
+
+	addl $-4, %eax
+
+	movl $8, (%eax)
+
+	pushl %ecx
+
+	pushl %edx
+
+	pushl $0
+
+	pushl -4(%ebp)
+
+	call _allocArray
+
+	addl $8, %esp
+
+	popl %edx
+
+	popl %ecx
+
+	movl %ebp,%ebx
+
+	addl $-8, %ebx
+
+	pushl %ecx
+
+	pushl %edx
+
+	pushl $0
+
+	pushl -4(%ebp)
+
+	call _allocArray
+
+	addl $8, %esp
+
+	popl %edx
+
+	popl %ecx
+
+	movl %eax, (%ebx)
+
+	pushl %ecx
+
+	pushl %edx
+
+	pushl $0
+
+	movl -4(%ebp), %eax
+
+	movl -4(%ebp), %ebx
+
+	addl %ebx,%eax
+
+	subl $1,%eax
+
+	pushl %eax
+
+	call _allocArray
+
+	addl $8, %esp
+
+	popl %edx
+
+	popl %ecx
+
+	pushl %ecx
+
+	pushl %edx
+
+	pushl $0
+
+	movl -4(%ebp), %eax
+
+	movl -4(%ebp), %ebx
+
+	addl %ebx,%eax
+
+	subl $1,%eax
+
+	pushl %eax
+
+	call _allocArray
+
+	addl $8, %esp
+
+	popl %edx
+
+	popl %ecx
+
+	pushl %ecx
+
+	pushl %edx
+
+	pushl %ebp
+
+	call printboard_L0
+
+	addl $4, %esp
+
+	popl %edx
+
+	popl %ecx
+
+	movl $0, %eax 
+
+	jmp L34
+
+L34:
+
+	popl %esi
+
+	popl %edi
+
+	popl %ebx
 
 	leave
 

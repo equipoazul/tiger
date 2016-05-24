@@ -1,0 +1,406 @@
+bien!
+Fragmentos de string: 8: (_tigermain, ), (printboard_L0, ), (L12, "\x0a"), (L11, "\x0a"), (L8, "\x0a"), (L7, "\x0a"), (L4, " O"), (L3, " O"), 
+L3:	" O"
+L4:	" O"
+L7:	"\x0a"
+L8:	"\x0a"
+L11:	"\x0a"
+L12:	"\x0a"
+printboard_L0:
+SEQ(
+ SEQ(
+  MOVE(
+   TEMP T1,
+   CONST 0),
+  SEQ(
+   MOVE(
+    TEMP T5,
+    BINOP(MINUS,
+     MEM(
+      BINOP(PLUS,
+       MEM(
+        BINOP(PLUS,
+         TEMP ebp,
+         CONST 8)),
+       CONST ~4)),
+     CONST 1)),
+   SEQ(
+    CJUMP(LE,
+     TEMP T5,
+     TEMP T1,
+     L10,L1),
+    SEQ(
+     LABEL L10,
+     SEQ(
+      SEQ(
+       SEQ(
+        MOVE(
+         TEMP T3,
+         CONST 0),
+        SEQ(
+         MOVE(
+          TEMP T4,
+          BINOP(MINUS,
+           MEM(
+            BINOP(PLUS,
+             MEM(
+              BINOP(PLUS,
+               TEMP ebp,
+               CONST 8)),
+             CONST ~4)),
+           CONST 1)),
+         SEQ(
+          CJUMP(LE,
+           TEMP T4,
+           TEMP T3,
+           L6,L2),
+          SEQ(
+           LABEL L6,
+           SEQ(
+            EXP(
+             CALL(
+              NAME print,
+               NAME L4)),
+            SEQ(
+             CJUMP(EQ,
+              TEMP T3,
+              TEMP T4,
+              L2,L5),
+             SEQ(
+              LABEL L5,
+              SEQ(
+               MOVE(
+                TEMP T3,
+                BINOP(PLUS,
+                 TEMP T3,
+                 CONST 1)),
+               SEQ(
+                JUMP(                 NAME L6),
+                LABEL L2))))))))),
+       EXP(
+        CALL(
+         NAME print,
+          NAME L8))),
+      SEQ(
+       CJUMP(EQ,
+        TEMP T1,
+        TEMP T5,
+        L1,L9),
+       SEQ(
+        LABEL L9,
+        SEQ(
+         MOVE(
+          TEMP T1,
+          BINOP(PLUS,
+           TEMP T1,
+           CONST 1)),
+         SEQ(
+          JUMP(           NAME L10),
+          LABEL L1))))))))),
+ EXP(
+  CALL(
+   NAME print,
+    NAME L12)))
+_tigermain:
+MOVE(
+ TEMP eax,
+ ESEQ(
+  MOVE(
+   MEM(
+    BINOP(PLUS,
+     TEMP ebp,
+     CONST ~4)),
+   CONST 8),
+  ESEQ(
+   EXP(
+    CALL(
+     NAME printboard_L0,
+      TEMP ebp)),
+   CONST 0)))
+
+Tabla de colores:
+eax: eax
+ebx: ebx
+ecx: ecx
+edi: edi
+T11: eax
+T12: eax
+T13: esi
+T15: eax
+T17: eax
+T19: eax
+edx: edx
+T21: eax
+T23: eax
+esi: esi
+T25: eax
+T27: eax
+T29: eax
+T31: eax
+T3: esi
+T33: eax
+T4: edi
+T34: edi
+T5: ebx
+T35: eax
+T6: ebx
+T7: ebx
+T36: eax
+T8: eax
+T37: eax
+T38: eax
+T9: edi
+T39: eax
+Tabla de colores:
+eax: eax
+ebx: ebx
+ecx: ecx
+edi: edi
+T14: eax
+edx: edx
+esi: esi
+
+
+Codigo despues del coloreo:
+.data
+L3:
+	.long 2
+	.string " O"
+
+L4:
+	.long 2
+	.string " O"
+
+L7:
+	.long 4
+	.string "\x0a"
+
+L8:
+	.long 4
+	.string "\x0a"
+
+L11:
+	.long 4
+	.string "\x0a"
+
+L12:
+	.long 4
+	.string "\x0a"
+
+.text
+	.globl _tigermain
+printboard_L0:
+
+	enter $44,$0x0
+
+	pushl %ebx
+
+	pushl %edi
+
+	pushl %esi
+
+	movl $0, %eax 
+
+	movl %eax, -44(%ebp)
+
+	movl 8(%ebp), %eax
+
+	movl -4(%eax), %ebx
+
+	subl $1,%ebx
+
+	movl -44(%ebp), %eax
+
+	cmpl %ebx,%eax
+
+	jle L10
+
+L1:
+
+	pushl %ecx
+
+	pushl %edx
+
+	pushl $L12
+
+	call print
+
+	addl $4, %esp
+
+	popl %edx
+
+	popl %ecx
+
+	jmp L13
+
+L10:
+
+	movl $0, %esi 
+
+	movl 8(%ebp), %eax
+
+	movl -4(%eax), %eax
+
+	movl %eax, -4(%ebp)
+
+	movl -4(%ebp), %eax
+
+	movl %eax, -8(%ebp)
+
+	movl -8(%ebp), %eax
+
+	movl %eax, -12(%ebp)
+
+	movl -12(%ebp), %eax
+
+	movl %eax, -16(%ebp)
+
+	movl -16(%ebp), %eax
+
+	movl %eax, -20(%ebp)
+
+	movl -20(%ebp), %eax
+
+	movl %eax, -24(%ebp)
+
+	movl -24(%ebp), %eax
+
+	movl %eax, -28(%ebp)
+
+	movl -28(%ebp), %eax
+
+	movl %eax, -32(%ebp)
+
+	movl -32(%ebp), %eax
+
+	movl %eax, -36(%ebp)
+
+	movl -36(%ebp), %eax
+
+	movl %eax, -40(%ebp)
+
+	movl -40(%ebp), %edi
+
+	subl $1,%edi
+
+	cmpl %edi,%esi
+
+	jle L6
+
+L2:
+
+	pushl %ecx
+
+	pushl %edx
+
+	pushl $L8
+
+	call print
+
+	addl $4, %esp
+
+	popl %edx
+
+	popl %ecx
+
+	movl -44(%ebp), %eax
+
+	cmpl %eax,%ebx
+
+	je L1
+
+L9:
+
+	movl -44(%ebp), %eax
+
+	addl $1, %eax
+
+	movl %eax, -44(%ebp)
+
+	jmp L10
+
+L6:
+
+	pushl %ecx
+
+	pushl %edx
+
+	pushl $L4
+
+	call print
+
+	addl $4, %esp
+
+	popl %edx
+
+	popl %ecx
+
+	cmpl %esi,%edi
+
+	je L2
+
+L5:
+
+	addl $1, %esi
+
+	jmp L6
+
+L13:
+
+	popl %esi
+
+	popl %edi
+
+	popl %ebx
+
+	leave
+
+	ret
+
+_tigermain:
+
+	enter $4,$0x0
+
+	pushl %ebx
+
+	pushl %edi
+
+	pushl %esi
+
+	movl %ebp,%eax
+
+	addl $-4, %eax
+
+	movl $8, (%eax)
+
+	pushl %ecx
+
+	pushl %edx
+
+	pushl %ebp
+
+	call printboard_L0
+
+	addl $4, %esp
+
+	popl %edx
+
+	popl %ecx
+
+	movl $0, %eax 
+
+	jmp L14
+
+L14:
+
+	popl %esi
+
+	popl %edi
+
+	popl %ebx
+
+	leave
+
+	ret
+
+yes!!

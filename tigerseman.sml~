@@ -191,6 +191,7 @@ fun transExp(venv, tenv) =
       let val {exp=testexp, ty=tytest} = trexp test
           val {exp=thenexp, ty=tythen} = trexp then'
           val {exp=elseexp, ty=tyelse} = trexp else'
+          val _ = print("IF EXP!!!\n")
       in
         case tipoReal tytest of
           TInt => if tiposIguales tythen tyelse then {exp=if tipoReal tythen=TUnit then ifThenElseExpUnit {test=testexp,then'=thenexp,else'=elseexp} else ifThenElseExp {test=testexp,then'=thenexp,else'=elseexp}, ty=tythen}
@@ -230,7 +231,7 @@ fun transExp(venv, tenv) =
         (* tabInserta(var, VIntro {parent=NONE, frame, level}, venv)*)
         val venv' = tabRInserta(var, VIntro {access=acc, level=level}, fromTab venv)
         val {exp=expbody, ty=tybody} = transExp (venv', tenv) body
-        val expvar = simpleVar (acc, 0)
+        val expvar = simpleVar (acc, level)
         val expfor = forExp {lo=explo, hi=exphi, var=expvar, body=expbody}
         val _ = postWhileForExp()
       in 
@@ -570,7 +571,9 @@ fun transExp(venv, tenv) =
   in trexp end
 fun transProg ex =
 	let	val main =
-				LetExp({decs=[FunctionDec[({name="_tigermain", params=[],	result=SOME "int", body=ex}, 0)]], body=UnitExp 0}, 0)
+				LetExp({decs=[FunctionDec[({name="_tigermain", params=[],
+								result=SOME "int", body=ex}, 0)]],
+						body=UnitExp 0}, 0)
 		val _ = transExp(tab_vars, tab_tipos) main
 	in	print "bien!\n" end
 end

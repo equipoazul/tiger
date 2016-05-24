@@ -191,6 +191,7 @@ fun transExp(venv, tenv) =
       let val {exp=testexp, ty=tytest} = trexp test
           val {exp=thenexp, ty=tythen} = trexp then'
           val {exp=elseexp, ty=tyelse} = trexp else'
+          val _ = print("IF EXP!!!\n")
       in
         case tipoReal tytest of
           TInt => if tiposIguales tythen tyelse then {exp=if tipoReal tythen=TUnit then ifThenElseExpUnit {test=testexp,then'=thenexp,else'=elseexp} else ifThenElseExp {test=testexp,then'=thenexp,else'=elseexp}, ty=tythen}
@@ -230,7 +231,7 @@ fun transExp(venv, tenv) =
         (* tabInserta(var, VIntro {parent=NONE, frame, level}, venv)*)
         val venv' = tabRInserta(var, VIntro {access=acc, level=level}, fromTab venv)
         val {exp=expbody, ty=tybody} = transExp (venv', tenv) body
-        val expvar = simpleVar (acc, 0)
+        val expvar = simpleVar (acc, level)
         val expfor = forExp {lo=explo, hi=exphi, var=expvar, body=expbody}
         val _ = postWhileForExp()
       in 
@@ -319,7 +320,7 @@ fun transExp(venv, tenv) =
           val acc = allocLocal (topLevel()) (!escape)
           val level = getActualLev()
           val venv' = (case tabBusca(s, tenv) of
-                          SOME t => if tiposIguales t tyinit then tabInserta(name, Var{access=acc, level=level, ty=t}, venv)
+                          SOME t => if tiposIguales t tyinit then tabRInserta(name, Var{access=acc, level=level, ty=t}, venv)
                                     else error("el tipo de var es distinto a la expresion", pos)
                           |_ => error("tipo desconocido", pos))
         in 
