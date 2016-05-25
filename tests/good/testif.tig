@@ -1,2 +1,9 @@
-(if 2 > 3 then 
-   (print("PEIOROIREW\n")); 0)
+let
+   var a := "2"
+   var b := "2"
+   function isdigit (s : string) : int =
+     ord ("0") <= ord (s) & ord (s) <= ord ("9")
+in
+   /*isdigit("2")*/
+   if a = b then print("EA\n"); 0
+end

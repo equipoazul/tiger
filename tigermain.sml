@@ -130,10 +130,10 @@ fun main(args) =
                           (*val colprint = (List.map (fn (x,y) => x) procExitedCode)*)
                           val stringSection = map tigerframe.string str_frags
                           val globlSection = map tigerframe.globl (List.map name func_frags)
-	                        val codeSection = map (tigerassem.strAssem) (List.concat colprint)
+	                      val codeSection = map (tigerassem.strAssem) (List.concat colprint)
 	                        
-	                        val allProgram = String.concat ([".data\n"] @ stringSection @ [".text\n\t.globl _tigermain\n"] @ codeSection)
-	                        val _ = print allProgram
+	                      val allProgram = String.concat ([".data\n"] @ stringSection @ [".text\n\t.globl _tigermain\n"] @ codeSection)
+                          val _ = print allProgram
 	                        (* Pasamos el assembler a un archivo y lo linkeamos con gcc *)
                           val fd = TextIO.openOut "asgard.s"
                           val _ = TextIO.output(fd, allProgram)

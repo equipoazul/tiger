@@ -8,8 +8,15 @@ let
     var row := intArray [ N ] of 0
     var col := intArray [ N ] of 0
 
+   /* function f (i:int) =
+        let 
+            function g (i : int) =
+                print("hola\n")
+        in
+            print("chau\n")
+        end*/
     function printint (i : int) =
-       let function f (i : int) =
+      let function f (i : int) =
             if i > 0 
         then (f (i/10); print (chr (i-i/10*10+ord ("0"))))
        in if i < 0 then (print ("-"); f (-i))
@@ -18,16 +25,13 @@ let
         end 
 
     function try (c : int) =
-(   for i := 0 to c do print ("."); print ("\n"); flush ();
-     if c=N
+     (if c=N
      then print("ACA VA EL TABLERO\n")
      else for r := 0 to N-1 
 	   do (if row[r]=0 then
               (row[r] :=1;
 		       row[1] := 10;
-	           try (c+1);
-			   row[r] :=0))
+	           try (c+1))) )
 
-)
  in try (0); 0
 end

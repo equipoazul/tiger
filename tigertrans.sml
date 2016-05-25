@@ -98,11 +98,10 @@ fun Ir(e) =
         fun aux3 [] = ""
         | aux3(h::t) = (aux2 h)^(aux3 t)
     in  aux3 e end
-fun nombreFrame frame = print(".globl " ^ tigerframe.name frame ^ "\n")
 
 (* While y for necesitan la u'ltima etiqueta para un break *)
 local
-    val salidas: label option tigerpila.Pila = tigerpila.nuevaPila1 NONE
+    val salidas: label option tigerpila.Pila = (tigerpila.nuevaPila1 NONE)
 in
     val pushSalida = tigerpila.pushPila salidas
     fun popSalida() = tigerpila.popPila salidas
@@ -231,10 +230,6 @@ fun arrayExp{size, init} =
 let
     val s = unEx size
     val i = unEx init
-    val _ = print "alloc Var arrr"
-    val _ = print (printExp s)
-    val _ = print (printExp i)
-    val _ = print "\n"
 in
     Ex (externalCall("_allocArray", [s, i]))
 end
@@ -277,7 +272,6 @@ fun callExp (name, external, isproc, lev:level, ls) =
 fun breakExp() =
   let 
      val a = topSalida()
-     val _ = print("Soy el break y quiero saltar a "^a^"\n")
   in 
     (*Nx (LABEL (topSalida()))*)
     Nx (JUMP (NAME a, [a]))
@@ -323,8 +317,7 @@ let
     val (l1, l2, l3) = (newlabel(), newlabel(), topSalida())
     val _ = print ("Whileexp ets: l2 -> " ^ l2 ^ " l1 -> " ^ l1 ^ " ^ l3 -> " ^ l3 ^ "\n")
 in
-    Nx (seq[JUMP(NAME l1, [l1]),
-            LABEL l1,
+    Nx (seq[LABEL l1,
                 cf(l2,l3),
               LABEL l2,
                  expb,
@@ -484,8 +477,8 @@ fun binOpStrExp {left,oper,right} =
     in
         Cx (fn (t, f) => (seq[MOVE(TEMP l, lexp),
                                   MOVE(TEMP r, rexp),
-                                    MOVE(TEMP res, externalCall("_stringcmp", [TEMP l, TEMP r])),
-                                    CJUMP(oper, TEMP res, CONST 0, t, f)]))
+                                  MOVE(TEMP res, externalCall("_stringcmp", [TEMP l, TEMP r])),
+                                  CJUMP(oper, TEMP res, CONST 0, t, f)]))
     end
 
 fun stmToExp s = EXP (unEx s)

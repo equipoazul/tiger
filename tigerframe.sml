@@ -104,18 +104,28 @@ fun allocLocal (f: frame) b =
 fun exp(InFrame k) = MEM(BINOP(PLUS, TEMP(fp), CONST k))
 | exp(InReg l) = TEMP l
 fun externalCall(s, l) = CALL(NAME s, l)
-fun procEntryExit1 (frame,body) = body
+(*fun procEntryExit1 (frame,body) = body*)
+fun seq [] = EXP (CONST 0)
+	| seq [s] = s
+	| seq (x::xs) = SEQ (x, seq xs)
+fun procEntryExit1 (frame,body) = 
+    let 
+        val temps = List.map (fn _ =>  tigertemp.newtemp()) (calleesaves)
+        val tempsAndRegs = ListPair.zip (temps, calleesaves)
+        val moves = List.map (fn (t, r) => tigertree.MOVE(TEMP t, TEMP r)) tempsAndRegs
+        val unMoves = List.map (fn (t, r) => tigertree.MOVE(TEMP r, TEMP t)) (List.rev tempsAndRegs) 
+    in
+        seq(moves @ [body] @ unMoves)
+    end
 
 fun procEntryExit3 (frame:frame, instrs) = 
   let
-    val saveCalleeSaves = List.map (fn s => OPER{assem="pushl `s0\n", src=[s], dst=[], jump=NONE}) calleesaves
-    val restoreCalleeSaves = List.map (fn s => OPER{assem="popl `d0\n", src=[], dst=[s], jump=NONE}) (List.rev calleesaves)
-    val label = List.hd(instrs)
+    val label = [List.hd(instrs)]
     val prologo = [tigerassem.OPER {assem="enter $" ^ Int.toString((!(#actualLocal frame)) * (~4)) ^ ",$0x0\n", src=[], dst=[], jump=NONE}]
     val epilogo = [tigerassem.OPER {assem="leave\n", src=[], dst=[], jump=NONE},
                    tigerassem.OPER {assem="ret\n", src=[], dst=[], jump=NONE}]
   in
-    [label] @ prologo @ saveCalleeSaves @ (List.tl(instrs)) @ restoreCalleeSaves @ epilogo
+    label @ prologo @ (List.tl(instrs)) @ epilogo
   end
 
 

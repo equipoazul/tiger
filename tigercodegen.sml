@@ -132,7 +132,7 @@ fun codegen frame stm =
                 if length args - length argregs>0 then
                     emit(OPER{assem="addl $"^
                             st(wSz*(length(args)-length(argregs)))^", %"^sp^"\n",
-                        src=[rv], dst=[rv]@callersaves, jump=NONE})
+                        src=[rv], dst=[rv]@tigerframe.callersaves, jump=NONE})
                 else ();
                 restoreCallerSaves())
             | EXP(CALL(e, args)) =>
@@ -143,7 +143,7 @@ fun codegen frame stm =
                 if length args-length argregs>0 then
                     emit(OPER{assem="addl $"^
                             st(wSz*(length(args)-length(argregs)))^", `d0\n",
-                        src=[rv], dst=[rv]@callersaves, jump=NONE})
+                        src=[rv], dst=tigerframe.callersaves, jump=NONE})
                 else ();
                 restoreCallerSaves())
             | EXP e =>
@@ -179,8 +179,11 @@ fun codegen frame stm =
                    
                 end
             | CJUMP(relop, e1, e2, l1, l2) =>
-                let val () = emit(OPER{assem="cmpl `s0,`s1\n",
+                let (*val () = emit(OPER{assem="cmpl `s0,`s1\n",
+                        src=[munchExp e1, munchExp e2], dst=[], jump=NONE})*)
+                    val () = emit(OPER{assem="cmpl `s1,`s0\n",
                         src=[munchExp e1, munchExp e2], dst=[], jump=NONE})
+
                 in  
                       emit(OPER{assem=relOp(relop)^l1^"\n", src=[],
                           dst=[], jump=SOME[l1, l2]})
