@@ -170,9 +170,16 @@ fun codegen frame stm =
                               dst = [],
                               jump = SOME [l1, l2]})
                 end
+
+
             | CJUMP(relop, e1, CONST c2, l1, l2) =>
-                let val () = emit(OPER{assem="cmpl $" ^ st(c2) ^ ", `s0\n",
-                        src=[munchExp e1], dst=[], jump=NONE})
+                let (*val () = emit(OPER{assem="cmpl $" ^ st(c2) ^ ", `s0\n",
+                        src=[munchExp e1], dst=[], jump=NONE})*)
+                    val tmp = tigertemp.newtemp()
+                    val _ = emit(OPER{assem="movl $"^st(c2)^", `d0\n",
+                                      src=[], dst=[tmp], jump=NONE})
+                    val () = emit(OPER{assem="cmpl `s1, `s0\n",
+                        src=[munchExp e1, tmp], dst=[], jump=NONE})
                 in  
                     emit(OPER{assem=relOp(relop)^l1^"\n", src=[],
                           dst=[], jump=SOME[l1, l2]})

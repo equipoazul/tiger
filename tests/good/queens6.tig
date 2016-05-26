@@ -2,7 +2,6 @@
 
 let
     var N := 8
-    var r := 0
 
     type intArray = array of int
 
@@ -32,15 +31,10 @@ let
      if c=N
      then print("Tablero\n") 
      else 
-       (if c=N then print("Esto NO deberia pasar...\n");
-        r := 0;
-        debug("ANTES While ->", r, c, N); 
-        while (r < 3) do 
+        for r := 0 to N-1 do 
          (debug("ANTES try ->", r, c, N); 
-          try (c+1);
-          debug("Despues ->", r, c, N); 
-          r := r + 1)
+          /*try (c+1)*/
+          debug("Despues ->", r, c, N))
 
-)
- in try (0); 0
+ in try (1); 0
 end
