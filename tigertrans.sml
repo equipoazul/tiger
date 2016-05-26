@@ -62,6 +62,7 @@ fun unEx (Ex e) = e
                    JUMP (NAME s, [s]),
                    LABEL t,
                    MOVE(TEMP r, CONST 1),
+                   JUMP (NAME s, [s]),
                    LABEL s],
                    TEMP r)
     end
@@ -354,10 +355,9 @@ fun forExp {lo, hi, var, body} =
                         let 
                           val t = newtemp()
                         in
-                            [MOVE (var', unEx lo),
+                          [MOVE (var', unEx lo),
                              MOVE (TEMP t, unEx hi),
-                             (*JUMP (LE, TEMP t, var', l2, lsal),*)
-                             CJUMP (GT, TEMP t, var', lsal, l2),
+                             CJUMP (GE, var', TEMP t, lsal, l2),
                              LABEL l2,
                                 unNx body,
                                 CJUMP (EQ, var', TEMP t, lsal, l1),
@@ -365,7 +365,7 @@ fun forExp {lo, hi, var, body} =
                                 MOVE (var', BINOP (PLUS, var', CONST 1)),
                                 JUMP (NAME l2, [l2]),
                              LABEL lsal]
-                        end))
+                         end))
         end
                          
 

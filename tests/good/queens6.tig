@@ -1,0 +1,46 @@
+/* A program to solve the 8-queens problem */
+
+let
+    var N := 8
+    var r := 0
+
+    type intArray = array of int
+
+    var row := intArray [ N ] of 0
+ 
+ function printint (i : int) =
+   let function f (i : int) =
+        if i > 0
+    then (f (i/10); print (chr (i-i/10*10+ord ("0"))))
+   in if i < 0 then (print ("-"); f (-i))
+      else if i>0 then f (i)
+      else print ("0")
+   end
+
+ function debug (s : string, r : int, c : int, N:int) =
+    (print(s); 
+     print(" r = "); 
+     printint(r); 
+     print(" c = "); 
+     printint(c); 
+     print(" N = ");
+     printint(N);
+     print("\n"))
+
+
+ function try (c : int) =
+     if c=N
+     then print("Tablero\n") 
+     else 
+       (if c=N then print("Esto NO deberia pasar...\n");
+        r := 0;
+        debug("ANTES While ->", r, c, N); 
+        while (r < 3) do 
+         (debug("ANTES try ->", r, c, N); 
+          try (c+1);
+          debug("Despues ->", r, c, N); 
+          r := r + 1)
+
+)
+ in try (0); 0
+end
