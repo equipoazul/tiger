@@ -51,9 +51,25 @@ L22:
 	.globl _tigermain
 f_L2:
 
-	enter $8,$0x0
+	enter $16,$0x0
 
-	movl %ebx, -4(%ebp)
+	movl %ebp,%eax
+
+	addl $-4, %eax
+
+	movl %ebx, (%eax)
+
+	movl %ebp,%eax
+
+	addl $-8, %eax
+
+	movl %edi, (%eax)
+
+	movl %ebp,%eax
+
+	addl $-12, %eax
+
+	movl %esi, (%eax)
 
 	movl $0, %ebx
 
@@ -64,6 +80,10 @@ f_L2:
 	jg L13
 
 L14:
+
+	movl -12(%ebp), %esi
+
+	movl -8(%ebp), %edi
 
 	movl -4(%ebp), %ebx
 
@@ -109,13 +129,13 @@ L13:
 
 	movl %eax,%edi
 
-	movl -8(%ebp), %eax
+	movl -16(%ebp), %eax
 
 	imul $10, %edi, %eax
 
-	movl %eax, -8(%ebp)
+	movl %eax, -16(%ebp)
 
-	movl -8(%ebp), %eax
+	movl -16(%ebp), %eax
 
 	subl %eax,%ebx
 
@@ -173,9 +193,25 @@ L32:
 
 printint_L1:
 
-	enter $4,$0x0
+	enter $12,$0x0
 
-	movl %ebx, -4(%ebp)
+	movl %ebp,%eax
+
+	addl $-4, %eax
+
+	movl %ebx, (%eax)
+
+	movl %ebp,%eax
+
+	addl $-8, %eax
+
+	movl %edi, (%eax)
+
+	movl %ebp,%eax
+
+	addl $-12, %eax
+
+	movl %esi, (%eax)
 
 	movl $0, %ebx
 
@@ -214,6 +250,10 @@ L24:
 L25:
 
 L28:
+
+	movl -12(%ebp), %esi
+
+	movl -8(%ebp), %edi
 
 	movl -4(%ebp), %ebx
 
@@ -289,11 +329,25 @@ L33:
 
 try_L0:
 
-	enter $8,$0x0
+	enter $12,$0x0
 
-	movl %ebx, -4(%ebp)
+	movl %ebp,%eax
 
-	movl %edi, -8(%ebp)
+	addl $-4, %eax
+
+	movl %ebx, (%eax)
+
+	movl %ebp,%eax
+
+	addl $-8, %eax
+
+	movl %edi, (%eax)
+
+	movl %ebp,%eax
+
+	addl $-12, %eax
+
+	movl %esi, (%eax)
 
 	movl $0, %edi 
 
@@ -335,6 +389,8 @@ L30:
 
 L29:
 
+	movl -12(%ebp), %esi
+
 	movl -8(%ebp), %edi
 
 	movl -4(%ebp), %ebx
@@ -349,7 +405,25 @@ L34:
 
 _tigermain:
 
-	enter $4,$0x0
+	enter $16,$0x0
+
+	movl %ebp,%eax
+
+	addl $-8, %eax
+
+	movl %ebx, (%eax)
+
+	movl %ebp,%eax
+
+	addl $-12, %eax
+
+	movl %edi, (%eax)
+
+	movl %ebp,%eax
+
+	addl $-16, %eax
+
+	movl %esi, (%eax)
 
 	movl %ebp,%eax
 
@@ -374,6 +448,12 @@ _tigermain:
 	popl %ecx
 
 	movl $0, %eax 
+
+	movl -16(%ebp), %esi
+
+	movl -12(%ebp), %edi
+
+	movl -8(%ebp), %ebx
 
 	jmp L35
 

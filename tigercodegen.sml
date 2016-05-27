@@ -119,7 +119,7 @@ fun codegen frame stm =
             | T.MOVE(e1, e2) => 
                 let val t=tigertemp.newtemp()
                 in
-                    emit(MOVE{assem="movl8 `s0,`d0\n",
+                    emit(MOVE{assem="movl `s0,`d0\n",
                         src=munchExp e2, dst=t});
                     emit(MOVE{assem="movl `s0,`d0\n",
                         src=t, dst=munchExp e1})

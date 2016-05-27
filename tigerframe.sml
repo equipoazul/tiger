@@ -110,13 +110,25 @@ fun seq [] = EXP (CONST 0)
 	| seq (x::xs) = SEQ (x, seq xs)
 fun procEntryExit1 (frame,body) = 
     let 
-        val temps = List.map (fn _ =>  tigertemp.newtemp()) (calleesaves)
+        val temps = List.map (fn _ => tigertemp.newtemp()) (calleesaves)
         val tempsAndRegs = ListPair.zip (temps, calleesaves)
         val moves = List.map (fn (t, r) => tigertree.MOVE(TEMP t, TEMP r)) tempsAndRegs
         val unMoves = List.map (fn (t, r) => tigertree.MOVE(TEMP r, TEMP t)) (List.rev tempsAndRegs) 
     in
         seq(moves @ [body] @ unMoves)
     end
+(*fun procEntryExit1 (frame,body) = 
+    let 
+        fun getNewAlloc () = case (allocLocal frame true) of
+                                      InFrame m' => m'
+                                    | _ => raise Fail "En true esto no deberia pasar...."
+        val temps = List.map (fn r => (r, getNewAlloc())) (calleesaves)
+        val moves = List.map (fn (r, m) => tigertree.MOVE(MEM(BINOP(PLUS, TEMP "ebp", CONST m)), TEMP r)) temps
+        val unMoves = List.map (fn (r, m) => tigertree.MOVE(TEMP r, MEM(BINOP(PLUS, TEMP "ebp", CONST m)))) (List.rev temps) 
+    in
+        seq(moves @ [body] @ unMoves)
+    end*)
+
 
 fun procEntryExit3 (frame:frame, instrs) = 
   let
