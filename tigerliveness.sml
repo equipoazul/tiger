@@ -56,66 +56,73 @@ struct
 
     fun liveAnalysis (FGRAPH fg) = 
       let
+        fun initTab ns = let
+                             val t = ref (tabNueva():liveSet)
+                             val _ = List.map (fn x => t := tabInserta(x, Splayset.empty String.compare, !t)) ns
+                          in
+                              t
+                          end
         fun initList ns = let
-                               val t = ref (tabNueva():liveSet)
-                               val _ = List.map (fn x => t := tabInserta(x, Splayset.empty String.compare, !t)) ns
-                            in
-                                t
-                            end
+                             val l = ref (List.map (fn x => Splayset.empty String.compare) ns)
+                          in
+                              l
+                          end
         val ns = (nodes (#control fg))
-        val liveIn = initList ns 
-        val liveOut = initList ns
+        val liveIn = initTab ns 
+        val liveOut = initTab ns
+        val inn = initList ns
+        val out = initList ns
+        val inn' = initList ns
+        val out' = initList ns
 
         fun getSuccIn n = let
                           val succs = succ (#control fg) n
                       in
                          List.map (fn x => case tabBusca(x, !liveIn) of
-                            NONE => raise Fail "Error al buscar un nodo en la tabla liveIn (1)"
-                          | SOME c => c) succs 
+                                                  NONE => raise Fail "Error al buscar un nodo en la tabla liveIn (1)"
+                                                | SOME c => c) succs
                       end
                       
-        fun liveAnalysis' ((FGRAPH fg), []) = 
-             let
-               (*val _ = print "Live In\n"
-               val _ = printLiveT (!liveIn)
-               val _ = print "Live Out\n"
-               val _ = printLiveT (!liveOut)*)
-               val _ = ()
-             in
-               (!liveIn, !liveOut)
-             end
-            | liveAnalysis' ((FGRAPH fg), (n::ns)) =
-              let       
-                  
-                val inn' = ref (Splayset.empty String.compare)
-                val out' = ref (Splayset.empty String.compare)
-                val inn = ref (Splayset.empty String.compare)  
-                val out = ref (Splayset.empty String.compare)  
-                val use = case tabBusca(n, !(#use fg)) of
-                                      NONE => Splayset.empty String.compare
-                                    | SOME tList => tigerutils.listToSet String.compare tList
-                val def = case tabBusca(n, !(#def fg)) of
-                                      NONE => Splayset.empty String.compare 
-                                    | SOME tList => tigerutils.listToSet String.compare tList
-
-                val _ = inn := Splayset.union (use, (Splayset.difference (!out, def)));
-                val _ = out := List.foldr Splayset.union (Splayset.empty String.compare) (getSuccIn n)
-
-                fun repeat() =
-                           (inn' := !inn;
-                            out' := !out;
-                            inn := Splayset.union (use, (Splayset.difference (!out, def)));
-                            out := List.foldr Splayset.union (Splayset.empty String.compare) (getSuccIn n))
-                val _ = repeat()
-                val _ = while (not (Splayset.equal (!inn, !inn') andalso Splayset.equal (!out, !out'))) do
-                           repeat()
-                val _ = liveIn := tabRInserta(n, !inn, !liveIn)
-                val _ = liveOut := tabRInserta(n, !out, !liveOut)
-                in
-                    liveAnalysis' ((FGRAPH fg), ns)
-                end
-      in
-           liveAnalysis' (FGRAPH fg, ns)
+        fun foreach ((FGRAPH fg), n) = 
+            let       
+                
+              val use = case tabBusca(n, !(#use fg)) of
+                                    NONE => Splayset.empty String.compare
+                                  | SOME tList => tigerutils.listToSet String.compare tList
+              val def = case tabBusca(n, !(#def fg)) of
+                                    NONE => Splayset.empty String.compare 
+                                  | SOME tList => tigerutils.listToSet String.compare tList
+              val _ = inn' := setNthList n (!inn') (List.nth(!inn, n))
+              val _ = out' := setNthList n (!out') (List.nth(!out, n))
+              val newElemInn = Splayset.union (use, (Splayset.difference (List.nth(!out, n), def)))
+              val _ = inn := setNthList n (!inn) newElemInn
+              val newElemOut = List.foldr Splayset.union (Splayset.empty String.compare) (getSuccIn n)
+              val _ = out := setNthList n (!out) newElemOut
+            in
+                (liveIn := tabRInserta(n, List.nth(!inn, n), !liveIn);
+                liveOut := tabRInserta(n, List.nth(!out, n), !liveOut))
+            end
+            
+        fun repeat() = List.map (fn x => foreach ((FGRAPH fg), x)) ns
+        
+        fun evalCondition() = 
+            let
+               val e1 = foldr (fn ((x, y), xs) => (Splayset.equal (x, y)) andalso xs) true (ListPair.zip(!inn', !inn))
+               val e2 = foldr (fn ((x, y), xs) => (Splayset.equal (x, y)) andalso xs) true (ListPair.zip(!out', !out))
+            in
+               e1 andalso e2
+            end
+        
+        val _ = repeat()
+        val _ = while not (evalCondition()) do
+                  repeat()
+        
+     in
+        (*(print "Live In\n";
+         printLiveT (!liveIn);
+         print "Live Out\n";
+         printLiveT (!liveOut);*)
+        (!liveIn, !liveOut)
       end
 
 end

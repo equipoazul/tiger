@@ -23,8 +23,9 @@ struct
         val newTempsC = ref (Splayset.empty String.compare)
         val (FGRAPH fg, iTable) = instrs2graph b
         (*val _ = tigerflow.printGraphFlow (FGRAPH fg)*)
-        val (liveIn, liveOut) = liveAnalysis (FGRAPH fg) 
-    
+        val (liveIn, liveOut) = liveAnalysis (FGRAPH fg)
+        fun printSet s = List.foldr (fn (x, xs) => x ^ "," ^ xs) "" (Splayset.listItems s)
+        fun printLiveT t = map (fn (x,y) => print ( (Int.toString x) ^ " -> " ^ (printSet y) ^ "\n") ) (tigertab.tabAList t)
         val uses = List.concat (tabValores (!(#use fg)))
         val defs = List.concat (tabValores (!(#def fg)))
         val totalRegs = unionList (String.compare) uses defs
@@ -41,7 +42,11 @@ struct
         
         
         val _ = meterCompleto() *)
-                                                     
+       
+        (*fun printStringSet s = (Splayset.app (fn x => print (x ^ "\n")) s)
+        val _ = (print("=======================\n");
+                print("LIVE OUT: \n"))
+        val _ = List.map (fn (x, y) => (print(Int.toString(x) ^ "\n"); printStringSet(y))) (tabAList (liveOut))                              *)
         
              
 (*        val _ = print "=====================================////////////////////===============================\n"
@@ -99,7 +104,7 @@ struct
           let
             val _ = print "=========================================\n"
             (*val _ = printIntTupleSet (!adjSet) "adjSet: "
-            val _ = printIntSet (!spillWorklist) "spillWorkList: "
+            val _ = printIntSet (!spillWorklist) "spillWorkList: "T29
             val _ = printIntSet (!freezeWorklist) "freezeWorkList: "
             val _ = printIntSet (!simplifyWorklist) "simplifyWorkList: "
             val _ = printIntSet (!coalescedNodes) "coalescedNodes: "
@@ -198,7 +203,6 @@ struct
                 val live = ref (case tabBusca((List.hd flowNodes), liveOut) of
                                  NONE => raise Fail ("La instruccion " ^ Int.toString(List.last flowNodes) ^ " no esta en la tabla liveOut")
                                | SOME s' => s' )
-                                          
                 fun updateLive (n) =
                     let
                         val use = case tabBusca(n, (!(#use fg))) of
@@ -227,10 +231,8 @@ struct
                                                  ()
                                                end 
                                     | _ => ()
-                        (*val _ = (print("LIVE DEL NODO " ^ Int.toString(n) ^ "
-                        * :\n"); Splayset.app (fn x => print(x ^ "\n")) (!live
-                        * ))*)
                         val _ = live := Splayset.union(!live, def)
+                        val _ = (print("LIVE DEL NODO " ^ Int.toString(n) ^ ":\n"); Splayset.app (fn x => print(x ^ "\n")) (!live))
                         val _ = List.map (fn d => case tabBusca(d, !(#tnode ig)) of
                                         NONE => raise Fail "El temp no esta en la tabla tnode (2)"
                                       | SOME di => List.map (fn l => case tabBusca(l, !(#tnode ig)) of
@@ -238,7 +240,8 @@ struct
                                                   | SOME li => (addEdge((li, di)))) (Splayset.listItems (!live))) (Splayset.listItems def) 
                         val _ = live := Splayset.union(use, Splayset.difference(!live, def))
                     in
-                        ()
+                         (print "Live Out\n";
+                                printLiveT (liveOut))
                         (*print("LIVE DEL NODO " ^ Int.toString(n) ^ "\n");
                         Splayset.app (fn x => print(x ^ "\n")) (!live)*)
                         
@@ -601,7 +604,7 @@ struct
 
       in
         (build ();
-        (*printTodo();*)
+         printTodo();
          if firstRun then
              initial := let 
                            val nodesIG = List.foldr (fn (x, xs) => Splayset.add(xs, nodeToTemp (IGRAPH ig) x)) (Splayset.empty String.compare) interNodes

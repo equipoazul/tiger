@@ -13,8 +13,11 @@ struct
     fun edges g = (!(#edges (g:graph)))
     
     fun edgeCompare ({from=f, to=t}, {from=f', to=t'}) =
-        if f = f' andalso t = t' then EQUAL
-        else LESS
+        if f < f' then LESS
+        else if f > f' then GREATER
+          else if t < t' then LESS
+            else if t > t' then GREATER
+              else EQUAL
     
     fun succ (g as {edges, nodes}) n = let
                                          val eds = List.filter (fn x => (#from x) = n) (!edges)
