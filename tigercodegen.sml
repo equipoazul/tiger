@@ -164,7 +164,7 @@ fun codegen frame stm =
                                       src=[], dst=[tmp], jump=NONE})                                      
                 in
                     emit(OPER{assem="cmpl $" ^ st(c2) ^ ", `s0\n",
-                              src=[tmp], dst=[], jump=NONE});
+                              src=[tmp], dst=[tmp], jump=NONE});
                     emit(OPER{assem = relOp(relop) ^ l1 ^ "\n", 
                               src = [],
                               dst = [],
@@ -179,7 +179,7 @@ fun codegen frame stm =
                     val _ = emit(OPER{assem="movl $"^st(c2)^", `d0\n",
                                       src=[], dst=[tmp], jump=NONE})
                     val () = emit(OPER{assem="cmpl `s1, `s0\n",
-                        src=[munchExp e1, tmp], dst=[], jump=NONE})
+                        src=[munchExp e1, tmp], dst=[munchExp e1, tmp], jump=NONE})
                 in  
                     emit(OPER{assem=relOp(relop)^l1^"\n", src=[],
                           dst=[], jump=SOME[l1, l2]})
@@ -189,7 +189,7 @@ fun codegen frame stm =
                 let (*val () = emit(OPER{assem="cmpl `s0,`s1\n",
                         src=[munchExp e1, munchExp e2], dst=[], jump=NONE})*)
                     val () = emit(OPER{assem="cmpl `s1,`s0\n",
-                        src=[munchExp e1, munchExp e2], dst=[], jump=NONE})
+                        src=[munchExp e1, munchExp e2], dst=[munchExp e1, munchExp e2], jump=NONE})
 
                 in  
                       emit(OPER{assem=relOp(relop)^l1^"\n", src=[],

@@ -1,348 +1,455 @@
-alloc Var arrrMEM BINOP (PLUS, TEMP ebp,CONST ~4)CONST 0
-alloc Var arrrMEM BINOP (PLUS, TEMP ebp,CONST ~4)CONST 0
+Subscript Var arrrMEM BINOP (PLUS, MEM BINOP (PLUS, TEMP ebp,CONST 8),CONST ~12)TEMP T5
 IF EXP!!!
+Subscript Var arrrMEM BINOP (PLUS, MEM BINOP (PLUS, TEMP ebp,CONST 8),CONST ~12)TEMP T5
 IF EXP!!!
-Subscript Var arrrMEM BINOP (PLUS, MEM BINOP (PLUS, TEMP ebp,CONST 8),CONST ~8)TEMP T36
-Subscript Var arrrMEM BINOP (PLUS, MEM BINOP (PLUS, TEMP ebp,CONST 8),CONST ~8)TEMP T36
-Subscript Var arrrMEM BINOP (PLUS, MEM BINOP (PLUS, TEMP ebp,CONST 8),CONST ~8)CONST 1
-Subscript Var arrrMEM BINOP (PLUS, MEM BINOP (PLUS, TEMP ebp,CONST 8),CONST ~8)TEMP T36
+Subscript Var arrrMEM BINOP (PLUS, MEM BINOP (PLUS, TEMP ebp,CONST 8),CONST ~8)TEMP T23
+Subscript Var arrrMEM BINOP (PLUS, MEM BINOP (PLUS, TEMP ebp,CONST 8),CONST ~16)BINOP (PLUS, TEMP T23,MEM BINOP (PLUS, TEMP ebp,CONST 12))
+IF EXP!!!
+Subscript Var arrrMEM BINOP (PLUS, MEM BINOP (PLUS, TEMP ebp,CONST 8),CONST ~20)BINOP (MINUS, BINOP (PLUS, TEMP T23,CONST 7),MEM BINOP (PLUS, TEMP ebp,CONST 12))
+IF EXP!!!
+Subscript Var arrrMEM BINOP (PLUS, MEM BINOP (PLUS, TEMP ebp,CONST 8),CONST ~8)TEMP T23
+Subscript Var arrrMEM BINOP (PLUS, MEM BINOP (PLUS, TEMP ebp,CONST 8),CONST ~16)BINOP (PLUS, TEMP T23,MEM BINOP (PLUS, TEMP ebp,CONST 12))
+Subscript Var arrrMEM BINOP (PLUS, MEM BINOP (PLUS, TEMP ebp,CONST 8),CONST ~20)BINOP (MINUS, BINOP (PLUS, TEMP T23,CONST 7),MEM BINOP (PLUS, TEMP ebp,CONST 12))
+Subscript Var arrrMEM BINOP (PLUS, MEM BINOP (PLUS, TEMP ebp,CONST 8),CONST ~12)MEM BINOP (PLUS, TEMP ebp,CONST 12)
+Subscript Var arrrMEM BINOP (PLUS, MEM BINOP (PLUS, TEMP ebp,CONST 8),CONST ~8)TEMP T23
+Subscript Var arrrMEM BINOP (PLUS, MEM BINOP (PLUS, TEMP ebp,CONST 8),CONST ~16)BINOP (PLUS, TEMP T23,MEM BINOP (PLUS, TEMP ebp,CONST 12))
+Subscript Var arrrMEM BINOP (PLUS, MEM BINOP (PLUS, TEMP ebp,CONST 8),CONST ~20)BINOP (MINUS, BINOP (PLUS, TEMP T23,CONST 7),MEM BINOP (PLUS, TEMP ebp,CONST 12))
 IF EXP!!!
 bien!
-Fragmentos de string: 22: (_tigermain, ), (try_L0, ), (L39, "ACA VA EL TABLERO\x0a"), (L38, "ACA VA EL TABLERO\x0a"), (L35, "\x0a"), (L34, "\x0a"), (L31, "."), (L30, "."), (printint_L1, ), (L22, "0"), (L21, "0"), (L18, "-"), (L17, "-"), (f_L2, ), (L12, "0"), (L11, "0"), (L10, "0"), (L9, "0"), (L8, "0"), (L7, "0"), (L6, "0"), (L5, "0"), 
-L5:	"0"
-L6:	"0"
-L7:	"0"
-L8:	"0"
-L9:	"0"
-L10:	"0"
-L11:	"0"
-L12:	"0"
-f_L2:
+Fragmentos de string: 11: (_tigermain, ), (try_L0, ), (printboard_L1, ), (L31, "\x0a"), (L30, "\x0a"), (L27, "\x0a"), (L26, "\x0a"), (L17, " ."), (L16, " O"), (L7, " ."), (L6, " O"), 
+L6:	" O"
+L7:	" ."
+L16:	" O"
+L17:	" ."
+L26:	"\x0a"
+L27:	"\x0a"
+L30:	"\x0a"
+L31:	"\x0a"
+printboard_L1:
 SEQ(
- CJUMP(GT,
-  MEM(
-   BINOP(PLUS,
-    TEMP ebp,
-    CONST 12)),
-  CONST 0,
-  L13,L14),
+ MOVE(
+  TEMP T19,
+  TEMP ebx),
  SEQ(
-  LABEL L13,
+  MOVE(
+   TEMP T20,
+   TEMP edi),
   SEQ(
+   MOVE(
+    TEMP T21,
+    TEMP esi),
    SEQ(
     SEQ(
-     MOVE(
-      TEMP T3,
-      BINOP(DIV,
-       MEM(
-        BINOP(PLUS,
-         TEMP ebp,
-         CONST 12)),
-       CONST 10)),
+     SEQ(
+      MOVE(
+       TEMP T5,
+       CONST 0),
+      SEQ(
+       MOVE(
+        TEMP T18,
+        BINOP(MINUS,
+         MEM(
+          BINOP(PLUS,
+           MEM(
+            BINOP(PLUS,
+             TEMP ebp,
+             CONST 8)),
+           CONST ~4)),
+         CONST 1)),
+       SEQ(
+        CJUMP(GE,
+         TEMP T5,
+         TEMP T18,
+         L2,L29),
+        SEQ(
+         LABEL L29,
+         SEQ(
+          SEQ(
+           SEQ(
+            MOVE(
+             TEMP T7,
+             CONST 0),
+            SEQ(
+             MOVE(
+              TEMP T17,
+              BINOP(MINUS,
+               MEM(
+                BINOP(PLUS,
+                 MEM(
+                  BINOP(PLUS,
+                   TEMP ebp,
+                   CONST 8)),
+                 CONST ~4)),
+               CONST 1)),
+             SEQ(
+              CJUMP(GE,
+               TEMP T7,
+               TEMP T17,
+               L3,L25),
+              SEQ(
+               LABEL L25,
+               SEQ(
+                SEQ(
+                 MOVE(
+                  TEMP T16,
+                  ESEQ(
+                   SEQ(
+                    CJUMP(EQ,
+                     ESEQ(
+                      SEQ(
+                       MOVE(
+                        TEMP T12,
+                        MEM(
+                         BINOP(PLUS,
+                          MEM(
+                           BINOP(PLUS,
+                            TEMP ebp,
+                            CONST 8)),
+                          CONST ~12))),
+                       SEQ(
+                        MOVE(
+                         TEMP T13,
+                         TEMP T5),
+                        EXP(
+                         CALL(
+                          NAME _checkIndexArray,
+                           TEMP T12,
+                           TEMP T13)))),
+                      MEM(
+                       BINOP(PLUS,
+                        TEMP T12,
+                        BINOP(MUL,
+                         TEMP T13,
+                         CONST 4)))),
+                     TEMP T7,
+                     L21,L22),
+                    SEQ(
+                     LABEL L21,
+                     SEQ(
+                      MOVE(
+                       TEMP T15,
+                       NAME L16),
+                      SEQ(
+                       JUMP(                        NAME L23),
+                       SEQ(
+                        LABEL L22,
+                        SEQ(
+                         MOVE(
+                          TEMP T15,
+                          NAME L17),
+                         LABEL L23)))))),
+                   TEMP T15)),
+                 EXP(
+                  CALL(
+                   NAME print,
+                    TEMP T16))),
+                SEQ(
+                 CJUMP(EQ,
+                  TEMP T7,
+                  TEMP T17,
+                  L3,L24),
+                 SEQ(
+                  LABEL L24,
+                  SEQ(
+                   MOVE(
+                    TEMP T7,
+                    BINOP(PLUS,
+                     TEMP T7,
+                     CONST 1)),
+                   SEQ(
+                    JUMP(                     NAME L25),
+                    LABEL L3))))))))),
+           EXP(
+            CALL(
+             NAME print,
+              NAME L27))),
+          SEQ(
+           CJUMP(EQ,
+            TEMP T5,
+            TEMP T18,
+            L2,L28),
+           SEQ(
+            LABEL L28,
+            SEQ(
+             MOVE(
+              TEMP T5,
+              BINOP(PLUS,
+               TEMP T5,
+               CONST 1)),
+             SEQ(
+              JUMP(               NAME L29),
+              LABEL L2))))))))),
      EXP(
       CALL(
-       NAME f_L2,
+       NAME print,
+        NAME L31))),
+    SEQ(
+     MOVE(
+      TEMP esi,
+      TEMP T21),
+     SEQ(
+      MOVE(
+       TEMP edi,
+       TEMP T20),
+      MOVE(
+       TEMP ebx,
+       TEMP T19)))))))
+try_L0:
+SEQ(
+ MOVE(
+  TEMP T62,
+  TEMP ebx),
+ SEQ(
+  MOVE(
+   TEMP T63,
+   TEMP edi),
+  SEQ(
+   MOVE(
+    TEMP T64,
+    TEMP esi),
+   SEQ(
+    SEQ(
+     CJUMP(EQ,
+      MEM(
+       BINOP(PLUS,
+        TEMP ebp,
+        CONST 12)),
+      MEM(
+       BINOP(PLUS,
         MEM(
          BINOP(PLUS,
           TEMP ebp,
           CONST 8)),
-        TEMP T3))),
-    SEQ(
-     MOVE(
-      TEMP T28,
-      ESEQ(
-       SEQ(
-        MOVE(
-         TEMP T26,
-         BINOP(PLUS,
-          BINOP(MINUS,
-           MEM(
-            BINOP(PLUS,
-             TEMP ebp,
-             CONST 12)),
-           BINOP(MUL,
-            BINOP(DIV,
-             MEM(
-              BINOP(PLUS,
-               TEMP ebp,
-               CONST 12)),
-             CONST 10),
-            CONST 10)),
-          ESEQ(
-           SEQ(
-            EXP(
-             CALL(
-              NAME ord,
-               NAME L12)),
-            MOVE(
-             TEMP T24,
-             TEMP eax)),
-           TEMP T24))),
-        SEQ(
-         EXP(
-          CALL(
-           NAME chr,
-            TEMP T26)),
-         MOVE(
-          TEMP T27,
-          TEMP eax))),
-       TEMP T27)),
-     EXP(
-      CALL(
-       NAME print,
-        TEMP T28)))),
-   LABEL L14)))
-L17:	"-"
-L18:	"-"
-L21:	"0"
-L22:	"0"
-printint_L1:
-EXP(
- ESEQ(
-  SEQ(
-   CJUMP(LT,
-    MEM(
-     BINOP(PLUS,
-      TEMP ebp,
-      CONST 12)),
-    CONST 0,
-    L26,L27),
-   SEQ(
-    LABEL L26,
-    SEQ(
+        CONST ~4)),
+      L60,L61),
      SEQ(
-      EXP(
-       CALL(
-        NAME print,
-         NAME L18)),
+      LABEL L60,
       SEQ(
-       MOVE(
-        TEMP T31,
-        BINOP(MINUS,
-         CONST 0,
-         MEM(
-          BINOP(PLUS,
-           TEMP ebp,
-           CONST 12)))),
        EXP(
         CALL(
-         NAME f_L2,
-          TEMP ebp,
-          TEMP T31)))),
-     SEQ(
-      JUMP(       NAME L28),
-      SEQ(
-       LABEL L27,
-       SEQ(
-        SEQ(
-         CJUMP(GT,
+         NAME printboard_L1,
           MEM(
            BINOP(PLUS,
             TEMP ebp,
-            CONST 12)),
-          CONST 0,
-          L23,L24),
-         SEQ(
-          LABEL L23,
-          SEQ(
-           SEQ(
-            MOVE(
-             TEMP T32,
-             MEM(
-              BINOP(PLUS,
-               TEMP ebp,
-               CONST 12))),
-            EXP(
-             CALL(
-              NAME f_L2,
-               TEMP ebp,
-               TEMP T32))),
-           SEQ(
-            JUMP(             NAME L25),
-            SEQ(
-             LABEL L24,
-             SEQ(
-              EXP(
-               CALL(
-                NAME print,
-                 NAME L22)),
-              LABEL L25)))))),
-        LABEL L28)))))),
-  CONST 0))
-L30:	"."
-L31:	"."
-L34:	"\x0a"
-L35:	"\x0a"
-L38:	"ACA VA EL TABLERO\x0a"
-L39:	"ACA VA EL TABLERO\x0a"
-try_L0:
-SEQ(
- SEQ(
-  MOVE(
-   TEMP T33,
-   CONST 0),
-  SEQ(
-   MOVE(
-    TEMP T34,
-    MEM(
-     BINOP(PLUS,
-      TEMP ebp,
-      CONST 12))),
-   SEQ(
-    CJUMP(GT,
-     TEMP T34,
-     TEMP T33,
-     L29,L33),
-    SEQ(
-     LABEL L33,
-     SEQ(
-      EXP(
-       CALL(
-        NAME print,
-         NAME L31)),
-      SEQ(
-       CJUMP(EQ,
-        TEMP T33,
-        TEMP T34,
-        L29,L32),
+            CONST 8)))),
        SEQ(
-        LABEL L32,
+        JUMP(         NAME L62),
         SEQ(
-         MOVE(
-          TEMP T33,
-          BINOP(PLUS,
-           TEMP T33,
-           CONST 1)),
+         LABEL L61,
          SEQ(
-          JUMP(           NAME L33),
-          LABEL L29))))))))),
- SEQ(
-  EXP(
-   CALL(
-    NAME print,
-     NAME L35)),
-  SEQ(
-   EXP(
-    CALL(
-     NAME flush)),
-   SEQ(
-    CJUMP(EQ,
-     MEM(
-      BINOP(PLUS,
-       TEMP ebp,
-       CONST 12)),
-     MEM(
-      BINOP(PLUS,
-       MEM(
-        BINOP(PLUS,
-         TEMP ebp,
-         CONST 8)),
-       CONST ~4)),
-     L47,L48),
-    SEQ(
-     LABEL L47,
-     SEQ(
-      EXP(
-       CALL(
-        NAME print,
-         NAME L39)),
-      SEQ(
-       JUMP(        NAME L49),
-       SEQ(
-        LABEL L48,
-        SEQ(
-         SEQ(
-          MOVE(
-           TEMP T36,
-           CONST 0),
           SEQ(
            MOVE(
-            TEMP T48,
-            BINOP(MINUS,
-             MEM(
-              BINOP(PLUS,
-               MEM(
-                BINOP(PLUS,
-                 TEMP ebp,
-                 CONST 8)),
-               CONST ~4)),
-             CONST 1)),
+            TEMP T23,
+            CONST 0),
            SEQ(
-            CJUMP(GT,
-             TEMP T48,
-             TEMP T36,
-             L40,L46),
+            MOVE(
+             TEMP T61,
+             BINOP(MINUS,
+              MEM(
+               BINOP(PLUS,
+                MEM(
+                 BINOP(PLUS,
+                  TEMP ebp,
+                  CONST 8)),
+                CONST ~4)),
+              CONST 1)),
             SEQ(
-             LABEL L46,
+             CJUMP(GE,
+              TEMP T23,
+              TEMP T61,
+              L34,L59),
              SEQ(
+              LABEL L59,
               SEQ(
-               CJUMP(EQ,
-                ESEQ(
-                 SEQ(
-                  MOVE(
-                   TEMP T37,
-                   MEM(
-                    BINOP(PLUS,
-                     MEM(
-                      BINOP(PLUS,
-                       TEMP ebp,
-                       CONST 8)),
-                     CONST ~8))),
-                  SEQ(
-                   MOVE(
-                    TEMP T38,
-                    TEMP T36),
-                   EXP(
-                    CALL(
-                     NAME _checkIndexArray,
-                      TEMP T37,
-                      TEMP T38)))),
-                 MEM(
-                  BINOP(PLUS,
-                   TEMP T37,
-                   BINOP(MUL,
-                    TEMP T38,
-                    CONST 4)))),
-                CONST 0,
-                L43,L44),
                SEQ(
-                LABEL L43,
-                SEQ(
-                 SEQ(
-                  MOVE(
-                   ESEQ(
-                    SEQ(
-                     MOVE(
-                      TEMP T39,
-                      MEM(
-                       BINOP(PLUS,
+                CJUMP(NE,
+                 ESEQ(
+                  SEQ(
+                   CJUMP(NE,
+                    ESEQ(
+                     SEQ(
+                      CJUMP(EQ,
+                       ESEQ(
+                        SEQ(
+                         MOVE(
+                          TEMP T24,
+                          MEM(
+                           BINOP(PLUS,
+                            MEM(
+                             BINOP(PLUS,
+                              TEMP ebp,
+                              CONST 8)),
+                            CONST ~8))),
+                         SEQ(
+                          MOVE(
+                           TEMP T25,
+                           TEMP T23),
+                          EXP(
+                           CALL(
+                            NAME _checkIndexArray,
+                             TEMP T24,
+                             TEMP T25)))),
                         MEM(
                          BINOP(PLUS,
-                          TEMP ebp,
-                          CONST 8)),
-                        CONST ~8))),
+                          TEMP T24,
+                          BINOP(MUL,
+                           TEMP T25,
+                           CONST 4)))),
+                       CONST 0,
+                       L42,L43),
+                      SEQ(
+                       LABEL L42,
+                       SEQ(
+                        MOVE(
+                         TEMP T30,
+                         ESEQ(
+                          SEQ(
+                           CJUMP(EQ,
+                            ESEQ(
+                             SEQ(
+                              MOVE(
+                               TEMP T27,
+                               MEM(
+                                BINOP(PLUS,
+                                 MEM(
+                                  BINOP(PLUS,
+                                   TEMP ebp,
+                                   CONST 8)),
+                                 CONST ~16))),
+                              SEQ(
+                               MOVE(
+                                TEMP T28,
+                                BINOP(PLUS,
+                                 TEMP T23,
+                                 MEM(
+                                  BINOP(PLUS,
+                                   TEMP ebp,
+                                   CONST 12)))),
+                               EXP(
+                                CALL(
+                                 NAME _checkIndexArray,
+                                  TEMP T27,
+                                  TEMP T28)))),
+                             MEM(
+                              BINOP(PLUS,
+                               TEMP T27,
+                               BINOP(MUL,
+                                TEMP T28,
+                                CONST 4)))),
+                            CONST 0,
+                            L45,L46),
+                           SEQ(
+                            LABEL L46,
+                            SEQ(
+                             MOVE(
+                              TEMP T31,
+                              CONST 0),
+                             SEQ(
+                              JUMP(                               NAME L47),
+                              SEQ(
+                               LABEL L45,
+                               SEQ(
+                                MOVE(
+                                 TEMP T31,
+                                 CONST 1),
+                                SEQ(
+                                 JUMP(                                  NAME L47),
+                                 LABEL L47))))))),
+                          TEMP T31)),
+                        SEQ(
+                         JUMP(                          NAME L44),
+                         SEQ(
+                          LABEL L43,
+                          SEQ(
+                           MOVE(
+                            TEMP T30,
+                            CONST 0),
+                           LABEL L44)))))),
+                     TEMP T30),
+                    CONST 0,
+                    L50,L51),
+                   SEQ(
+                    LABEL L50,
+                    SEQ(
+                     MOVE(
+                      TEMP T36,
+                      ESEQ(
+                       SEQ(
+                        CJUMP(EQ,
+                         ESEQ(
+                          SEQ(
+                           MOVE(
+                            TEMP T34,
+                            MEM(
+                             BINOP(PLUS,
+                              MEM(
+                               BINOP(PLUS,
+                                TEMP ebp,
+                                CONST 8)),
+                              CONST ~20))),
+                           SEQ(
+                            MOVE(
+                             TEMP T35,
+                             BINOP(MINUS,
+                              BINOP(PLUS,
+                               TEMP T23,
+                               CONST 7),
+                              MEM(
+                               BINOP(PLUS,
+                                TEMP ebp,
+                                CONST 12)))),
+                            EXP(
+                             CALL(
+                              NAME _checkIndexArray,
+                               TEMP T34,
+                               TEMP T35)))),
+                          MEM(
+                           BINOP(PLUS,
+                            TEMP T34,
+                            BINOP(MUL,
+                             TEMP T35,
+                             CONST 4)))),
+                         CONST 0,
+                         L53,L54),
+                        SEQ(
+                         LABEL L54,
+                         SEQ(
+                          MOVE(
+                           TEMP T37,
+                           CONST 0),
+                          SEQ(
+                           JUMP(                            NAME L55),
+                           SEQ(
+                            LABEL L53,
+                            SEQ(
+                             MOVE(
+                              TEMP T37,
+                              CONST 1),
+                             SEQ(
+                              JUMP(                               NAME L55),
+                              LABEL L55))))))),
+                       TEMP T37)),
                      SEQ(
-                      MOVE(
-                       TEMP T40,
-                       TEMP T36),
-                      EXP(
-                       CALL(
-                        NAME _checkIndexArray,
-                         TEMP T39,
-                         TEMP T40)))),
-                    MEM(
-                     BINOP(PLUS,
-                      TEMP T39,
-                      BINOP(MUL,
-                       TEMP T40,
-                       CONST 4)))),
-                   CONST 1),
+                      JUMP(                       NAME L52),
+                      SEQ(
+                       LABEL L51,
+                       SEQ(
+                        MOVE(
+                         TEMP T36,
+                         CONST 0),
+                        LABEL L52)))))),
+                  TEMP T36),
+                 CONST 0,
+                 L56,L57),
+                SEQ(
+                 LABEL L56,
+                 SEQ(
                   SEQ(
                    MOVE(
                     ESEQ(
                      SEQ(
                       MOVE(
-                       TEMP T41,
+                       TEMP T38,
                        MEM(
                         BINOP(PLUS,
                          MEM(
@@ -352,564 +459,846 @@ SEQ(
                          CONST ~8))),
                       SEQ(
                        MOVE(
-                        TEMP T42,
-                        CONST 1),
+                        TEMP T39,
+                        TEMP T23),
                        EXP(
                         CALL(
                          NAME _checkIndexArray,
-                          TEMP T41,
-                          TEMP T42)))),
+                          TEMP T38,
+                          TEMP T39)))),
                      MEM(
                       BINOP(PLUS,
-                       TEMP T41,
+                       TEMP T38,
                        BINOP(MUL,
-                        TEMP T42,
+                        TEMP T39,
                         CONST 4)))),
-                    CONST 10),
+                    CONST 1),
                    SEQ(
-                    SEQ(
-                     MOVE(
-                      TEMP T45,
-                      BINOP(PLUS,
-                       MEM(
-                        BINOP(PLUS,
-                         TEMP ebp,
-                         CONST 12)),
-                       CONST 1)),
-                     EXP(
-                      CALL(
-                       NAME try_L0,
-                        MEM(
-                         BINOP(PLUS,
-                          TEMP ebp,
-                          CONST 8)),
-                        TEMP T45))),
                     MOVE(
                      ESEQ(
                       SEQ(
                        MOVE(
-                        TEMP T46,
+                        TEMP T41,
                         MEM(
                          BINOP(PLUS,
                           MEM(
                            BINOP(PLUS,
                             TEMP ebp,
                             CONST 8)),
-                          CONST ~8))),
+                          CONST ~16))),
                        SEQ(
                         MOVE(
-                         TEMP T47,
-                         TEMP T36),
+                         TEMP T42,
+                         BINOP(PLUS,
+                          TEMP T23,
+                          MEM(
+                           BINOP(PLUS,
+                            TEMP ebp,
+                            CONST 12)))),
                         EXP(
                          CALL(
                           NAME _checkIndexArray,
-                           TEMP T46,
-                           TEMP T47)))),
+                           TEMP T41,
+                           TEMP T42)))),
                       MEM(
                        BINOP(PLUS,
-                        TEMP T46,
+                        TEMP T41,
                         BINOP(MUL,
-                         TEMP T47,
+                         TEMP T42,
                          CONST 4)))),
-                     CONST 0)))),
-                 LABEL L44))),
-              SEQ(
-               CJUMP(EQ,
-                TEMP T36,
-                TEMP T48,
-                L40,L45),
+                     CONST 1),
+                    SEQ(
+                     MOVE(
+                      ESEQ(
+                       SEQ(
+                        MOVE(
+                         TEMP T45,
+                         MEM(
+                          BINOP(PLUS,
+                           MEM(
+                            BINOP(PLUS,
+                             TEMP ebp,
+                             CONST 8)),
+                           CONST ~20))),
+                        SEQ(
+                         MOVE(
+                          TEMP T46,
+                          BINOP(MINUS,
+                           BINOP(PLUS,
+                            TEMP T23,
+                            CONST 7),
+                           MEM(
+                            BINOP(PLUS,
+                             TEMP ebp,
+                             CONST 12)))),
+                         EXP(
+                          CALL(
+                           NAME _checkIndexArray,
+                            TEMP T45,
+                            TEMP T46)))),
+                       MEM(
+                        BINOP(PLUS,
+                         TEMP T45,
+                         BINOP(MUL,
+                          TEMP T46,
+                          CONST 4)))),
+                      CONST 1),
+                     SEQ(
+                      MOVE(
+                       ESEQ(
+                        SEQ(
+                         MOVE(
+                          TEMP T47,
+                          MEM(
+                           BINOP(PLUS,
+                            MEM(
+                             BINOP(PLUS,
+                              TEMP ebp,
+                              CONST 8)),
+                            CONST ~12))),
+                         SEQ(
+                          MOVE(
+                           TEMP T48,
+                           MEM(
+                            BINOP(PLUS,
+                             TEMP ebp,
+                             CONST 12))),
+                          EXP(
+                           CALL(
+                            NAME _checkIndexArray,
+                             TEMP T47,
+                             TEMP T48)))),
+                        MEM(
+                         BINOP(PLUS,
+                          TEMP T47,
+                          BINOP(MUL,
+                           TEMP T48,
+                           CONST 4)))),
+                       TEMP T23),
+                      SEQ(
+                       SEQ(
+                        MOVE(
+                         TEMP T51,
+                         BINOP(PLUS,
+                          MEM(
+                           BINOP(PLUS,
+                            TEMP ebp,
+                            CONST 12)),
+                          CONST 1)),
+                        EXP(
+                         CALL(
+                          NAME try_L0,
+                           MEM(
+                            BINOP(PLUS,
+                             TEMP ebp,
+                             CONST 8)),
+                           TEMP T51))),
+                       SEQ(
+                        MOVE(
+                         ESEQ(
+                          SEQ(
+                           MOVE(
+                            TEMP T52,
+                            MEM(
+                             BINOP(PLUS,
+                              MEM(
+                               BINOP(PLUS,
+                                TEMP ebp,
+                                CONST 8)),
+                              CONST ~8))),
+                           SEQ(
+                            MOVE(
+                             TEMP T53,
+                             TEMP T23),
+                            EXP(
+                             CALL(
+                              NAME _checkIndexArray,
+                               TEMP T52,
+                               TEMP T53)))),
+                          MEM(
+                           BINOP(PLUS,
+                            TEMP T52,
+                            BINOP(MUL,
+                             TEMP T53,
+                             CONST 4)))),
+                         CONST 0),
+                        SEQ(
+                         MOVE(
+                          ESEQ(
+                           SEQ(
+                            MOVE(
+                             TEMP T55,
+                             MEM(
+                              BINOP(PLUS,
+                               MEM(
+                                BINOP(PLUS,
+                                 TEMP ebp,
+                                 CONST 8)),
+                               CONST ~16))),
+                            SEQ(
+                             MOVE(
+                              TEMP T56,
+                              BINOP(PLUS,
+                               TEMP T23,
+                               MEM(
+                                BINOP(PLUS,
+                                 TEMP ebp,
+                                 CONST 12)))),
+                             EXP(
+                              CALL(
+                               NAME _checkIndexArray,
+                                TEMP T55,
+                                TEMP T56)))),
+                           MEM(
+                            BINOP(PLUS,
+                             TEMP T55,
+                             BINOP(MUL,
+                              TEMP T56,
+                              CONST 4)))),
+                          CONST 0),
+                         MOVE(
+                          ESEQ(
+                           SEQ(
+                            MOVE(
+                             TEMP T59,
+                             MEM(
+                              BINOP(PLUS,
+                               MEM(
+                                BINOP(PLUS,
+                                 TEMP ebp,
+                                 CONST 8)),
+                               CONST ~20))),
+                            SEQ(
+                             MOVE(
+                              TEMP T60,
+                              BINOP(MINUS,
+                               BINOP(PLUS,
+                                TEMP T23,
+                                CONST 7),
+                               MEM(
+                                BINOP(PLUS,
+                                 TEMP ebp,
+                                 CONST 12)))),
+                             EXP(
+                              CALL(
+                               NAME _checkIndexArray,
+                                TEMP T59,
+                                TEMP T60)))),
+                           MEM(
+                            BINOP(PLUS,
+                             TEMP T59,
+                             BINOP(MUL,
+                              TEMP T60,
+                              CONST 4)))),
+                          CONST 0)))))))),
+                  LABEL L57))),
                SEQ(
-                LABEL L45,
+                CJUMP(EQ,
+                 TEMP T23,
+                 TEMP T61,
+                 L34,L58),
                 SEQ(
-                 MOVE(
-                  TEMP T36,
-                  BINOP(PLUS,
-                   TEMP T36,
-                   CONST 1)),
+                 LABEL L58,
                  SEQ(
-                  JUMP(                   NAME L46),
-                  LABEL L40))))))))),
-         LABEL L49)))))))))
+                  MOVE(
+                   TEMP T23,
+                   BINOP(PLUS,
+                    TEMP T23,
+                    CONST 1)),
+                  SEQ(
+                   JUMP(                    NAME L59),
+                   LABEL L34))))))))),
+          LABEL L62)))))),
+    SEQ(
+     MOVE(
+      TEMP esi,
+      TEMP T64),
+     SEQ(
+      MOVE(
+       TEMP edi,
+       TEMP T63),
+      MOVE(
+       TEMP ebx,
+       TEMP T62)))))))
 _tigermain:
-MOVE(
- TEMP eax,
- ESEQ(
+SEQ(
+ MOVE(
+  TEMP T65,
+  TEMP ebx),
+ SEQ(
+  MOVE(
+   TEMP T66,
+   TEMP edi),
   SEQ(
    MOVE(
-    MEM(
-     BINOP(PLUS,
-      TEMP ebp,
-      CONST ~4)),
-    CONST 8),
+    TEMP T67,
+    TEMP esi),
    SEQ(
     MOVE(
-     MEM(
-      BINOP(PLUS,
-       TEMP ebp,
-       CONST ~8)),
-     CALL(
-      NAME _allocArray,
-       MEM(
-        BINOP(PLUS,
-         TEMP ebp,
-         CONST ~4)),
-       CONST 0)),
-    MOVE(
-     TEMP T0,
-     CALL(
-      NAME _allocArray,
-       MEM(
-        BINOP(PLUS,
-         TEMP ebp,
-         CONST ~4)),
-       CONST 0)))),
-  ESEQ(
-   EXP(
-    CALL(
-     NAME try_L0,
-      TEMP ebp,
-      CONST 0)),
-   CONST 0)))
+     TEMP eax,
+     ESEQ(
+      SEQ(
+       MOVE(
+        MEM(
+         BINOP(PLUS,
+          TEMP ebp,
+          CONST ~4)),
+        CONST 8),
+       SEQ(
+        MOVE(
+         MEM(
+          BINOP(PLUS,
+           TEMP ebp,
+           CONST ~8)),
+         CALL(
+          NAME _allocArray,
+           MEM(
+            BINOP(PLUS,
+             TEMP ebp,
+             CONST ~4)),
+           CONST 0)),
+        SEQ(
+         MOVE(
+          MEM(
+           BINOP(PLUS,
+            TEMP ebp,
+            CONST ~12)),
+          CALL(
+           NAME _allocArray,
+            MEM(
+             BINOP(PLUS,
+              TEMP ebp,
+              CONST ~4)),
+            CONST 0)),
+         SEQ(
+          MOVE(
+           MEM(
+            BINOP(PLUS,
+             TEMP ebp,
+             CONST ~16)),
+           CALL(
+            NAME _allocArray,
+             BINOP(MINUS,
+              BINOP(PLUS,
+               MEM(
+                BINOP(PLUS,
+                 TEMP ebp,
+                 CONST ~4)),
+               MEM(
+                BINOP(PLUS,
+                 TEMP ebp,
+                 CONST ~4))),
+              CONST 1),
+             CONST 0)),
+          MOVE(
+           MEM(
+            BINOP(PLUS,
+             TEMP ebp,
+             CONST ~20)),
+           CALL(
+            NAME _allocArray,
+             BINOP(MINUS,
+              BINOP(PLUS,
+               MEM(
+                BINOP(PLUS,
+                 TEMP ebp,
+                 CONST ~4)),
+               MEM(
+                BINOP(PLUS,
+                 TEMP ebp,
+                 CONST ~4))),
+              CONST 1),
+             CONST 0)))))),
+      ESEQ(
+       EXP(
+        CALL(
+         NAME try_L0,
+          TEMP ebp,
+          CONST 0)),
+       CONST 0))),
+    SEQ(
+     MOVE(
+      TEMP esi,
+      TEMP T67),
+     SEQ(
+      MOVE(
+       TEMP edi,
+       TEMP T66),
+      MOVE(
+       TEMP ebx,
+       TEMP T65)))))))
 
 Tabla de colores:
-T49: edi
-T52: eax
-T53: edi
-T54: eax
 eax: eax
-T55: edi
-T56: edi
-T57: ebx
-T58: esi
-T59: eax
-T60: edi
+T194: ebx
+T195: edi
+T196: esi
+T197: eax
+T198: eax
+T199: eax
 ebx: ebx
 ecx: ecx
-edi: edi
-edx: edx
-T24: eax
-esi: esi
-T26: edi
-T27: eax
-T28: eax
-T3: edi
-Tabla de colores:
-eax: eax
-T61: eax
-T62: eax
-T63: eax
-T64: ebx
-ebx: ebx
-T65: eax
-ecx: ecx
-edi: edi
-edx: edx
-esi: esi
-T31: eax
-T32: eax
-Tabla de colores:
-T40: esi
-T41: ebx
-T42: edi
-T45: eax
-T46: ebx
-T47: esi
-T48: edi
-eax: eax
-ebx: ebx
-T66: ebx
-T67: edi
-T68: ebx
-T69: eax
-T70: eax
-T71: edi
-T72: edi
-T73: eax
-T74: ebx
-ecx: ecx
-T75: eax
 T76: eax
-T77: ebx
+T77: eax
+T78: eax
 edi: edi
-T79: esi
-T80: ebx
+T79: eax
+T12: ebx
+T13: edi
+T80: eax
+T15: eax
 T81: eax
+T16: eax
 T82: ebx
-T84: ebx
+T83: eax
 edx: edx
 T85: eax
-T86: ebx
-T88: eax
-T89: eax
+T87: eax
+T88: ebx
+T200: ebx
 esi: esi
-T90: ebx
-T91: eax
-T92: ebx
-T98: eax
-T99: eax
-T33: edi
-T34: ebx
-T36: esi
-T37: ebx
+T201: esi
+T90: eax
+T202: esi
+T91: edi
+T203: eax
+T204: eax
+T205: eax
+T206: eax
+T207: ebx
+T208: eax
+T209: esi
+T5: edi
+T210: edi
+T211: ebx
+T212: eax
+T213: eax
+T214: ebx
+T215: eax
+T216: eax
+T217: eax
+Tabla de colores:
+T220: esi
+T221: eax
+T222: ebx
+T223: ebx
+T224: esi
+T225: esi
+T226: eax
+T227: eax
+T228: eax
+T229: ebx
+T230: ebx
+T231: eax
+eax: eax
+T232: eax
+T233: esi
+T234: edi
+T235: ebx
+T236: ebx
+T237: esi
+T238: esi
+T239: esi
+T240: ebx
+T241: ebx
+ebx: ebx
+T242: esi
+T243: esi
+T244: esi
+T245: ebx
+T246: ebx
+T247: eax
+T248: eax
+T249: ebx
+T250: eax
+T251: eax
+ecx: ecx
+T252: ebx
+T253: eax
+T254: eax
+T255: eax
+edi: edi
+T256: eax
+T257: eax
+T258: ebx
+T259: eax
+T260: eax
+T261: ebx
+edx: edx
+T262: eax
+T263: eax
+T264: ebx
+T265: eax
+T266: eax
+T267: eax
+T268: eax
+T269: eax
+T24: edi
+esi: esi
+T25: ebx
+T27: edi
+T28: ebx
+T270: eax
+T271: eax
+T272: eax
+T273: ebx
+T274: eax
+T275: ebx
+T30: eax
+T31: eax
+T34: edi
+T35: ebx
+T36: eax
+T37: eax
 T100: eax
-T38: esi
-T101: eax
+T38: edi
+T101: edi
 T39: ebx
 T102: eax
-T103: eax
-T104: eax
 T105: eax
+T107: ebx
+T108: edi
+T41: edi
+T42: ebx
+T45: edi
+T46: ebx
+T47: edi
+T110: ebx
+T48: ebx
+T111: ebx
+T112: eax
+T113: edi
+T114: eax
+T115: ebx
+T116: eax
+T118: eax
+T119: eax
+T51: eax
+T52: edi
+T53: ebx
+T55: edi
+T56: ebx
+T121: edi
+T59: edi
+T122: edi
+T124: edi
+T125: eax
+T126: ebx
+T127: ebx
+T128: eax
+T60: ebx
+T130: eax
+T131: eax
+T133: edi
+T134: edi
+T136: edi
+T137: eax
+T138: edi
+T140: edi
+T141: eax
+T142: ebx
+T143: eax
+T144: edi
+T146: edi
+T147: eax
+T148: ebx
+T149: ebx
+T150: eax
+T151: edi
+T153: edi
+T154: eax
+T155: ebx
+T156: edi
+T158: eax
+T159: eax
+T92: edi
+T93: ebx
+T94: eax
+T95: esi
+T96: eax
+T97: eax
+T160: edi
+T98: eax
+T161: eax
+T99: eax
+T162: edi
+T164: edi
+T165: eax
+T166: ebx
+T167: eax
+T168: edi
+T218: ebx
+T219: edi
+T170: edi
+T171: eax
+T172: ebx
+T173: ebx
+T174: eax
+T175: edi
 Tabla de colores:
-T50: edi
-T51: ebx
+T177: eax
+T178: ebx
+T180: ebx
+T182: ebx
+T184: eax
+T185: eax
+T186: eax
+T187: ecx
+T188: ebx
 eax: eax
+T190: eax
+T191: eax
+T192: eax
+T193: ecx
 ebx: ebx
+T67: esi
+T68: edi
+T69: ebx
+T70: edi
+T71: ebx
+T72: edi
+T73: ebx
+T74: edi
 ecx: ecx
+T75: ebx
 edi: edi
 edx: edx
 esi: esi
-T94: eax
-T95: ebx
-T0: ebx
+T276: ebx
+T277: edi
+T278: edi
+T279: ebx
 
 
 Codigo despues del coloreo:
 .data
-L5:
-	.long 1
-	.string "0"
-
 L6:
-	.long 1
-	.string "0"
+	.long 2
+	.string " O"
 
 L7:
-	.long 1
-	.string "0"
+	.long 2
+	.string " ."
 
-L8:
-	.long 1
-	.string "0"
-
-L9:
-	.long 1
-	.string "0"
-
-L10:
-	.long 1
-	.string "0"
-
-L11:
-	.long 1
-	.string "0"
-
-L12:
-	.long 1
-	.string "0"
+L16:
+	.long 2
+	.string " O"
 
 L17:
-	.long 1
-	.string "-"
+	.long 2
+	.string " ."
 
-L18:
-	.long 1
-	.string "-"
+L26:
+	.long 4
+	.string "\x0a"
 
-L21:
-	.long 1
-	.string "0"
-
-L22:
-	.long 1
-	.string "0"
+L27:
+	.long 4
+	.string "\x0a"
 
 L30:
-	.long 1
-	.string "."
+	.long 4
+	.string "\x0a"
 
 L31:
-	.long 1
-	.string "."
-
-L34:
 	.long 4
 	.string "\x0a"
-
-L35:
-	.long 4
-	.string "\x0a"
-
-L38:
-	.long 21
-	.string "ACA VA EL TABLERO\x0a"
-
-L39:
-	.long 21
-	.string "ACA VA EL TABLERO\x0a"
 
 .text
 	.globl _tigermain
-f_L2:
+printboard_L1:
 
-	enter $0,$0x0
+	enter $36,$0x0
 
-	pushl %ebx
+	movl %ebx, -12(%ebp)
 
-	pushl %edi
+	movl %edi, -16(%ebp)
 
-	pushl %esi
-
-	movl 12(%ebp), %eax
-
-	cmpl $0, %eax
-
-	jg L13
-
-L14:
-
-	jmp L50
-
-L13:
-
-	movl 12(%ebp), %eax
-
-	movl $10, %edi
-
-	xorl %edx, %edx
-
-	idivl %edi
-
-	movl %eax,%edi
-
-	pushl %ecx
-
-	pushl %edx
-
-	pushl %edi
-
-	pushl 8(%ebp)
-
-	call f_L2
-
-	addl $8, %esp
-
-	popl %edx
-
-	popl %ecx
-
-	movl 12(%ebp), %edi
-
-	movl 12(%ebp), %eax
-
-	movl $10, %esi
-
-	xorl %edx, %edx
-
-	idivl %esi
-
-	movl %eax,%esi
-
-	imul $10, %esi, %ebx
-
-	subl %ebx,%edi
-
-	pushl %ecx
-
-	pushl %edx
-
-	pushl $L12
-
-	call ord
-
-	addl $4, %esp
-
-	popl %edx
-
-	popl %ecx
-
-	addl %eax,%edi
-
-	pushl %ecx
-
-	pushl %edx
-
-	pushl %edi
-
-	call chr
-
-	addl $4, %esp
-
-	popl %edx
-
-	popl %ecx
-
-	pushl %ecx
-
-	pushl %edx
-
-	pushl %eax
-
-	call print
-
-	addl $4, %esp
-
-	popl %edx
-
-	popl %ecx
-
-	jmp L14
-
-L50:
-
-	popl %esi
-
-	popl %edi
-
-	popl %ebx
-
-	leave
-
-	ret
-
-printint_L1:
-
-	enter $0,$0x0
-
-	pushl %ebx
-
-	pushl %edi
-
-	pushl %esi
-
-	movl 12(%ebp), %eax
-
-	cmpl $0, %eax
-
-	jl L26
-
-L27:
-
-	movl 12(%ebp), %eax
-
-	cmpl $0, %eax
-
-	jg L23
-
-L24:
-
-	pushl %ecx
-
-	pushl %edx
-
-	pushl $L22
-
-	call print
-
-	addl $4, %esp
-
-	popl %edx
-
-	popl %ecx
-
-L25:
-
-L28:
-
-	jmp L51
-
-L26:
-
-	pushl %ecx
-
-	pushl %edx
-
-	pushl $L18
-
-	call print
-
-	addl $4, %esp
-
-	popl %edx
-
-	popl %ecx
-
-	movl $0, %eax
-
-	movl 12(%ebp), %ebx
-
-	subl %ebx,%eax
-
-	pushl %ecx
-
-	pushl %edx
-
-	pushl %eax
-
-	pushl %ebp
-
-	call f_L2
-
-	addl $8, %esp
-
-	popl %edx
-
-	popl %ecx
-
-	jmp L28
-
-L23:
-
-	movl 12(%ebp), %eax
-
-	pushl %ecx
-
-	pushl %edx
-
-	pushl %eax
-
-	pushl %ebp
-
-	call f_L2
-
-	addl $8, %esp
-
-	popl %edx
-
-	popl %ecx
-
-	jmp L25
-
-L51:
-
-	popl %esi
-
-	popl %edi
-
-	popl %ebx
-
-	leave
-
-	ret
-
-try_L0:
-
-	enter $16,$0x0
-
-	pushl %ebx
-
-	pushl %edi
-
-	pushl %esi
+	movl %esi, -20(%ebp)
 
 	movl $0, %edi 
 
-	movl 12(%ebp), %ebx
+	movl 8(%ebp), %eax
 
-	cmpl %ebx,%edi
+	movl -4(%eax), %eax
 
-	jg L29
+	subl $1,%eax
 
-L33:
+	movl %eax, -8(%ebp)
+
+	movl -8(%ebp), %eax
+
+	cmpl %eax,%edi
+
+	movl %eax, -8(%ebp)
+
+	jge L2
+
+L29:
+
+	movl $0, %eax 
+
+	movl %eax, -36(%ebp)
+
+	movl 8(%ebp), %eax
+
+	movl -4(%eax), %eax
+
+	subl $1,%eax
+
+	movl %eax, -4(%ebp)
+
+	movl -4(%ebp), %ebx
+
+	movl -36(%ebp), %eax
+
+	cmpl %ebx,%eax
+
+	movl %eax, -36(%ebp)
+
+	movl %ebx, -4(%ebp)
+
+	jge L3
+
+L25:
+
+	movl 8(%ebp), %eax
+
+	movl -12(%eax), %ebx
+
+	pushl %ecx
+
+	pushl %edx
+
+	pushl %edi
+
+	pushl %ebx
+
+	call _checkIndexArray
+
+	addl $8, %esp
+
+	popl %edx
+
+	popl %ecx
+
+	movl %ebx,%eax
+
+	movl -28(%ebp), %esi
+
+	imul $4, %edi, %esi
+
+	movl %esi, -28(%ebp)
+
+	movl -28(%ebp), %esi
+
+	addl %esi,%eax
+
+	movl (%eax), %eax
+
+	movl %eax, -24(%ebp)
+
+	movl -32(%ebp), %eax
+
+	imul $4, %edi, %eax
+
+	movl %eax, -32(%ebp)
+
+	movl -32(%ebp), %eax
+
+	addl %eax,%ebx
+
+	movl (%ebx), %eax
+
+	movl -24(%ebp), %eax
+
+	movl -36(%ebp), %ebx
+
+	cmpl %ebx,%eax
+
+	movl %ebx, -36(%ebp)
+
+	je L21
+
+L22:
+
+	movl $L17, %eax
+
+L23:
+
+	pushl %ecx
+
+	pushl %edx
+
+	pushl %eax
+
+	call print
+
+	addl $4, %esp
+
+	popl %edx
+
+	popl %ecx
+
+	movl -4(%ebp), %ebx
+
+	movl -36(%ebp), %eax
+
+	cmpl %ebx,%eax
+
+	movl %eax, -36(%ebp)
+
+	movl %ebx, -4(%ebp)
+
+	je L3
+
+L24:
+
+	movl -36(%ebp), %eax
+
+	addl $1, %eax
+
+	movl %eax, -36(%ebp)
+
+	jmp L25
+
+L21:
+
+	movl $L16, %eax
+
+	jmp L23
+
+L3:
+
+	pushl %ecx
+
+	pushl %edx
+
+	pushl $L27
+
+	call print
+
+	addl $4, %esp
+
+	popl %edx
+
+	popl %ecx
+
+	movl -8(%ebp), %eax
+
+	cmpl %eax,%edi
+
+	movl %eax, -8(%ebp)
+
+	je L2
+
+L28:
+
+	addl $1, %edi
+
+	jmp L29
+
+L2:
 
 	pushl %ecx
 
@@ -925,79 +1314,87 @@ L33:
 
 	popl %ecx
 
-	cmpl %edi,%ebx
+	movl -20(%ebp), %esi
 
-	je L29
+	movl -16(%ebp), %edi
 
-L32:
+	movl -12(%ebp), %ebx
 
-	addl $1, %edi
+	jmp L63
 
-	jmp L33
+L63:
 
-L29:
+	leave
 
-	pushl %ecx
+	ret
 
-	pushl %edx
+try_L0:
 
-	pushl $L35
+	enter $88,$0x0
 
-	call print
+	movl %ebx, -64(%ebp)
 
-	addl $4, %esp
+	movl %edi, -68(%ebp)
 
-	popl %edx
+	movl %esi, -72(%ebp)
 
-	popl %ecx
+	movl 12(%ebp), %edi
 
-	pushl %ecx
+	movl 8(%ebp), %eax
 
-	pushl %edx
+	movl -4(%eax), %ebx
 
-	call flush
-
-	popl %edx
-
-	popl %ecx
-
-	movl 12(%ebp), %ebx
+	movl 12(%ebp), %esi
 
 	movl 8(%ebp), %eax
 
 	movl -4(%eax), %eax
 
-	cmpl %ebx,%eax
+	cmpl %ebx,%edi
 
-	je L47
+	je L60
 
-L48:
+L61:
 
-	movl $0, %esi 
+	movl $0, %eax 
 
-	movl 8(%ebp), %eax
-
-	movl -4(%eax), %edi
-
-	subl $1,%edi
-
-	cmpl %edi,%esi
-
-	jg L40
-
-L46:
+	movl %eax, -60(%ebp)
 
 	movl 8(%ebp), %eax
 
-	movl -8(%eax), %ebx
+	movl -4(%eax), %eax
+
+	subl $1,%eax
+
+	movl %eax, -88(%ebp)
+
+	movl -60(%ebp), %ebx
+
+	movl -88(%ebp), %eax
+
+	cmpl %eax,%ebx
+
+	movl %eax, -88(%ebp)
+
+	movl %ebx, -60(%ebp)
+
+	jge L34
+
+L59:
+
+	movl 8(%ebp), %eax
+
+	movl -8(%eax), %edi
+
+	movl -60(%ebp), %ebx
 
 	pushl %ecx
 
 	pushl %edx
 
-	pushl %esi
-
 	pushl %ebx
+
+	pushl %edi
 
 	call _checkIndexArray
 
@@ -1007,43 +1404,105 @@ L46:
 
 	popl %ecx
 
-	movl -4(%ebp), %eax
+	movl $0, %eax
 
-	imul $4, %esi, %eax
+	movl %eax, -76(%ebp)
+
+	movl %edi,%eax
+
+	movl -8(%ebp), %esi
+
+	imul $4, %ebx, %esi
+
+	movl %esi, -8(%ebp)
+
+	movl -8(%ebp), %esi
+
+	addl %esi,%eax
+
+	movl (%eax), %eax
 
 	movl %eax, -4(%ebp)
 
-	movl -4(%ebp), %eax
+	movl -12(%ebp), %eax
 
-	addl %eax,%ebx
+	imul $4, %ebx, %eax
 
-	movl (%ebx), %eax
+	movl %eax, -12(%ebp)
 
-	cmpl $0, %eax
+	movl -12(%ebp), %eax
 
-	je L43
+	addl %eax,%edi
+
+	movl (%edi), %ebx
+
+	movl -4(%ebp), %ebx
+
+	movl -76(%ebp), %eax
+
+	cmpl %eax, %ebx
+
+	movl %eax, -76(%ebp)
+
+	je L42
+
+L43:
+
+	movl $0, %eax 
 
 L44:
 
-	cmpl %esi,%edi
+	movl $0, %ebx
 
-	je L40
+	cmpl %ebx, %eax
 
-L45:
+	jne L50
 
-	addl $1, %esi
+L51:
 
-	jmp L46
+	movl $0, %eax 
 
-L47:
+L52:
+
+	movl $0, %ebx
+
+	cmpl %ebx, %eax
+
+	jne L56
+
+L57:
+
+	movl -60(%ebp), %ebx
+
+	movl -88(%ebp), %eax
+
+	cmpl %eax,%ebx
+
+	movl %eax, -88(%ebp)
+
+	movl %ebx, -60(%ebp)
+
+	je L34
+
+L58:
+
+	movl -60(%ebp), %eax
+
+	addl $1, %eax
+
+	movl %eax, -60(%ebp)
+
+	jmp L59
+
+L60:
 
 	pushl %ecx
 
 	pushl %edx
 
-	pushl $L39
+	pushl 8(%ebp)
 
-	call print
+	call printboard_L1
 
 	addl $4, %esp
 
@@ -1051,57 +1510,117 @@ L47:
 
 	popl %ecx
 
-L49:
+L62:
 
-	jmp L52
+	movl -72(%ebp), %esi
 
-L43:
+	movl -68(%ebp), %edi
+
+	movl -64(%ebp), %ebx
+
+	jmp L64
+
+L42:
 
 	movl 8(%ebp), %eax
 
-	movl -8(%eax), %ebx
+	movl -16(%eax), %edi
 
-	pushl %ecx
+	movl -60(%ebp), %ebx
 
-	pushl %edx
-
-	pushl %esi
-
-	pushl %ebx
-
-	call _checkIndexArray
-
-	addl $8, %esp
-
-	popl %edx
-
-	popl %ecx
-
-	movl -8(%ebp), %eax
-
-	imul $4, %esi, %eax
-
-	movl %eax, -8(%ebp)
-
-	movl -8(%ebp), %eax
+	movl 12(%ebp), %eax
 
 	addl %eax,%ebx
 
-	movl $1, (%ebx)
-
-	movl 8(%ebp), %eax
-
-	movl -8(%eax), %ebx
-
-	movl $1, %edi 
-
 	pushl %ecx
 
 	pushl %edx
+
+	pushl %ebx
 
 	pushl %edi
 
+	call _checkIndexArray
+
+	addl $8, %esp
+
+	popl %edx
+
+	popl %ecx
+
+	movl $0, %eax
+
+	movl %eax, -80(%ebp)
+
+	movl %edi,%eax
+
+	movl -16(%ebp), %esi
+
+	imul $4, %ebx, %esi
+
+	movl %esi, -16(%ebp)
+
+	movl -16(%ebp), %esi
+
+	addl %esi,%eax
+
+	movl (%eax), %eax
+
+	movl -20(%ebp), %esi
+
+	imul $4, %ebx, %esi
+
+	movl %esi, -20(%ebp)
+
+	movl -20(%ebp), %ebx
+
+	addl %ebx,%edi
+
+	movl (%edi), %edi
+
+	movl -80(%ebp), %ebx
+
+	cmpl %ebx, %eax
+
+	movl %ebx, -80(%ebp)
+
+	je L45
+
+L46:
+
+	movl $0, %eax 
+
+L47:
+
+	jmp L44
+
+L45:
+
+	movl $1, %eax 
+
+	jmp L47
+
+L50:
+
+	movl 8(%ebp), %eax
+
+	movl -20(%eax), %edi
+
+	movl -60(%ebp), %ebx
+
+	addl $7, %ebx
+
+	movl 12(%ebp), %eax
+
+	subl %eax,%ebx
+
+	pushl %ecx
+
+	pushl %edx
+
 	pushl %ebx
+
+	pushl %edi
 
 	call _checkIndexArray
 
@@ -1111,17 +1630,207 @@ L43:
 
 	popl %ecx
 
-	movl -12(%ebp), %eax
+	movl $0, %eax
 
-	imul $4, %edi, %eax
+	movl %eax, -84(%ebp)
 
-	movl %eax, -12(%ebp)
+	movl %edi,%eax
 
-	movl -12(%ebp), %eax
+	movl -24(%ebp), %esi
+
+	imul $4, %ebx, %esi
+
+	movl %esi, -24(%ebp)
+
+	movl -24(%ebp), %esi
+
+	addl %esi,%eax
+
+	movl (%eax), %eax
+
+	movl -28(%ebp), %esi
+
+	imul $4, %ebx, %esi
+
+	movl %esi, -28(%ebp)
+
+	movl -28(%ebp), %ebx
+
+	addl %ebx,%edi
+
+	movl (%edi), %edi
+
+	movl -84(%ebp), %ebx
+
+	cmpl %ebx, %eax
+
+	movl %ebx, -84(%ebp)
+
+	je L53
+
+L54:
+
+	movl $0, %eax 
+
+L55:
+
+	jmp L52
+
+L53:
+
+	movl $1, %eax 
+
+	jmp L55
+
+L56:
+
+	movl 8(%ebp), %eax
+
+	movl -8(%eax), %edi
+
+	movl -60(%ebp), %ebx
+
+	pushl %ecx
+
+	pushl %edx
+
+	pushl %ebx
+
+	pushl %edi
+
+	call _checkIndexArray
+
+	addl $8, %esp
+
+	popl %edx
+
+	popl %ecx
+
+	movl -32(%ebp), %eax
+
+	imul $4, %ebx, %eax
+
+	movl %eax, -32(%ebp)
+
+	movl -32(%ebp), %eax
+
+	addl %eax,%edi
+
+	movl $1, (%edi)
+
+	movl 8(%ebp), %eax
+
+	movl -16(%eax), %edi
+
+	movl -60(%ebp), %ebx
+
+	movl 12(%ebp), %eax
 
 	addl %eax,%ebx
 
-	movl $10, (%ebx)
+	pushl %ecx
+
+	pushl %edx
+
+	pushl %ebx
+
+	pushl %edi
+
+	call _checkIndexArray
+
+	addl $8, %esp
+
+	popl %edx
+
+	popl %ecx
+
+	movl -36(%ebp), %eax
+
+	imul $4, %ebx, %eax
+
+	movl %eax, -36(%ebp)
+
+	movl -36(%ebp), %eax
+
+	addl %eax,%edi
+
+	movl $1, (%edi)
+
+	movl 8(%ebp), %eax
+
+	movl -20(%eax), %edi
+
+	movl -60(%ebp), %ebx
+
+	addl $7, %ebx
+
+	movl 12(%ebp), %eax
+
+	subl %eax,%ebx
+
+	pushl %ecx
+
+	pushl %edx
+
+	pushl %ebx
+
+	pushl %edi
+
+	call _checkIndexArray
+
+	addl $8, %esp
+
+	popl %edx
+
+	popl %ecx
+
+	movl -40(%ebp), %eax
+
+	imul $4, %ebx, %eax
+
+	movl %eax, -40(%ebp)
+
+	movl -40(%ebp), %eax
+
+	addl %eax,%edi
+
+	movl $1, (%edi)
+
+	movl 8(%ebp), %eax
+
+	movl -12(%eax), %edi
+
+	movl 12(%ebp), %ebx
+
+	pushl %ecx
+
+	pushl %edx
+
+	pushl %ebx
+
+	pushl %edi
+
+	call _checkIndexArray
+
+	addl $8, %esp
+
+	popl %edx
+
+	popl %ecx
+
+	movl -44(%ebp), %eax
+
+	imul $4, %ebx, %eax
+
+	movl %eax, -44(%ebp)
+
+	movl -44(%ebp), %eax
+
+	addl %eax,%edi
+
+	movl -60(%ebp), %eax
+
+	movl %eax, (%edi)
 
 	movl 12(%ebp), %eax
 
@@ -1145,15 +1854,17 @@ L43:
 
 	movl 8(%ebp), %eax
 
-	movl -8(%eax), %ebx
+	movl -8(%eax), %edi
+
+	movl -60(%ebp), %ebx
 
 	pushl %ecx
 
 	pushl %edx
 
-	pushl %esi
-
 	pushl %ebx
+
+	pushl %edi
 
 	call _checkIndexArray
 
@@ -1163,31 +1874,103 @@ L43:
 
 	popl %ecx
 
-	movl -16(%ebp), %eax
+	movl -48(%ebp), %eax
 
-	imul $4, %esi, %eax
+	imul $4, %ebx, %eax
 
-	movl %eax, -16(%ebp)
+	movl %eax, -48(%ebp)
 
-	movl -16(%ebp), %eax
+	movl -48(%ebp), %eax
+
+	addl %eax,%edi
+
+	movl $0, (%edi)
+
+	movl 8(%ebp), %eax
+
+	movl -16(%eax), %edi
+
+	movl -60(%ebp), %ebx
+
+	movl 12(%ebp), %eax
 
 	addl %eax,%ebx
 
-	movl $0, (%ebx)
+	pushl %ecx
 
-	jmp L44
+	pushl %edx
 
-L40:
+	pushl %ebx
 
-	jmp L49
+	pushl %edi
 
-L52:
+	call _checkIndexArray
 
-	popl %esi
+	addl $8, %esp
 
-	popl %edi
+	popl %edx
 
-	popl %ebx
+	popl %ecx
+
+	movl -52(%ebp), %eax
+
+	imul $4, %ebx, %eax
+
+	movl %eax, -52(%ebp)
+
+	movl -52(%ebp), %eax
+
+	addl %eax,%edi
+
+	movl $0, (%edi)
+
+	movl 8(%ebp), %eax
+
+	movl -20(%eax), %edi
+
+	movl -60(%ebp), %ebx
+
+	addl $7, %ebx
+
+	movl 12(%ebp), %eax
+
+	subl %eax,%ebx
+
+	pushl %ecx
+
+	pushl %edx
+
+	pushl %ebx
+
+	pushl %edi
+
+	call _checkIndexArray
+
+	addl $8, %esp
+
+	popl %edx
+
+	popl %ecx
+
+	movl -56(%ebp), %eax
+
+	imul $4, %ebx, %eax
+
+	movl %eax, -56(%ebp)
+
+	movl -56(%ebp), %eax
+
+	addl %eax,%edi
+
+	movl $0, (%edi)
+
+	jmp L57
+
+L34:
+
+	jmp L62
+
+L64:
 
 	leave
 
@@ -1195,13 +1978,11 @@ L52:
 
 _tigermain:
 
-	enter $8,$0x0
+	enter $28,$0x0
 
-	pushl %ebx
+	movl %ebx, -24(%ebp)
 
-	pushl %edi
-
-	pushl %esi
+	movl %edi, -28(%ebp)
 
 	movl %ebp,%eax
 
@@ -1233,6 +2014,10 @@ _tigermain:
 
 	movl %edi, (%ebx)
 
+	movl %ebp,%ebx
+
+	addl $-12, %ebx
+
 	pushl %ecx
 
 	pushl %edx
@@ -1249,7 +2034,73 @@ _tigermain:
 
 	popl %ecx
 
-	movl %eax, %ebx
+	movl %eax, %edi
+
+	movl %edi, (%ebx)
+
+	movl %ebp,%ebx
+
+	addl $-16, %ebx
+
+	pushl %ecx
+
+	pushl %edx
+
+	pushl $0
+
+	movl -4(%ebp), %eax
+
+	movl -4(%ebp), %ecx
+
+	addl %ecx,%eax
+
+	subl $1,%eax
+
+	pushl %eax
+
+	call _allocArray
+
+	addl $8, %esp
+
+	popl %edx
+
+	popl %ecx
+
+	movl %eax, %edi
+
+	movl %edi, (%ebx)
+
+	movl %ebp,%ebx
+
+	addl $-20, %ebx
+
+	pushl %ecx
+
+	pushl %edx
+
+	pushl $0
+
+	movl -4(%ebp), %eax
+
+	movl -4(%ebp), %ecx
+
+	addl %ecx,%eax
+
+	subl $1,%eax
+
+	pushl %eax
+
+	call _allocArray
+
+	addl $8, %esp
+
+	popl %edx
+
+	popl %ecx
+
+	movl %eax, %edi
+
+	movl %edi, (%ebx)
 
 	pushl %ecx
 
@@ -1269,15 +2120,13 @@ _tigermain:
 
 	movl $0, %eax 
 
-	jmp L53
+	movl -28(%ebp), %edi
 
-L53:
+	movl -24(%ebp), %ebx
 
-	popl %esi
+	jmp L65
 
-	popl %edi
-
-	popl %ebx
+L65:
 
 	leave
 
