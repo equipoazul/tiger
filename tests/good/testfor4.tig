@@ -1,0 +1,10 @@
+let
+    var a := 0
+    type intArray = array of int
+
+    var row := intArray [ 10 ] of 1
+in
+    (for i:=0 to 10 do
+        a := a + row[i];
+     row[3])
+end

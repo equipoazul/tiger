@@ -227,10 +227,8 @@ struct
                                                  ()
                                                end 
                                     | _ => ()
-                        (*val _ = (print("LIVE DEL NODO " ^ Int.toString(n) ^ "
-                        * :\n"); Splayset.app (fn x => print(x ^ "\n")) (!live
-                        * ))*)
                         val _ = live := Splayset.union(!live, def)
+                        (*val _ = (print("LIVE DEL NODO " ^ Int.toString(n) ^ ":\n"); Splayset.app (fn x => print(x ^ "\n")) (!live))*)
                         val _ = List.map (fn d => case tabBusca(d, !(#tnode ig)) of
                                         NONE => raise Fail "El temp no esta en la tabla tnode (2)"
                                       | SOME di => List.map (fn l => case tabBusca(l, !(#tnode ig)) of
@@ -526,6 +524,7 @@ struct
        
         fun rewriteProgram () =
             let
+                (*val _ = print "REEESCRIBIIIIIIIIIIIIIIIIIIII"*)
                 (*val newTempsC = ref (Splayset.empty String.compare)*)
                 val spilledNodesTmp = ref (Splayset.foldr (fn (x, xs) => Splayset.add(xs, nodeToTemp (IGRAPH ig) x)) (Splayset.empty String.compare) (!spilledNodes)) 
                 (*val _ = printIntSet (!spilledNodes) "----> spilledNodes en rewrite: "
@@ -601,7 +600,7 @@ struct
 
       in
         (build ();
-        (*printTodo();*)
+        printTodo();
          if firstRun then
              initial := let 
                            val nodesIG = List.foldr (fn (x, xs) => Splayset.add(xs, nodeToTemp (IGRAPH ig) x)) (Splayset.empty String.compare) interNodes

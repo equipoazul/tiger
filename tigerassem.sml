@@ -13,23 +13,36 @@ datatype instr =
 	| LABEL of {assem: string, lab: tigertemp.label}
 	| MOVE of {assem: string, dst: temp, src: temp}
 
-fun printInstr (OPER {assem=a, dst=d, src=s, jump=_}) = 
+fun printInstr2 (OPER {assem=a, dst=d, src=s, jump=_}) = 
       let
         val srcStr = foldr (fn (x, xs) => x ^ " " ^ xs) "" s
         val dstStr = foldr (fn (x, xs) => x ^ " " ^ xs) "" d
       in
         "OPER {assem = "^a^" dst = " ^ dstStr ^ ", src = " ^ srcStr ^ ", _ jump = _}\n"
       end
-  | printInstr (LABEL {assem=a, lab=l}) = "LABEL {assem = "^a^" lab = "^l^"}\n"
-  | printInstr (MOVE {assem=a, dst=d, src=s}) = "MOVE {assem = "^a^", dst ="^d^", src ="^s^"}\n"
+  | printInstr2 (LABEL {assem=a, lab=l}) = "LABEL {assem = "^a^" lab = "^l^"}\n"
+  | printInstr2 (MOVE {assem=a, dst=d, src=s}) = "MOVE {assem = "^a^", dst ="^d^", src ="^s^"}\n"
+  
+fun printInstr (OPER {assem=a, dst=d, src=s, jump= j}) = 
+      let
+        val srcStr = foldr (fn (x, xs) => x ^ " " ^ xs) "" s
+        val dstStr = foldr (fn (x, xs) => x ^ " " ^ xs) "" d
+        val jmpStr = case j of 
+                         SOME l => foldr (fn (x, xs) => x ^ " " ^ xs) "" l
+                       | _ => ""
+      in
+        "[Dst(Def):" ^ dstStr ^ "Src(Use): " ^ srcStr ^ " Jmp: " ^ jmpStr ^ "]\t\t\t" ^ a 
+      end
+  | printInstr (LABEL {assem=a, lab=l}) = "[Dst(Def):  Src(Use): ]\t\t\t" ^ a
+  | printInstr (MOVE {assem=a, dst=d, src=s}) = "[Dst(Def): " ^ d^ " Src(Use): "^s^"]\t\t\t" ^ a
   
 fun src2List (MOVE r) = [#src r]
 | src2List (OPER r) = #src r
-(*  | src2List _ = []*)
+| src2List _ = []
 
 fun dst2List (MOVE r) = [#dst r]
 | dst2List (OPER r) = #dst r
-(*      | dst2List _ = []*)
+| dst2List _ = []
   
 fun printInstrList n [] = ""
   | printInstrList n (x::xs) = (print (Int.toString(n) ^ "\t" ^ printInstr x); printInstrList (n + 1) (xs))
