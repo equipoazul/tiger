@@ -140,7 +140,6 @@ fun transExp(venv, tenv) =
         (* Traducir cada expresión de fields *)
         val tfields = map (fn (sy,ex) => (sy, trexp ex)) fields
 
-        (*val _ = map (fn x => (print x; 0)) (qs [("z", 1), ("b", 2), ("a", 3))])*)
         (* Buscar el tipo *)
         val (tyr, cs) = case tabBusca(typ, tenv) of
                             SOME t => (case tipoReal t of
@@ -320,7 +319,7 @@ fun transExp(venv, tenv) =
           val acc = allocLocal (topLevel()) (!escape)
           val level = getActualLev()
           val venv' = (case tabBusca(s, tenv) of
-                          SOME t => if tiposIguales t tyinit then tabInserta(name, Var{access=acc, level=level, ty=t}, venv)
+                          SOME t => if tiposIguales t tyinit then tabRInserta(name, Var{access=acc, level=level, ty=t}, venv)
                                     else error("el tipo de var es distinto a la expresion", pos)
                           |_ => error("tipo desconocido", pos))
         in 

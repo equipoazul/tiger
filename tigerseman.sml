@@ -140,7 +140,6 @@ fun transExp(venv, tenv) =
         (* Traducir cada expresión de fields *)
         val tfields = map (fn (sy,ex) => (sy, trexp ex)) fields
 
-        (*val _ = map (fn x => (print x; 0)) (qs [("z", 1), ("b", 2), ("a", 3))])*)
         (* Buscar el tipo *)
         val (tyr, cs) = case tabBusca(typ, tenv) of
                             SOME t => (case tipoReal t of
@@ -191,7 +190,6 @@ fun transExp(venv, tenv) =
       let val {exp=testexp, ty=tytest} = trexp test
           val {exp=thenexp, ty=tythen} = trexp then'
           val {exp=elseexp, ty=tyelse} = trexp else'
-          val _ = print("IF EXP!!!\n")
       in
         case tipoReal tytest of
           TInt => if tiposIguales tythen tyelse then {exp=if tipoReal tythen=TUnit then ifThenElseExpUnit {test=testexp,then'=thenexp,else'=elseexp} else ifThenElseExp {test=testexp,then'=thenexp,else'=elseexp}, ty=tythen}

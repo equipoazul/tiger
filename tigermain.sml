@@ -67,14 +67,12 @@ fun main(args) =
 		fun name (tigerframe.PROC{body, frame}) = tigerframe.name(frame)
 		  | name _ = raise Fail "error interno (name): no es PROC"
 		val frags = tigertrans.getResult() (* lista de fragmentos *)
-		(*val _ = println("Fragmentos: " ^ Int.toString (List.length(frags)))*)
 		val func_frags = let fun isFunc (tigerframe.PROC _) = true 
 		                       | isFunc _ = false
 		                 in
 		                   List.filter isFunc frags
 		                 end
 
-		(*val _ = println("Fragmentos de funcion: " ^ Int.toString (List.length(func_frags)) ^ ": " ^ concatWith ", " (List.map name func_frags))                 *)
 		val str_frags = let fun isStr (tigerframe.STRING _) = true
 		                      | isStr _ = false
 		                    fun strip (tigerframe.STRING f) = f
@@ -88,52 +86,31 @@ fun main(args) =
                                                                  else (i::remRedundantMoves is)
        | remRedundantMoves (i::is) = (i::remRedundantMoves is)
 
-		val _ = println("Fragmentos de string: " ^ Int.toString (List.length(str_frags)) ^ ": " ^ concatWith ", " (List.map (fn (l, s) => "(" ^ l ^ ", " ^ s ^ ")") str_frags))
-		val _ = println(tigertrans.Ir frags)   
-
-		
+	
 		fun canonizar n = tigercanon.traceSchedule o (tigercanon.basicBlocks n) o tigercanon.linearize
 		fun canon_frag (p as tigerframe.PROC {body, frame}) = (canonizar (name p) body, frame) 
 		(* fun canon_frag (tigerframe.PROC {body, frame}) = (tigercanon.linearize body, frame) *)
 		  | canon_frag _ = raise Fail "error interno (canon_frag): no es proc"
 		val canon_frags = List.map canon_frag func_frags
-		(*val _ = tigerinterp.inter true canon_frags str_frags*)
                 val instrlist = let
                           fun aplanar (x, frame) = List.map (fn y => (frame, y)) x
-                          (*val stm_tpl = List.map aplanar canon_frags
-                          
-                          val _ = List.map (fn (x, y) => let val _ = print "--------------- BLOQUE --------------\n"
-                                                             val assem = tigercodegen.codegen x y
-                                                         in
-                                                             (map tigerassem.printAssem assem;
-                                                              print "---------------END BLOQUE --------------\n")
-                                                         end) (List.concat stm_tpl)*)
-                          (*val _ = print "\n\nCodigo ANTES del coloreo:\n"                                                         
-                          val assems = List.concat (List.map (fn (x, y) => tigercodegen.codegen x y) (List.concat stm_tpl))
-                          val _ = map tigerassem.printAssem assems*)
-                          (*val graph = instrs2graph assems
-                          val _ = tigerflow.printGraphFlow (#1 graph)
-                          val _ = tigercoloring.color grAndBlocks 
-                          
-                          val _ = print "\n\n-------------------------------------\n"   *)
+
                           fun applyCodeGen stmList frame = List.map (fn x => tigercodegen.codegen frame x) stmList
                           val assemsBlocks = List.map (fn (x, y) => (applyCodeGen x y , y)) canon_frags
                           val plainAssemsBlocks = List.map (fn (x, y) => (List.concat x, y, true)) assemsBlocks
-                          (*val grAndBlocks = map (fn (x, y) => (instrs2graph x, x)) plainAssemsBlocks*)
                           val precoloredCode = List.map tigercoloring.coloring plainAssemsBlocks
-                          val coloredCode = List.map (fn (i, f, c) => (printColorTable c; (replaceTforColors i c, f))) precoloredCode
+                          val coloredCode = List.map (fn (i, f, c) => (replaceTforColors i c, f)) precoloredCode
                           val procExitedCode = List.map (fn (x, y) => (tigerframe.procEntryExit3 (y, x), y)) coloredCode
                           
-                          val _ = print "\n\nCodigo despues del coloreo:\n"
-                          (*TODO EN CASO DE DESESPERAR, BORRR EL remRedundantMoves POR LAS DUDAS FIXME*)
+                          
                           val colprint = map remRedundantMoves (List.map (fn (x,y) => x) procExitedCode)
-                          (*val colprint = (List.map (fn (x,y) => x) procExitedCode)*)
                           val stringSection = map tigerframe.string str_frags
                           val globlSection = map tigerframe.globl (List.map name func_frags)
-	                      val codeSection = map (tigerassem.strAssem) (List.concat colprint)
+	                        val codeSection = map (tigerassem.strAssem) (List.concat colprint)
 	                        
-	                      val allProgram = String.concat ([".data\n"] @ stringSection @ [".text\n\t.globl _tigermain\n"] @ codeSection)
-                          val _ = print allProgram
+	                        val allProgram = String.concat ([".data\n"] @ stringSection @ [".text\n\t.globl _tigermain\n"] @ codeSection)
+	                        (*val _ = print "\n\nCodigo despues del coloreo:\n"
+                          val _ = print allProgram*)
 	                        (* Pasamos el assembler a un archivo y lo linkeamos con gcc *)
                           val fd = TextIO.openOut "asgard.s"
                           val _ = TextIO.output(fd, allProgram)
@@ -142,12 +119,6 @@ fun main(args) =
                           val _ = Process.system("gcc -m32 -g runtime.o asgard.s -o outtiger")
                                                     
                         in
-                          (*List.map (fn (x, y) => tigercodegen.codegen x y) (List.concat stm_tpl) *)
-                          (* map (fn ins => case ins of
-                                        OPER {assem=x, ...} =>  print("OPER ->  " ^ x ^ "\n")
-                                      | LABEL {assem=x, ...} =>  print("LABEL -> " ^ x ^ "\n")
-                                      | MOVE {assem=x, ...} =>  print("MOVE ->  " ^ x ^ "\n")) (List.concat assems) *)
-                           (*List.map tigercoloring.coloring plainAssemsBlocks*)
                            ()
                         end
         

@@ -1,6 +1,0 @@
-let
-    var n := 40
-    var m := 20
-in
-n / m 
-end

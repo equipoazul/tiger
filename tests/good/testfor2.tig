@@ -1,8 +1,0 @@
-let
-    var N := 3
-
-in
-    for i := 0 to N-1 do 
-        print ("-");
-    0
-end

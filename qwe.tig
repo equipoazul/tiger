@@ -1,5 +1,0 @@
-let
-	type R = {i: int, j: int, k: int}
-	var r:= R{i=10, j=11, k=12}
-
-in r.i+/*r.j+*/r.k end

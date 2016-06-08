@@ -50,12 +50,6 @@ fun unEx (Ex e) = e
         val f = newlabel()
         val s = newlabel()
     in
-        (*ESEQ(seq [MOVE(TEMP r, CONST 1),
-            cf (t, f),
-            LABEL f,
-            MOVE(TEMP r, CONST 0),
-            LABEL t],
-            TEMP r)*)
         ESEQ(seq[cf (t, f),
                    LABEL f,
                    MOVE(TEMP r, CONST 0),
@@ -114,12 +108,6 @@ end
 
 val datosGlobs = ref ([]: frag list)
 
-(*fun procEntryExit{level: level, body} =
-    let val label = STRING(name(#frame level), "")
-        val body' = PROC{frame= #frame level, body=unNx body}
-        val final = STRING(";;-------", "")
-    in  datosGlobs:=(!datosGlobs@[label, body', final]) end
-fun getResult() = !datosGlobs*)
 
 fun procEntryExit{level: level, body} =
     let val label = STRING(name(#frame level), "")
@@ -133,12 +121,6 @@ fun stringLen s =
         | aux(_::t) = 1+aux(t)
     in  aux(explode s) end
 
-(*fun stringExp(s: string) =
-    let val l = newlabel()
-        val len = ".long "^makestring(stringLen s)
-        val str = ".string \""^s^"\""
-        val _ = datosGlobs:=(!datosGlobs @ [STRING(l, len), STRING("", str)])
-    in  Ex(NAME l) end*)
     
 fun stringExp(s: string) =
     let val l = newlabel()
@@ -179,7 +161,6 @@ fun simpleVar(acc, nivel) =
                 fun aux 0 = TEMP fp
                     |aux n = if n < 0 then raise Fail "(simpleVar) Error de memoria!\n"
                              else MEM (BINOP (PLUS, aux(n - 1), CONST fpPrevLev))
-                             (*else MEM (BINOP (PLUS, aux(!actualLevel - 1), aux(n-1)))*)
              in
                 if (!actualLevel = nivel) then Ex (MEM (BINOP (PLUS, TEMP fp, CONST k))) 
                   else if (nivel < !actualLevel) then Ex (MEM (BINOP (PLUS, aux(!actualLevel - nivel), CONST k)))
@@ -207,10 +188,6 @@ let
     val i = unEx ind
     val ra = newtemp()
     val ri = newtemp()
-    val _ = print "Subscript Var arrr"
-    val _ = print (printExp a)
-    val _ = print (printExp i)
-    val _ = print "\n"
 in
     Ex( ESEQ(seq[MOVE(TEMP ra, a),
         MOVE(TEMP ri, i),
@@ -266,15 +243,10 @@ fun callExp (name, external, isproc, lev:level, ls) =
     end
 
 
-(*fun letExp ([], body) = Ex (unEx body)
- |  letExp (inits, body) = Ex (ESEQ(seq inits,unEx body))*)
-
-
 fun breakExp() =
   let 
      val a = topSalida()
   in 
-    (*Nx (LABEL (topSalida()))*)
     Nx (JUMP (NAME a, [a]))
  end
 
@@ -316,7 +288,6 @@ let
     val cf = unCx test   (*JUMP( NAME t, [t]) *)
     val expb = unNx body
     val (l1, l2, l3) = (newlabel(), newlabel(), topSalida())
-    val _ = print ("Whileexp ets: l2 -> " ^ l2 ^ " l1 -> " ^ l1 ^ " ^ l3 -> " ^ l3 ^ "\n")
 in
     Nx (seq[LABEL l1,
                 cf(l2,l3),

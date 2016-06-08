@@ -21,10 +21,7 @@ in
   arr2[1].age := 23;
   arr3[34] := "sfd";
 
-  print(arr2[3].name);
-  print(arr3[34]);
-
   rec1.name := "sdf";
   rec2.dates[0] := 2323;
-  rec2.dates[2] := 45; rec2.dates[2] 
+  rec2.dates[2] := 2323; 0
 end

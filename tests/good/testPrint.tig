@@ -1,5 +1,0 @@
-let
-  var txt : string := "Hola Mundo\n"
-in
-  print(txt); 0 
-end

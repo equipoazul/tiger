@@ -1,1257 +1,109 @@
-Subscript Var arrrTEMP T1TEMP T2
 bien!
-Fragmentos de string: 1: (_tigermain, ), 
-_tigermain:
-SEQ(
- MOVE(
-  TEMP T6,
-  TEMP ebx),
- SEQ(
-  MOVE(
-   TEMP T7,
-   TEMP edi),
-  SEQ(
-   MOVE(
-    TEMP T8,
-    TEMP esi),
-   SEQ(
-    MOVE(
-     TEMP eax,
-     ESEQ(
-      SEQ(
-       MOVE(
-        TEMP T0,
-        CONST 0),
-       MOVE(
-        TEMP T1,
-        CALL(
-         NAME _allocArray,
-          CONST 10,
-          CONST 1))),
-      ESEQ(
-       SEQ(
-        MOVE(
-         TEMP T2,
-         CONST 0),
-        SEQ(
-         LABEL L2,
-         SEQ(
-          CJUMP(EQ,
-           TEMP T2,
-           CONST 10,
-           L0,L1),
-          SEQ(
-           LABEL L1,
-           SEQ(
-            MOVE(
-             TEMP T0,
-             BINOP(PLUS,
-              TEMP T0,
-              ESEQ(
-               SEQ(
-                MOVE(
-                 TEMP T3,
-                 TEMP T1),
-                SEQ(
-                 MOVE(
-                  TEMP T4,
-                  TEMP T2),
-                 EXP(
-                  CALL(
-                   NAME _checkIndexArray,
-                    TEMP T3,
-                    TEMP T4)))),
-               MEM(
-                BINOP(PLUS,
-                 TEMP T3,
-                 BINOP(MUL,
-                  TEMP T4,
-                  CONST 4)))))),
-            SEQ(
-             MOVE(
-              TEMP T2,
-              BINOP(PLUS,
-               TEMP T2,
-               CONST 1)),
-             SEQ(
-              JUMP(               NAME L2),
-              LABEL L0))))))),
-       CONST 0))),
-    SEQ(
-     MOVE(
-      TEMP esi,
-      TEMP T8),
-     SEQ(
-      MOVE(
-       TEMP edi,
-       TEMP T7),
-      MOVE(
-       TEMP ebx,
-       TEMP T6)))))))
-
-FLOWGRAPH: 
-[48, 47, 46, 45, 44, 43, 42, 41, 40, 39, 38, 37, 36, 35, 34, 33, 32, 31, 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0, ]
-[<47, 48><46, 47><45, 46><44, 45><43, 44><42, 43><41, 15><40, 41><39, 40><38, 39><37, 38><36, 37><35, 36><34, 35><33, 34><32, 33><31, 32><30, 31><29, 30><28, 29><27, 28><26, 27><25, 26><24, 25><23, 24><22, 23><21, 22><20, 21><19, 20><18, 19><18, 42><17, 18><16, 17><15, 16><14, 15><13, 14><12, 13><11, 12><10, 11><9, 10><8, 9><7, 8><6, 7><5, 6><4, 5><3, 4><2, 3><1, 2><0, 1>]
-Use:
-1 -> ebx 
-2 -> edi 
-3 -> esi 
-5 -> ecx 
-6 -> edx 
-10 -> eax 
-13 -> eax 
-17 -> T2, T11 
-20 -> T0 
-21 -> T1 
-22 -> T2 
-23 -> ecx 
-24 -> edx 
-25 -> T4 
-26 -> T3 
-28 -> eax 
-31 -> T9 
-32 -> T3 
-33 -> T4, T15 
-34 -> T15, T14 
-35 -> T14 
-36 -> T13, T12 
-37 -> T12 
-38 -> T2 
-39 -> T16 
-40 -> T16 
-44 -> T8 
-45 -> T7 
-46 -> T6 
-Def:
-1 -> T6 
-2 -> T7 
-3 -> T8 
-4 -> T0 
-9 -> eax 
-10 -> eax, ecx, edx 
-11 -> edx 
-12 -> ecx 
-13 -> T1, eax 
-14 -> T2 
-16 -> T11 
-17 -> T2, T11 
-20 -> T9 
-21 -> T3 
-22 -> T4 
-27 -> eax 
-28 -> eax, ecx, edx 
-29 -> edx 
-30 -> ecx 
-31 -> T12 
-32 -> T14 
-33 -> T15 
-34 -> T14 
-35 -> T13 
-36 -> T12 
-37 -> T0 
-38 -> T16 
-39 -> T16 
-40 -> T2 
-43 -> eax 
-44 -> esi 
-45 -> edi 
-46 -> ebx 
-Live In
-0 -> T15,ebx,ecx,edi,edx,esi,
-1 -> T15,ebx,ecx,edi,edx,esi,
-2 -> T15,T6,ecx,edi,edx,esi,
-3 -> T15,T6,T7,ecx,edx,esi,
-4 -> T15,T6,T7,T8,ecx,edx,
-5 -> T0,T15,T6,T7,T8,ecx,edx,
-6 -> T0,T15,T6,T7,T8,edx,
-7 -> T0,T15,T6,T7,T8,
-8 -> T0,T15,T6,T7,T8,
-9 -> T0,T15,T6,T7,T8,
-10 -> T0,T15,T6,T7,T8,eax,
-11 -> T0,T15,T6,T7,T8,eax,
-12 -> T0,T15,T6,T7,T8,eax,edx,
-13 -> T0,T15,T6,T7,T8,eax,ecx,edx,
-14 -> T0,T1,T15,T6,T7,T8,ecx,edx,
-15 -> T0,T1,T15,T2,T6,T7,T8,ecx,edx,
-16 -> T0,T1,T15,T2,T6,T7,T8,ecx,edx,
-17 -> T0,T1,T11,T15,T2,T6,T7,T8,ecx,edx,
-18 -> T0,T1,T15,T2,T6,T7,T8,ecx,edx,
-19 -> T0,T1,T15,T2,ecx,edx,
-20 -> T0,T1,T15,T2,ecx,edx,
-21 -> T1,T15,T2,T9,ecx,edx,
-22 -> T15,T2,T3,T9,ecx,edx,
-23 -> T15,T2,T3,T4,T9,ecx,edx,
-24 -> T15,T2,T3,T4,T9,edx,
-25 -> T15,T2,T3,T4,T9,
-26 -> T15,T2,T3,T4,T9,
-27 -> T15,T2,T3,T4,T9,
-28 -> T15,T2,T3,T4,T9,eax,
-29 -> T15,T2,T3,T4,T9,
-30 -> T15,T2,T3,T4,T9,
-31 -> T15,T2,T3,T4,T9,
-32 -> T12,T15,T2,T3,T4,
-33 -> T12,T14,T15,T2,T4,
-34 -> T12,T14,T15,T2,
-35 -> T12,T14,T2,
-36 -> T12,T13,T2,
-37 -> T12,T2,
-38 -> T2,
-39 -> T16,
-40 -> T16,
-41 -> 
-42 -> T6,T7,T8,
-43 -> T6,T7,T8,
-44 -> T6,T7,T8,
-45 -> T6,T7,
-46 -> T6,
-47 -> 
-48 -> 
-Live Out
-0 -> T15,ebx,ecx,edi,edx,esi,
-1 -> T15,T6,ecx,edi,edx,esi,
-2 -> T15,T6,T7,ecx,edx,esi,
-3 -> T15,T6,T7,T8,ecx,edx,
-4 -> T0,T15,T6,T7,T8,ecx,edx,
-5 -> T0,T15,T6,T7,T8,edx,
-6 -> T0,T15,T6,T7,T8,
-7 -> T0,T15,T6,T7,T8,
-8 -> T0,T15,T6,T7,T8,
-9 -> T0,T15,T6,T7,T8,eax,
-10 -> T0,T15,T6,T7,T8,eax,
-11 -> T0,T15,T6,T7,T8,eax,edx,
-12 -> T0,T15,T6,T7,T8,eax,ecx,edx,
-13 -> T0,T1,T15,T6,T7,T8,ecx,edx,
-14 -> T0,T1,T15,T2,T6,T7,T8,ecx,edx,
-15 -> T0,T1,T15,T2,T6,T7,T8,ecx,edx,
-16 -> T0,T1,T11,T15,T2,T6,T7,T8,ecx,edx,
-17 -> T0,T1,T15,T2,T6,T7,T8,ecx,edx,
-18 -> T0,T1,T15,T2,T6,T7,T8,ecx,edx,
-19 -> T0,T1,T15,T2,ecx,edx,
-20 -> T1,T15,T2,T9,ecx,edx,
-21 -> T15,T2,T3,T9,ecx,edx,
-22 -> T15,T2,T3,T4,T9,ecx,edx,
-23 -> T15,T2,T3,T4,T9,edx,
-24 -> T15,T2,T3,T4,T9,
-25 -> T15,T2,T3,T4,T9,
-26 -> T15,T2,T3,T4,T9,
-27 -> T15,T2,T3,T4,T9,eax,
-28 -> T15,T2,T3,T4,T9,
-29 -> T15,T2,T3,T4,T9,
-30 -> T15,T2,T3,T4,T9,
-31 -> T12,T15,T2,T3,T4,
-32 -> T12,T14,T15,T2,T4,
-33 -> T12,T14,T15,T2,
-34 -> T12,T14,T2,
-35 -> T12,T13,T2,
-36 -> T12,T2,
-37 -> T2,
-38 -> T16,
-39 -> T16,
-40 -> 
-41 -> 
-42 -> T6,T7,T8,
-43 -> T6,T7,T8,
-44 -> T6,T7,
-45 -> T6,
-46 -> 
-47 -> 
-48 -> 
-LIVE DEL NODO 48:
-LIVE DEL NODO 47:
-LIVE DEL NODO 46:
-ebx
-LIVE DEL NODO 45:
-T6
-edi
-LIVE DEL NODO 44:
-T6
-T7
-esi
-LIVE DEL NODO 43:
-T6
-T7
-T8
-eax
-LIVE DEL NODO 42:
-T6
-T7
-T8
-LIVE DEL NODO 41:
-T6
-T7
-T8
-LIVE DEL NODO 40:
-T2
-T6
-T7
-T8
-LIVE DEL NODO 39:
-T16
-T6
-T7
-T8
-LIVE DEL NODO 38:
-T16
-T6
-T7
-T8
-LIVE DEL NODO 37:
-T0
-T2
-T6
-T7
-T8
-LIVE DEL NODO 36:
-T12
-T2
-T6
-T7
-T8
-LIVE DEL NODO 35:
-T12
-T13
-T2
-T6
-T7
-T8
-LIVE DEL NODO 34:
-T12
-T14
-T2
-T6
-T7
-T8
-LIVE DEL NODO 33:
-T12
-T14
-T15
-T2
-T6
-T7
-T8
-LIVE DEL NODO 32:
-T12
-T14
-T15
-T2
-T4
-T6
-T7
-T8
-LIVE DEL NODO 31:
-T12
-T15
-T2
-T3
-T4
-T6
-T7
-T8
-LIVE DEL NODO 30:
-T15
-T2
-T3
-T4
-T6
-T7
-T8
-T9
-ecx
-LIVE DEL NODO 29:
-T15
-T2
-T3
-T4
-T6
-T7
-T8
-T9
-edx
-LIVE DEL NODO 28:
-T15
-T2
-T3
-T4
-T6
-T7
-T8
-T9
-eax
-ecx
-edx
-LIVE DEL NODO 27:
-T15
-T2
-T3
-T4
-T6
-T7
-T8
-T9
-eax
-LIVE DEL NODO 26:
-T15
-T2
-T3
-T4
-T6
-T7
-T8
-T9
-LIVE DEL NODO 25:
-T15
-T2
-T3
-T4
-T6
-T7
-T8
-T9
-LIVE DEL NODO 24:
-T15
-T2
-T3
-T4
-T6
-T7
-T8
-T9
-LIVE DEL NODO 23:
-T15
-T2
-T3
-T4
-T6
-T7
-T8
-T9
-edx
-LIVE DEL NODO 22:
-T15
-T3
-T4
-T6
-T7
-T8
-T9
-ecx
-edx
-LIVE DEL NODO 21:
-T15
-T2
-T3
-T6
-T7
-T8
-T9
-ecx
-edx
-LIVE DEL NODO 20:
-T1
-T15
-T2
-T6
-T7
-T8
-T9
-ecx
-edx
-LIVE DEL NODO 19:
-T0
-T1
-T15
-T2
-T6
-T7
-T8
-ecx
-edx
-LIVE DEL NODO 18:
-T0
-T1
-T15
-T2
-T6
-T7
-T8
-ecx
-edx
-LIVE DEL NODO 17:
-T0
-T1
-T11
-T15
-T2
-T6
-T7
-T8
-ecx
-edx
-LIVE DEL NODO 16:
-T0
-T1
-T11
-T15
-T2
-T6
-T7
-T8
-ecx
-edx
-LIVE DEL NODO 15:
-T0
-T1
-T15
-T2
-T6
-T7
-T8
-ecx
-edx
-LIVE DEL NODO 14:
-T0
-T1
-T15
-T2
-T6
-T7
-T8
-ecx
-edx
-LIVE DEL NODO 13:
-T0
-T1
-T15
-T6
-T7
-T8
-eax
-ecx
-edx
-LIVE DEL NODO 12:
-T0
-T15
-T6
-T7
-T8
-eax
-ecx
-edx
-LIVE DEL NODO 11:
-T0
-T15
-T6
-T7
-T8
-eax
-edx
-LIVE DEL NODO 10:
-T0
-T15
-T6
-T7
-T8
-eax
-ecx
-edx
-LIVE DEL NODO 9:
-T0
-T15
-T6
-T7
-T8
-eax
-LIVE DEL NODO 8:
-T0
-T15
-T6
-T7
-T8
-LIVE DEL NODO 7:
-T0
-T15
-T6
-T7
-T8
-LIVE DEL NODO 6:
-T0
-T15
-T6
-T7
-T8
-LIVE DEL NODO 5:
-T0
-T15
-T6
-T7
-T8
-edx
-LIVE DEL NODO 4:
-T0
-T15
-T6
-T7
-T8
-ecx
-edx
-LIVE DEL NODO 3:
-T15
-T6
-T7
-T8
-ecx
-edx
-LIVE DEL NODO 2:
-T15
-T6
-T7
-ecx
-edx
-esi
-LIVE DEL NODO 1:
-T15
-T6
-ecx
-edi
-edx
-esi
-LIVE DEL NODO 0:
-T15
-ebx
-ecx
-edi
-edx
-esi
-=========================================
-CODIGO: 
-0	[Dst(Def):  Src(Use): ]			_tigermain:
-1	[Dst(Def): T6 Src(Use): ebx]			movl `s0,`d0
-2	[Dst(Def): T7 Src(Use): edi]			movl `s0,`d0
-3	[Dst(Def): T8 Src(Use): esi]			movl `s0,`d0
-4	[Dst(Def):T0 Src(Use):  Jmp: ]			movl $0, `d0 
-5	[Dst(Def):Src(Use): ecx  Jmp: ]			pushl `s0
-6	[Dst(Def):Src(Use): edx  Jmp: ]			pushl `s0
-7	[Dst(Def):Src(Use):  Jmp: ]			pushl $1
-8	[Dst(Def):Src(Use):  Jmp: ]			pushl $10
-9	[Dst(Def):eax Src(Use):  Jmp: ]			call _allocArray
-10	[Dst(Def):eax ecx edx Src(Use): eax  Jmp: ]			addl $8, %esp
-11	[Dst(Def):edx Src(Use):  Jmp: ]			popl `d0
-12	[Dst(Def):ecx Src(Use):  Jmp: ]			popl `d0
-13	[Dst(Def):T1 eax Src(Use): eax  Jmp: ]			movl `s0, `d0
-14	[Dst(Def):T2 Src(Use):  Jmp: ]			movl $0, `d0 
-15	[Dst(Def):  Src(Use): ]			L2:
-16	[Dst(Def):T11 Src(Use):  Jmp: ]			movl $10, `d0
-17	[Dst(Def):T2 T11 Src(Use): T2 T11  Jmp: ]			cmpl `s1, `s0
-18	[Dst(Def):Src(Use):  Jmp: L0 L1 ]			je L0
-19	[Dst(Def):  Src(Use): ]			L1:
-20	[Dst(Def): T9 Src(Use): T0]			movl `s0,`d0
-21	[Dst(Def): T3 Src(Use): T1]			movl `s0,`d0
-22	[Dst(Def): T4 Src(Use): T2]			movl `s0,`d0
-23	[Dst(Def):Src(Use): ecx  Jmp: ]			pushl `s0
-24	[Dst(Def):Src(Use): edx  Jmp: ]			pushl `s0
-25	[Dst(Def):Src(Use): T4  Jmp: ]			pushl `s0
-26	[Dst(Def):Src(Use): T3  Jmp: ]			pushl `s0
-27	[Dst(Def):eax Src(Use):  Jmp: ]			call _checkIndexArray
-28	[Dst(Def):eax ecx edx Src(Use): eax  Jmp: ]			addl $8, %esp
-29	[Dst(Def):edx Src(Use):  Jmp: ]			popl `d0
-30	[Dst(Def):ecx Src(Use):  Jmp: ]			popl `d0
-31	[Dst(Def): T12 Src(Use): T9]			movl `s0,`d0
-32	[Dst(Def): T14 Src(Use): T3]			movl `s0,`d0
-33	[Dst(Def):T15 Src(Use): T4 T15  Jmp: ]			imul $4, `s0, `d0
-34	[Dst(Def):T14 Src(Use): T15 T14  Jmp: ]			addl `s0,`d0
-35	[Dst(Def):T13 Src(Use): T14  Jmp: ]			movl (`s0), `d0
-36	[Dst(Def):T12 Src(Use): T13 T12  Jmp: ]			addl `s0,`d0
-37	[Dst(Def): T0 Src(Use): T12]			movl `s0,`d0
-38	[Dst(Def): T16 Src(Use): T2]			movl `s0,`d0
-39	[Dst(Def):T16 Src(Use): T16  Jmp: ]			addl $1, `d0
-40	[Dst(Def): T2 Src(Use): T16]			movl `s0,`d0
-41	[Dst(Def):Src(Use):  Jmp: L2 ]			jmp L2
-42	[Dst(Def):  Src(Use): ]			L0:
-43	[Dst(Def):eax Src(Use):  Jmp: ]			movl $0, `d0 
-44	[Dst(Def): esi Src(Use): T8]			movl `s0,`d0
-45	[Dst(Def): edi Src(Use): T7]			movl `s0,`d0
-46	[Dst(Def): ebx Src(Use): T6]			movl `s0,`d0
-47	[Dst(Def):Src(Use):  Jmp: L3 ]			jmp L3
-48	[Dst(Def):  Src(Use): ]			L3:
-
-=========================================
-REEESCRIBIIIIIIIIIIIIIIIIIIIIFLOWGRAPH: 
-[57, 56, 55, 54, 53, 52, 51, 50, 49, 48, 47, 46, 45, 44, 43, 42, 41, 40, 39, 38, 37, 36, 35, 34, 33, 32, 31, 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0, ]
-[<56, 57><55, 56><54, 55><53, 54><52, 53><51, 52><50, 51><49, 50><48, 49><47, 18><46, 47><45, 46><44, 45><43, 44><42, 43><41, 42><40, 41><39, 40><38, 39><37, 38><36, 37><35, 36><34, 35><33, 34><32, 33><31, 32><30, 31><29, 30><28, 29><27, 28><26, 27><25, 26><24, 25><23, 24><22, 23><21, 22><21, 48><20, 21><19, 20><18, 19><17, 18><16, 17><15, 16><14, 15><13, 14><12, 13><11, 12><10, 11><9, 10><8, 9><7, 8><6, 7><5, 6><4, 5><3, 4><2, 3><1, 2><0, 1>]
-Use:
-1 -> ebx 
-2 -> T17 
-3 -> edi 
-4 -> T18 
-5 -> esi 
-6 -> T19 
-8 -> ecx 
-9 -> edx 
-13 -> eax 
-16 -> eax 
-20 -> T2, T11 
-23 -> T0 
-24 -> T1 
-25 -> T2 
-26 -> ecx 
-27 -> edx 
-28 -> T4 
-29 -> T3 
-31 -> eax 
-34 -> T9 
-35 -> T3 
-37 -> T4, T20 
-38 -> T20 
-40 -> T21, T14 
-41 -> T14 
-42 -> T13, T12 
-43 -> T12 
-44 -> T2 
-45 -> T16 
-46 -> T16 
-51 -> T22 
-53 -> T23 
-55 -> T24 
-Def:
-1 -> T17 
-3 -> T18 
-5 -> T19 
-7 -> T0 
-12 -> eax 
-13 -> eax, ecx, edx 
-14 -> edx 
-15 -> ecx 
-16 -> T1, eax 
-17 -> T2 
-19 -> T11 
-20 -> T2, T11 
-23 -> T9 
-24 -> T3 
-25 -> T4 
-30 -> eax 
-31 -> eax, ecx, edx 
-32 -> edx 
-33 -> ecx 
-34 -> T12 
-35 -> T14 
-36 -> T20 
-37 -> T20 
-39 -> T21 
-40 -> T14 
-41 -> T13 
-42 -> T12 
-43 -> T0 
-44 -> T16 
-45 -> T16 
-46 -> T2 
-49 -> eax 
-50 -> T22 
-51 -> esi 
-52 -> T23 
-53 -> edi 
-54 -> T24 
-55 -> ebx 
-Live In
-0 -> ebx,ecx,edi,edx,esi,
-1 -> ebx,ecx,edi,edx,esi,
-2 -> T17,ecx,edi,edx,esi,
-3 -> ecx,edi,edx,esi,
-4 -> T18,ecx,edx,esi,
-5 -> ecx,edx,esi,
-6 -> T19,ecx,edx,
-7 -> ecx,edx,
-8 -> T0,ecx,edx,
-9 -> T0,edx,
-10 -> T0,
-11 -> T0,
-12 -> T0,
-13 -> T0,eax,
-14 -> T0,eax,
-15 -> T0,eax,edx,
-16 -> T0,eax,ecx,edx,
-17 -> T0,T1,ecx,edx,
-18 -> T0,T1,T2,ecx,edx,
-19 -> T0,T1,T2,ecx,edx,
-20 -> T0,T1,T11,T2,ecx,edx,
-21 -> T0,T1,T2,ecx,edx,
-22 -> T0,T1,T2,ecx,edx,
-23 -> T0,T1,T2,ecx,edx,
-24 -> T1,T2,T9,ecx,edx,
-25 -> T2,T3,T9,ecx,edx,
-26 -> T2,T3,T4,T9,ecx,edx,
-27 -> T2,T3,T4,T9,edx,
-28 -> T2,T3,T4,T9,
-29 -> T2,T3,T4,T9,
-30 -> T2,T3,T4,T9,
-31 -> T2,T3,T4,T9,eax,
-32 -> T2,T3,T4,T9,
-33 -> T2,T3,T4,T9,
-34 -> T2,T3,T4,T9,
-35 -> T12,T2,T3,T4,
-36 -> T12,T14,T2,T4,
-37 -> T12,T14,T2,T20,T4,
-38 -> T12,T14,T2,T20,
-39 -> T12,T14,T2,
-40 -> T12,T14,T2,T21,
-41 -> T12,T14,T2,
-42 -> T12,T13,T2,
-43 -> T12,T2,
-44 -> T2,
-45 -> T16,
-46 -> T16,
-47 -> 
-48 -> 
-49 -> 
-50 -> 
-51 -> T22,
-52 -> 
-53 -> T23,
-54 -> 
-55 -> T24,
-56 -> 
-57 -> 
-Live Out
-0 -> ebx,ecx,edi,edx,esi,
-1 -> T17,ecx,edi,edx,esi,
-2 -> ecx,edi,edx,esi,
-3 -> T18,ecx,edx,esi,
-4 -> ecx,edx,esi,
-5 -> T19,ecx,edx,
-6 -> ecx,edx,
-7 -> T0,ecx,edx,
-8 -> T0,edx,
-9 -> T0,
-10 -> T0,
-11 -> T0,
-12 -> T0,eax,
-13 -> T0,eax,
-14 -> T0,eax,edx,
-15 -> T0,eax,ecx,edx,
-16 -> T0,T1,ecx,edx,
-17 -> T0,T1,T2,ecx,edx,
-18 -> T0,T1,T2,ecx,edx,
-19 -> T0,T1,T11,T2,ecx,edx,
-20 -> T0,T1,T2,ecx,edx,
-21 -> T0,T1,T2,ecx,edx,
-22 -> T0,T1,T2,ecx,edx,
-23 -> T1,T2,T9,ecx,edx,
-24 -> T2,T3,T9,ecx,edx,
-25 -> T2,T3,T4,T9,ecx,edx,
-26 -> T2,T3,T4,T9,edx,
-27 -> T2,T3,T4,T9,
-28 -> T2,T3,T4,T9,
-29 -> T2,T3,T4,T9,
-30 -> T2,T3,T4,T9,eax,
-31 -> T2,T3,T4,T9,
-32 -> T2,T3,T4,T9,
-33 -> T2,T3,T4,T9,
-34 -> T12,T2,T3,T4,
-35 -> T12,T14,T2,T4,
-36 -> T12,T14,T2,T20,T4,
-37 -> T12,T14,T2,T20,
-38 -> T12,T14,T2,
-39 -> T12,T14,T2,T21,
-40 -> T12,T14,T2,
-41 -> T12,T13,T2,
-42 -> T12,T2,
-43 -> T2,
-44 -> T16,
-45 -> T16,
-46 -> 
-47 -> 
-48 -> 
-49 -> 
-50 -> T22,
-51 -> 
-52 -> T23,
-53 -> 
-54 -> T24,
-55 -> 
-56 -> 
-57 -> 
-LIVE DEL NODO 57:
-LIVE DEL NODO 56:
-LIVE DEL NODO 55:
-ebx
-LIVE DEL NODO 54:
-T24
-LIVE DEL NODO 53:
-edi
-LIVE DEL NODO 52:
-T23
-LIVE DEL NODO 51:
-esi
-LIVE DEL NODO 50:
-T22
-LIVE DEL NODO 49:
-eax
-LIVE DEL NODO 48:
-LIVE DEL NODO 47:
-LIVE DEL NODO 46:
-T2
-LIVE DEL NODO 45:
-T16
-LIVE DEL NODO 44:
-T16
-LIVE DEL NODO 43:
-T0
-T2
-LIVE DEL NODO 42:
-T12
-T2
-LIVE DEL NODO 41:
-T12
-T13
-T2
-LIVE DEL NODO 40:
-T12
-T14
-T2
-LIVE DEL NODO 39:
-T12
-T14
-T2
-T21
-LIVE DEL NODO 38:
-T12
-T14
-T2
-LIVE DEL NODO 37:
-T12
-T14
-T2
-T20
-LIVE DEL NODO 36:
-T12
-T14
-T2
-T20
-T4
-LIVE DEL NODO 35:
-T12
-T14
-T2
-T4
-LIVE DEL NODO 34:
-T12
-T2
-T3
-T4
-LIVE DEL NODO 33:
-T2
-T3
-T4
-T9
-ecx
-LIVE DEL NODO 32:
-T2
-T3
-T4
-T9
-edx
-LIVE DEL NODO 31:
-T2
-T3
-T4
-T9
-eax
-ecx
-edx
-LIVE DEL NODO 30:
-T2
-T3
-T4
-T9
-eax
-LIVE DEL NODO 29:
-T2
-T3
-T4
-T9
-LIVE DEL NODO 28:
-T2
-T3
-T4
-T9
-LIVE DEL NODO 27:
-T2
-T3
-T4
-T9
-LIVE DEL NODO 26:
-T2
-T3
-T4
-T9
-edx
-LIVE DEL NODO 25:
-T3
-T4
-T9
-ecx
-edx
-LIVE DEL NODO 24:
-T2
-T3
-T9
-ecx
-edx
-LIVE DEL NODO 23:
-T1
-T2
-T9
-ecx
-edx
-LIVE DEL NODO 22:
-T0
-T1
-T2
-ecx
-edx
-LIVE DEL NODO 21:
-T0
-T1
-T2
-ecx
-edx
-LIVE DEL NODO 20:
-T0
-T1
-T11
-T2
-ecx
-edx
-LIVE DEL NODO 19:
-T0
-T1
-T11
-T2
-ecx
-edx
-LIVE DEL NODO 18:
-T0
-T1
-T2
-ecx
-edx
-LIVE DEL NODO 17:
-T0
-T1
-T2
-ecx
-edx
-LIVE DEL NODO 16:
-T0
-T1
-eax
-ecx
-edx
-LIVE DEL NODO 15:
-T0
-eax
-ecx
-edx
-LIVE DEL NODO 14:
-T0
-eax
-edx
-LIVE DEL NODO 13:
-T0
-eax
-ecx
-edx
-LIVE DEL NODO 12:
-T0
-eax
-LIVE DEL NODO 11:
-T0
-LIVE DEL NODO 10:
-T0
-LIVE DEL NODO 9:
-T0
-LIVE DEL NODO 8:
-T0
-edx
-LIVE DEL NODO 7:
-T0
-ecx
-edx
-LIVE DEL NODO 6:
-ecx
-edx
-LIVE DEL NODO 5:
-T19
-ecx
-edx
-LIVE DEL NODO 4:
-ecx
-edx
-esi
-LIVE DEL NODO 3:
-T18
-ecx
-edx
-esi
-LIVE DEL NODO 2:
-ecx
-edi
-edx
-esi
-LIVE DEL NODO 1:
-T17
-ecx
-edi
-edx
-esi
-LIVE DEL NODO 0:
-ebx
-ecx
-edi
-edx
-esi
-=========================================
-CODIGO: 
-0	[Dst(Def):  Src(Use): ]			_tigermain:
-1	[Dst(Def): T17 Src(Use): ebx]			movl `s0,`d0
-2	[Dst(Def):Src(Use): T17  Jmp: ]			movl `s0, -8(%ebp)
-3	[Dst(Def): T18 Src(Use): edi]			movl `s0,`d0
-4	[Dst(Def):Src(Use): T18  Jmp: ]			movl `s0, -12(%ebp)
-5	[Dst(Def): T19 Src(Use): esi]			movl `s0,`d0
-6	[Dst(Def):Src(Use): T19  Jmp: ]			movl `s0, -16(%ebp)
-7	[Dst(Def):T0 Src(Use):  Jmp: ]			movl $0, `d0 
-8	[Dst(Def):Src(Use): ecx  Jmp: ]			pushl `s0
-9	[Dst(Def):Src(Use): edx  Jmp: ]			pushl `s0
-10	[Dst(Def):Src(Use):  Jmp: ]			pushl $1
-11	[Dst(Def):Src(Use):  Jmp: ]			pushl $10
-12	[Dst(Def):eax Src(Use):  Jmp: ]			call _allocArray
-13	[Dst(Def):eax ecx edx Src(Use): eax  Jmp: ]			addl $8, %esp
-14	[Dst(Def):edx Src(Use):  Jmp: ]			popl `d0
-15	[Dst(Def):ecx Src(Use):  Jmp: ]			popl `d0
-16	[Dst(Def):T1 eax Src(Use): eax  Jmp: ]			movl `s0, `d0
-17	[Dst(Def):T2 Src(Use):  Jmp: ]			movl $0, `d0 
-18	[Dst(Def):  Src(Use): ]			L2:
-19	[Dst(Def):T11 Src(Use):  Jmp: ]			movl $10, `d0
-20	[Dst(Def):T2 T11 Src(Use): T2 T11  Jmp: ]			cmpl `s1, `s0
-21	[Dst(Def):Src(Use):  Jmp: L0 L1 ]			je L0
-22	[Dst(Def):  Src(Use): ]			L1:
-23	[Dst(Def): T9 Src(Use): T0]			movl `s0,`d0
-24	[Dst(Def): T3 Src(Use): T1]			movl `s0,`d0
-25	[Dst(Def): T4 Src(Use): T2]			movl `s0,`d0
-26	[Dst(Def):Src(Use): ecx  Jmp: ]			pushl `s0
-27	[Dst(Def):Src(Use): edx  Jmp: ]			pushl `s0
-28	[Dst(Def):Src(Use): T4  Jmp: ]			pushl `s0
-29	[Dst(Def):Src(Use): T3  Jmp: ]			pushl `s0
-30	[Dst(Def):eax Src(Use):  Jmp: ]			call _checkIndexArray
-31	[Dst(Def):eax ecx edx Src(Use): eax  Jmp: ]			addl $8, %esp
-32	[Dst(Def):edx Src(Use):  Jmp: ]			popl `d0
-33	[Dst(Def):ecx Src(Use):  Jmp: ]			popl `d0
-34	[Dst(Def): T12 Src(Use): T9]			movl `s0,`d0
-35	[Dst(Def): T14 Src(Use): T3]			movl `s0,`d0
-36	[Dst(Def):T20 Src(Use):  Jmp: ]			movl -4(%ebp), `d0
-37	[Dst(Def):T20 Src(Use): T4 T20  Jmp: ]			imul $4, `s0, `d0
-38	[Dst(Def):Src(Use): T20  Jmp: ]			movl `s0, -4(%ebp)
-39	[Dst(Def):T21 Src(Use):  Jmp: ]			movl -4(%ebp), `d0
-40	[Dst(Def):T14 Src(Use): T21 T14  Jmp: ]			addl `s0,`d0
-41	[Dst(Def):T13 Src(Use): T14  Jmp: ]			movl (`s0), `d0
-42	[Dst(Def):T12 Src(Use): T13 T12  Jmp: ]			addl `s0,`d0
-43	[Dst(Def): T0 Src(Use): T12]			movl `s0,`d0
-44	[Dst(Def): T16 Src(Use): T2]			movl `s0,`d0
-45	[Dst(Def):T16 Src(Use): T16  Jmp: ]			addl $1, `d0
-46	[Dst(Def): T2 Src(Use): T16]			movl `s0,`d0
-47	[Dst(Def):Src(Use):  Jmp: L2 ]			jmp L2
-48	[Dst(Def):  Src(Use): ]			L0:
-49	[Dst(Def):eax Src(Use):  Jmp: ]			movl $0, `d0 
-50	[Dst(Def):T22 Src(Use):  Jmp: ]			movl -16(%ebp), `d0
-51	[Dst(Def): esi Src(Use): T22]			movl `s0,`d0
-52	[Dst(Def):T23 Src(Use):  Jmp: ]			movl -12(%ebp), `d0
-53	[Dst(Def): edi Src(Use): T23]			movl `s0,`d0
-54	[Dst(Def):T24 Src(Use):  Jmp: ]			movl -8(%ebp), `d0
-55	[Dst(Def): ebx Src(Use): T24]			movl `s0,`d0
-56	[Dst(Def):Src(Use):  Jmp: L3 ]			jmp L3
-57	[Dst(Def):  Src(Use): ]			L3:
-
-=========================================
-Tabla de colores:
-eax: eax
-ebx: ebx
-ecx: ecx
-edi: edi
-T11: eax
-T12: edi
-T13: eax
-T14: esi
-T16: ebx
-T17: ebx
-T18: edi
-T19: esi
-edx: edx
-T20: eax
-T21: eax
-T22: esi
-T23: edi
-T24: ebx
-esi: esi
-T0: edi
-T1: esi
-T2: ebx
-T3: esi
-T4: ebx
-T9: edi
 
 
 Codigo despues del coloreo:
 .data
+L6:
+	.long 2
+	.string " O"
+
+L7:
+	.long 2
+	.string " ."
+
+L16:
+	.long 2
+	.string " O"
+
+L17:
+	.long 2
+	.string " ."
+
+L26:
+	.long 4
+	.string "\x0a"
+
+L27:
+	.long 4
+	.string "\x0a"
+
+L30:
+	.long 4
+	.string "\x0a"
+
+L31:
+	.long 4
+	.string "\x0a"
+
 .text
 	.globl _tigermain
-_tigermain:
+printboard_L1:
 
-	enter $16,$0x0
+	enter $36,$0x0
 
-	movl %ebx, -8(%ebp)
+	movl %ebx, -12(%ebp)
 
-	movl %edi, -12(%ebp)
+	movl %edi, -16(%ebp)
 
-	movl %esi, -16(%ebp)
+	movl %esi, -20(%ebp)
 
 	movl $0, %edi 
 
+	movl 8(%ebp), %eax
+
+	movl -4(%eax), %eax
+
+	subl $1,%eax
+
+	movl %eax, -8(%ebp)
+
+	movl -8(%ebp), %eax
+
+	cmpl %eax,%edi
+
+	movl %eax, -8(%ebp)
+
+	jge L2
+
+L29:
+
+	movl $0, %eax 
+
+	movl %eax, -36(%ebp)
+
+	movl 8(%ebp), %eax
+
+	movl -4(%eax), %eax
+
+	subl $1,%eax
+
+	movl %eax, -4(%ebp)
+
+	movl -4(%ebp), %ebx
+
+	movl -36(%ebp), %eax
+
+	cmpl %ebx,%eax
+
+	movl %eax, -36(%ebp)
+
+	movl %ebx, -4(%ebp)
+
+	jge L3
+
+L25:
+
+	movl 8(%ebp), %eax
+
+	movl -12(%eax), %ebx
+
 	pushl %ecx
 
 	pushl %edx
 
-	pushl $1
-
-	pushl $10
-
-	call _allocArray
-
-	addl $8, %esp
-
-	popl %edx
-
-	popl %ecx
-
-	movl %eax, %esi
-
-	movl $0, %ebx 
-
-L2:
-
-	movl $10, %eax
-
-	cmpl %eax, %ebx
-
-	je L0
-
-L1:
-
-	pushl %ecx
-
-	pushl %edx
+	pushl %edi
 
 	pushl %ebx
-
-	pushl %esi
 
 	call _checkIndexArray
 
@@ -1261,37 +113,939 @@ L1:
 
 	popl %ecx
 
-	movl -4(%ebp), %eax
+	movl %ebx,%eax
 
-	imul $4, %ebx, %eax
+	movl -28(%ebp), %esi
 
-	movl %eax, -4(%ebp)
+	imul $4, %edi, %esi
 
-	movl -4(%ebp), %eax
+	movl %esi, -28(%ebp)
 
-	addl %eax,%esi
+	movl -28(%ebp), %esi
 
-	movl (%esi), %eax
+	addl %esi,%eax
 
-	addl %eax,%edi
+	movl (%eax), %eax
 
-	addl $1, %ebx
+	movl %eax, -24(%ebp)
 
-	jmp L2
+	movl -32(%ebp), %eax
 
-L0:
+	imul $4, %edi, %eax
+
+	movl %eax, -32(%ebp)
+
+	movl -32(%ebp), %eax
+
+	addl %eax,%ebx
+
+	movl (%ebx), %eax
+
+	movl -24(%ebp), %eax
+
+	movl -36(%ebp), %ebx
+
+	cmpl %ebx,%eax
+
+	movl %ebx, -36(%ebp)
+
+	je L21
+
+L22:
+
+	movl $L17, %eax
+
+L23:
+
+	pushl %ecx
+
+	pushl %edx
+
+	pushl %eax
+
+	call print
+
+	addl $4, %esp
+
+	popl %edx
+
+	popl %ecx
+
+	movl -4(%ebp), %ebx
+
+	movl -36(%ebp), %eax
+
+	cmpl %ebx,%eax
+
+	movl %eax, -36(%ebp)
+
+	movl %ebx, -4(%ebp)
+
+	je L3
+
+L24:
+
+	movl -36(%ebp), %eax
+
+	addl $1, %eax
+
+	movl %eax, -36(%ebp)
+
+	jmp L25
+
+L21:
+
+	movl $L16, %eax
+
+	jmp L23
+
+L3:
+
+	pushl %ecx
+
+	pushl %edx
+
+	pushl $L27
+
+	call print
+
+	addl $4, %esp
+
+	popl %edx
+
+	popl %ecx
+
+	movl -8(%ebp), %eax
+
+	cmpl %eax,%edi
+
+	movl %eax, -8(%ebp)
+
+	je L2
+
+L28:
+
+	addl $1, %edi
+
+	jmp L29
+
+L2:
+
+	pushl %ecx
+
+	pushl %edx
+
+	pushl $L31
+
+	call print
+
+	addl $4, %esp
+
+	popl %edx
+
+	popl %ecx
+
+	movl -20(%ebp), %esi
+
+	movl -16(%ebp), %edi
+
+	movl -12(%ebp), %ebx
+
+	jmp L63
+
+L63:
+
+	leave
+
+	ret
+
+try_L0:
+
+	enter $88,$0x0
+
+	movl %ebx, -64(%ebp)
+
+	movl %edi, -68(%ebp)
+
+	movl %esi, -72(%ebp)
+
+	movl 12(%ebp), %edi
+
+	movl 8(%ebp), %eax
+
+	movl -4(%eax), %ebx
+
+	movl 12(%ebp), %esi
+
+	movl 8(%ebp), %eax
+
+	movl -4(%eax), %eax
+
+	cmpl %ebx,%edi
+
+	je L60
+
+L61:
 
 	movl $0, %eax 
 
+	movl %eax, -60(%ebp)
+
+	movl 8(%ebp), %eax
+
+	movl -4(%eax), %eax
+
+	subl $1,%eax
+
+	movl %eax, -88(%ebp)
+
+	movl -60(%ebp), %ebx
+
+	movl -88(%ebp), %eax
+
+	cmpl %eax,%ebx
+
+	movl %eax, -88(%ebp)
+
+	movl %ebx, -60(%ebp)
+
+	jge L34
+
+L59:
+
+	movl 8(%ebp), %eax
+
+	movl -8(%eax), %edi
+
+	movl -60(%ebp), %ebx
+
+	pushl %ecx
+
+	pushl %edx
+
+	pushl %ebx
+
+	pushl %edi
+
+	call _checkIndexArray
+
+	addl $8, %esp
+
+	popl %edx
+
+	popl %ecx
+
+	movl $0, %eax
+
+	movl %eax, -76(%ebp)
+
+	movl %edi,%eax
+
+	movl -8(%ebp), %esi
+
+	imul $4, %ebx, %esi
+
+	movl %esi, -8(%ebp)
+
+	movl -8(%ebp), %esi
+
+	addl %esi,%eax
+
+	movl (%eax), %eax
+
+	movl %eax, -4(%ebp)
+
+	movl -12(%ebp), %eax
+
+	imul $4, %ebx, %eax
+
+	movl %eax, -12(%ebp)
+
+	movl -12(%ebp), %eax
+
+	addl %eax,%edi
+
+	movl (%edi), %ebx
+
+	movl -4(%ebp), %ebx
+
+	movl -76(%ebp), %eax
+
+	cmpl %eax, %ebx
+
+	movl %eax, -76(%ebp)
+
+	je L42
+
+L43:
+
+	movl $0, %eax 
+
+L44:
+
+	movl $0, %ebx
+
+	cmpl %ebx, %eax
+
+	jne L50
+
+L51:
+
+	movl $0, %eax 
+
+L52:
+
+	movl $0, %ebx
+
+	cmpl %ebx, %eax
+
+	jne L56
+
+L57:
+
+	movl -60(%ebp), %ebx
+
+	movl -88(%ebp), %eax
+
+	cmpl %eax,%ebx
+
+	movl %eax, -88(%ebp)
+
+	movl %ebx, -60(%ebp)
+
+	je L34
+
+L58:
+
+	movl -60(%ebp), %eax
+
+	addl $1, %eax
+
+	movl %eax, -60(%ebp)
+
+	jmp L59
+
+L60:
+
+	pushl %ecx
+
+	pushl %edx
+
+	pushl 8(%ebp)
+
+	call printboard_L1
+
+	addl $4, %esp
+
+	popl %edx
+
+	popl %ecx
+
+L62:
+
+	movl -72(%ebp), %esi
+
+	movl -68(%ebp), %edi
+
+	movl -64(%ebp), %ebx
+
+	jmp L64
+
+L42:
+
+	movl 8(%ebp), %eax
+
+	movl -16(%eax), %edi
+
+	movl -60(%ebp), %ebx
+
+	movl 12(%ebp), %eax
+
+	addl %eax,%ebx
+
+	pushl %ecx
+
+	pushl %edx
+
+	pushl %ebx
+
+	pushl %edi
+
+	call _checkIndexArray
+
+	addl $8, %esp
+
+	popl %edx
+
+	popl %ecx
+
+	movl $0, %eax
+
+	movl %eax, -80(%ebp)
+
+	movl %edi,%eax
+
 	movl -16(%ebp), %esi
 
-	movl -12(%ebp), %edi
+	imul $4, %ebx, %esi
 
-	movl -8(%ebp), %ebx
+	movl %esi, -16(%ebp)
 
-	jmp L3
+	movl -16(%ebp), %esi
 
-L3:
+	addl %esi,%eax
+
+	movl (%eax), %eax
+
+	movl -20(%ebp), %esi
+
+	imul $4, %ebx, %esi
+
+	movl %esi, -20(%ebp)
+
+	movl -20(%ebp), %ebx
+
+	addl %ebx,%edi
+
+	movl (%edi), %edi
+
+	movl -80(%ebp), %ebx
+
+	cmpl %ebx, %eax
+
+	movl %ebx, -80(%ebp)
+
+	je L45
+
+L46:
+
+	movl $0, %eax 
+
+L47:
+
+	jmp L44
+
+L45:
+
+	movl $1, %eax 
+
+	jmp L47
+
+L50:
+
+	movl 8(%ebp), %eax
+
+	movl -20(%eax), %edi
+
+	movl -60(%ebp), %ebx
+
+	addl $7, %ebx
+
+	movl 12(%ebp), %eax
+
+	subl %eax,%ebx
+
+	pushl %ecx
+
+	pushl %edx
+
+	pushl %ebx
+
+	pushl %edi
+
+	call _checkIndexArray
+
+	addl $8, %esp
+
+	popl %edx
+
+	popl %ecx
+
+	movl $0, %eax
+
+	movl %eax, -84(%ebp)
+
+	movl %edi,%eax
+
+	movl -24(%ebp), %esi
+
+	imul $4, %ebx, %esi
+
+	movl %esi, -24(%ebp)
+
+	movl -24(%ebp), %esi
+
+	addl %esi,%eax
+
+	movl (%eax), %eax
+
+	movl -28(%ebp), %esi
+
+	imul $4, %ebx, %esi
+
+	movl %esi, -28(%ebp)
+
+	movl -28(%ebp), %ebx
+
+	addl %ebx,%edi
+
+	movl (%edi), %edi
+
+	movl -84(%ebp), %ebx
+
+	cmpl %ebx, %eax
+
+	movl %ebx, -84(%ebp)
+
+	je L53
+
+L54:
+
+	movl $0, %eax 
+
+L55:
+
+	jmp L52
+
+L53:
+
+	movl $1, %eax 
+
+	jmp L55
+
+L56:
+
+	movl 8(%ebp), %eax
+
+	movl -8(%eax), %edi
+
+	movl -60(%ebp), %ebx
+
+	pushl %ecx
+
+	pushl %edx
+
+	pushl %ebx
+
+	pushl %edi
+
+	call _checkIndexArray
+
+	addl $8, %esp
+
+	popl %edx
+
+	popl %ecx
+
+	movl -32(%ebp), %eax
+
+	imul $4, %ebx, %eax
+
+	movl %eax, -32(%ebp)
+
+	movl -32(%ebp), %eax
+
+	addl %eax,%edi
+
+	movl $1, (%edi)
+
+	movl 8(%ebp), %eax
+
+	movl -16(%eax), %edi
+
+	movl -60(%ebp), %ebx
+
+	movl 12(%ebp), %eax
+
+	addl %eax,%ebx
+
+	pushl %ecx
+
+	pushl %edx
+
+	pushl %ebx
+
+	pushl %edi
+
+	call _checkIndexArray
+
+	addl $8, %esp
+
+	popl %edx
+
+	popl %ecx
+
+	movl -36(%ebp), %eax
+
+	imul $4, %ebx, %eax
+
+	movl %eax, -36(%ebp)
+
+	movl -36(%ebp), %eax
+
+	addl %eax,%edi
+
+	movl $1, (%edi)
+
+	movl 8(%ebp), %eax
+
+	movl -20(%eax), %edi
+
+	movl -60(%ebp), %ebx
+
+	addl $7, %ebx
+
+	movl 12(%ebp), %eax
+
+	subl %eax,%ebx
+
+	pushl %ecx
+
+	pushl %edx
+
+	pushl %ebx
+
+	pushl %edi
+
+	call _checkIndexArray
+
+	addl $8, %esp
+
+	popl %edx
+
+	popl %ecx
+
+	movl -40(%ebp), %eax
+
+	imul $4, %ebx, %eax
+
+	movl %eax, -40(%ebp)
+
+	movl -40(%ebp), %eax
+
+	addl %eax,%edi
+
+	movl $1, (%edi)
+
+	movl 8(%ebp), %eax
+
+	movl -12(%eax), %edi
+
+	movl 12(%ebp), %ebx
+
+	pushl %ecx
+
+	pushl %edx
+
+	pushl %ebx
+
+	pushl %edi
+
+	call _checkIndexArray
+
+	addl $8, %esp
+
+	popl %edx
+
+	popl %ecx
+
+	movl -44(%ebp), %eax
+
+	imul $4, %ebx, %eax
+
+	movl %eax, -44(%ebp)
+
+	movl -44(%ebp), %eax
+
+	addl %eax,%edi
+
+	movl -60(%ebp), %eax
+
+	movl %eax, (%edi)
+
+	movl 12(%ebp), %eax
+
+	addl $1, %eax
+
+	pushl %ecx
+
+	pushl %edx
+
+	pushl %eax
+
+	pushl 8(%ebp)
+
+	call try_L0
+
+	addl $8, %esp
+
+	popl %edx
+
+	popl %ecx
+
+	movl 8(%ebp), %eax
+
+	movl -8(%eax), %edi
+
+	movl -60(%ebp), %ebx
+
+	pushl %ecx
+
+	pushl %edx
+
+	pushl %ebx
+
+	pushl %edi
+
+	call _checkIndexArray
+
+	addl $8, %esp
+
+	popl %edx
+
+	popl %ecx
+
+	movl -48(%ebp), %eax
+
+	imul $4, %ebx, %eax
+
+	movl %eax, -48(%ebp)
+
+	movl -48(%ebp), %eax
+
+	addl %eax,%edi
+
+	movl $0, (%edi)
+
+	movl 8(%ebp), %eax
+
+	movl -16(%eax), %edi
+
+	movl -60(%ebp), %ebx
+
+	movl 12(%ebp), %eax
+
+	addl %eax,%ebx
+
+	pushl %ecx
+
+	pushl %edx
+
+	pushl %ebx
+
+	pushl %edi
+
+	call _checkIndexArray
+
+	addl $8, %esp
+
+	popl %edx
+
+	popl %ecx
+
+	movl -52(%ebp), %eax
+
+	imul $4, %ebx, %eax
+
+	movl %eax, -52(%ebp)
+
+	movl -52(%ebp), %eax
+
+	addl %eax,%edi
+
+	movl $0, (%edi)
+
+	movl 8(%ebp), %eax
+
+	movl -20(%eax), %edi
+
+	movl -60(%ebp), %ebx
+
+	addl $7, %ebx
+
+	movl 12(%ebp), %eax
+
+	subl %eax,%ebx
+
+	pushl %ecx
+
+	pushl %edx
+
+	pushl %ebx
+
+	pushl %edi
+
+	call _checkIndexArray
+
+	addl $8, %esp
+
+	popl %edx
+
+	popl %ecx
+
+	movl -56(%ebp), %eax
+
+	imul $4, %ebx, %eax
+
+	movl %eax, -56(%ebp)
+
+	movl -56(%ebp), %eax
+
+	addl %eax,%edi
+
+	movl $0, (%edi)
+
+	jmp L57
+
+L34:
+
+	jmp L62
+
+L64:
+
+	leave
+
+	ret
+
+_tigermain:
+
+	enter $24,$0x0
+
+	movl %ebx, -24(%ebp)
+
+	movl %ebp,%eax
+
+	addl $-4, %eax
+
+	movl $8, (%eax)
+
+	movl %ebp,%ebx
+
+	addl $-8, %ebx
+
+	pushl %ecx
+
+	pushl %edx
+
+	pushl $0
+
+	pushl -4(%ebp)
+
+	call _allocArray
+
+	addl $8, %esp
+
+	popl %edx
+
+	popl %ecx
+
+	movl %eax, (%ebx)
+
+	movl %ebp,%ebx
+
+	addl $-12, %ebx
+
+	pushl %ecx
+
+	pushl %edx
+
+	pushl $0
+
+	pushl -4(%ebp)
+
+	call _allocArray
+
+	addl $8, %esp
+
+	popl %edx
+
+	popl %ecx
+
+	movl %eax, (%ebx)
+
+	movl %ebp,%ebx
+
+	addl $-16, %ebx
+
+	pushl %ecx
+
+	pushl %edx
+
+	pushl $0
+
+	movl -4(%ebp), %eax
+
+	movl -4(%ebp), %ecx
+
+	addl %ecx,%eax
+
+	subl $1,%eax
+
+	pushl %eax
+
+	call _allocArray
+
+	addl $8, %esp
+
+	popl %edx
+
+	popl %ecx
+
+	movl %eax, (%ebx)
+
+	movl %ebp,%ebx
+
+	addl $-20, %ebx
+
+	pushl %ecx
+
+	pushl %edx
+
+	pushl $0
+
+	movl -4(%ebp), %eax
+
+	movl -4(%ebp), %ecx
+
+	addl %ecx,%eax
+
+	subl $1,%eax
+
+	pushl %eax
+
+	call _allocArray
+
+	addl $8, %esp
+
+	popl %edx
+
+	popl %ecx
+
+	movl %eax, (%ebx)
+
+	pushl %ecx
+
+	pushl %edx
+
+	pushl $0
+
+	pushl %ebp
+
+	call try_L0
+
+	addl $8, %esp
+
+	popl %edx
+
+	popl %ecx
+
+	movl $0, %eax 
+
+	movl -24(%ebp), %ebx
+
+	jmp L65
+
+L65:
 
 	leave
 

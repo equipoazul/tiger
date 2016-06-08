@@ -1,8 +1,0 @@
-/* locals hide globals */
-let
-	var a :=0
-
-	function g (a : int, b : int, c : int, d : int) : int = d 
-in
- g (2,3,4,5)
-end
